@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalabel=no">
+    <title>梵净山三维地图沙盘</title>
+    <script src="./Cesium/Build/Cesium/Cesium.js"></script>
+    <style>
+        @import url(./Cesium/Build/Cesium/Widgets/widgets.css);
+
+        html,body,#cesiumContainer{
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            overflow: hidden;
+        }
+        .imgContent{
+            position: absolute;
+            display: block;
+            
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<img id="imgOverlay"
+     style="position: absolute; top: 177.697px; left: 258.29px; width: 32px; pointer-events: none;"
+     src="img_map_mylocation.png"/>
+<script src="index.js"></script>
+</body>
+</html>
