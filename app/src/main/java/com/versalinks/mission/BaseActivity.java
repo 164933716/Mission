@@ -19,6 +19,7 @@ import androidx.databinding.ViewDataBinding;
 public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatActivity {
 
     protected Context context;
+    protected T binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,14 +27,14 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         context = this;
         View view = createView(this);
         setContentView(view);
-        T binding = DataBindingUtil.bind(view);
+        binding = DataBindingUtil.bind(view);
         if (binding != null) {
             binding.setLifecycleOwner(this);
-            onCreate(binding);
+            onCreateByBinding(savedInstanceState);
         }
     }
 
-    protected abstract void onCreate(@NonNull T binding);
+    protected abstract void onCreateByBinding(Bundle savedInstanceState);
 
     @NonNull
     protected abstract View createView(Context context);

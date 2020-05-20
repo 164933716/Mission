@@ -1,12 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
-    <FrameLayout
-        android:id="@+id/container"
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/vGpsOpt"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/shape_oval_white"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_gps" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp" />
+
+                <ImageView
+                    android:id="@+id/vMenuOpt"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/shape_oval_white"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/src_img_fm_icn_fill_filter" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/vRoutesOpt"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_margin="10dp"
+                android:background="@drawable/shape_oval_white"
+                android:padding="5dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/src_img_fm_icn_basic_guidebook" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/shape_oval_white"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/src_img_fm_icn_line_basic_info" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp" />
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/shape_oval_black"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/src_img_fm_icn_colour_map_compass" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_corner5_bg"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="2dp">
+
+                    <LinearLayout
+                        android:id="@+id/vGestureLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        tools:ignore="Suspicious0dp"
+                        tools:layout_height="240dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_fill_map_tilt_down" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp" />
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_fill_map_tilt_up" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp" />
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_fill_map_rotate_left" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp" />
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_fill_map_rotate_right" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp" />
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_fill_map_plus" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp" />
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_fill_map_minus" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="10dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/vGestureOpt"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/shape_oval_black"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/src_img_fm_icn_line_map_deathstar_white" />
+
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp" />
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/shape_oval_white"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/src_img_fm_icn_colour_my_position_inviewport" />
+
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp" />
+
+                <ImageView
+                    android:id="@+id/vLayerOpt"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/shape_oval_white"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/src_img_buttons_fmicnlinedarkmapoverlays" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <com.versalinks.mission.MenuChoose
+            android:id="@+id/vMenuChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+
+        <com.versalinks.mission.LayerChoose
+            android:id="@+id/vLayerChoose"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end" />
+    </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

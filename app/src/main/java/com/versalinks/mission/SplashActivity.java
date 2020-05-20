@@ -3,9 +3,8 @@ package com.versalinks.mission;
 import android.Manifest;
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
@@ -18,7 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * OK
@@ -28,7 +29,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     protected Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            Observable.timer(300, TimeUnit.MILLISECONDS).subscribe(new Observer<Long>() {
+            Observable.timer(300, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Long>() {
                 @Override
                 public void onSubscribe(Disposable d) {
 
@@ -46,8 +47,9 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
 
                 @Override
                 public void onComplete() {
-//                    jump2Activity(MainActivity.class);
-//                    finish();
+
+                    jump2Activity(MainActivity.class);
+                    finish();
                 }
             });
         }
@@ -55,16 +57,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
 
 
     @Override
-    protected void onCreate(@NonNull ActivitySplashBinding binding) {
-        binding.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ChooseDialog chooseDialog=new ChooseDialog(context);
-                chooseDialog.show();
-            }
-        });
-        ChooseDialog chooseDialog=new ChooseDialog(context);
-        chooseDialog.show();
+    protected void onCreateByBinding(Bundle savedInstanceState) {
         if (permissionsOK(permission)) {
             runnable.run();
         } else {

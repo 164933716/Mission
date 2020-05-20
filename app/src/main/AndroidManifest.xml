@@ -29,9 +29,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
-        <activity
-            android:name=".SplashActivity">
+        <service
+            android:name=".GPSService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="525e443fe0fd8ffbfa753925497f593c" />
+
+        <service android:name="com.amap.api.location.APSService" />
+
+        <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,6 +50,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+        <activity android:name=".GPSRecordActivity" />
+        <activity android:name=".RoutesActivity" />
     </application>
 
 </manifest>

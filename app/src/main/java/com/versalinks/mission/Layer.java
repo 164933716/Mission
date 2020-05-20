@@ -35,10 +35,10 @@ public class Layer {
         Layer layer = new Layer();
         layer.label = "生态体验点";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("自然科普", 0));
-        layer.items.add(new Item("观光旅游", 0));
-        layer.items.add(new Item("户外体验", 0));
-        layer.items.add(new Item("专项旅游", 0));
+        layer.items.add(new Item("自然科普", R.drawable.src_img_fmicnlineterrainaspect));
+        layer.items.add(new Item("观光旅游", R.drawable.src_img_fmicnlineterrainavalanche));
+        layer.items.add(new Item("户外体验", R.drawable.src_img_fmicnlineterrainelevation));
+        layer.items.add(new Item("专项旅游", R.drawable.src_img_fmicnlineterrainflat));
         return layer;
     }
 
@@ -46,8 +46,8 @@ public class Layer {
         Layer layer = new Layer();
         layer.label = "珍稀动植物";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("动物", 0));
-        layer.items.add(new Item("植物", 0));
+        layer.items.add(new Item("动物", R.drawable.src_img_fm_icn_line_poi_park));
+        layer.items.add(new Item("植物", R.drawable.src_img_fm_icn_line_poi_peak));
         return layer;
     }
 
@@ -55,14 +55,10 @@ public class Layer {
         Layer layer = new Layer();
         layer.label = "信息";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("山庄", 0));
-        layer.items.add(new Item("景点", 0));
-        layer.items.add(new Item("景点1", 0));
-        layer.items.add(new Item("景点2", 0));
-        layer.items.add(new Item("景点3", 0));
-        layer.items.add(new Item("景点4", 0));
-        layer.items.add(new Item("景点5", 0));
-        layer.items.add(new Item("景点6", 0));
+        layer.items.add(new Item("景点1", R.drawable.src_img_flags_flagar));
+        layer.items.add(new Item("景点2", R.drawable.src_img_flags_flagau));
+        layer.items.add(new Item("景点3", R.drawable.src_img_flags_flagcn));
+        layer.items.add(new Item("景点4", R.drawable.src_img_flags_flagca));
         return layer;
     }
 }

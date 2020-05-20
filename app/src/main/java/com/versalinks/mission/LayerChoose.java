@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -31,7 +32,7 @@ public class LayerChoose extends LinearLayout {
     }
 
     public LayerChoose(@NonNull Context context, @Nullable AttributeSet attrs) {
-        this(context, null, 0);
+        this(context, attrs, 0);
     }
 
     public LayerChoose(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -122,6 +123,10 @@ public class LayerChoose extends LinearLayout {
         }
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return true;
+    }
 
     static class GridDividerItemDecoration extends RecyclerView.ItemDecoration {
         @Override
