@@ -49,7 +49,7 @@ public class GPSService extends Service {
                 distance += v;
             }
             for (TrackListener trackListener : trackListeners) {
-                trackListener.trackProgress(list.size() > 0 ? list.get(list.size() - 1 ).altitude : 0, distance, duration, list);
+                trackListener.trackProgress(list.size() > 0 ? list.get(list.size() - 1).altitude : 0, distance, duration, list);
             }
             handler.postDelayed(this, 1000);
         }
@@ -187,17 +187,16 @@ public class GPSService extends Service {
         handler.post(runnable);
     }
 
-    public List<Model_GPS> stopTrack() {
+    public void stopTrack() {
         handler.removeCallbacks(runnable);
         List<Model_GPS> gpsList = new ArrayList<>(list.size());
         gpsList.addAll(list);
         for (TrackListener trackListener : trackListeners) {
-            trackListener.trackEnd();
+            trackListener.trackEnd(gpsList);
         }
         duration = 0;
         distance = 0;
         list.clear();
-        return gpsList;
     }
 
     public void stopLocate() {
@@ -209,7 +208,7 @@ public class GPSService extends Service {
     interface TrackListener {
         void trackStart();
 
-        void trackEnd();
+        void trackEnd(List<Model_GPS> gpsList);
 
         void trackProgress(double altitude, double distance, long duration, List<Model_GPS> list);
     }

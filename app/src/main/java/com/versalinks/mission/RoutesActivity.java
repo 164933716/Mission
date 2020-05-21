@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.LogUtils;
+import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.simple.SimpleMultiListener;
 import com.versalinks.mission.databinding.ActivityRoutesBinding;
@@ -13,18 +17,26 @@ import com.versalinks.mission.databinding.ActivityRoutesBinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
+
 public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
     private List<Route> allList = new ArrayList<>();
     private BaseAdapter<Route> adapter;
+    private Realm realm;
+    private RealmResults<Route> allAsync;
 
     @Override
     protected void onCreateByBinding(Bundle savedInstanceState) {
+        realm = Realm.getDefaultInstance();
         binding.vBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
+        binding.refresh.setRefreshHeader(new ClassicsHeader(context));
         binding.refresh.setEnableRefresh(true);
         binding.refresh.setEnableLoadMore(false);
         binding.refresh.setEnableAutoLoadMore(false);
@@ -35,7 +47,9 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
                 loadData();
             }
         });
+        binding.recycler.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
 //        binding.ivLogo
+        loadData();
     }
 
     private void initAdapter(List<Route> list) {
@@ -56,8 +70,26 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
     }
 
     private void loadData() {
-        binding.refresh.finishRefresh();
-        initAdapter(null);
+        allAsync = realm.where(Route.class).findAllAsync();
+        allAsync.addChangeListener(new RealmChangeListener<RealmResults<Route>>() {
+            @Override
+            public void onChange(@NonNull RealmResults<Route> routes) {
+                LogUtils.e("onChange" + routes.size());
+                binding.refresh.finishRefresh();
+                initAdapter(allAsync);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (allAsync != null) {
+            allAsync.removeAllChangeListeners(); // remove all registered listeners
+        }
+        if (realm != null && !realm.isClosed()) {
+            realm.close();
+        }
+        super.onDestroy();
     }
 
     @NonNull

@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
+import com.gyf.barlibrary.ImmersionBar;
+
 public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatActivity {
 
     protected Context context;
@@ -27,11 +29,16 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         context = this;
         View view = createView(this);
         setContentView(view);
+        ImmersionBar.with(this)
+                .fitsSystemWindows(true)  //使用该属性,必须指定状态栏颜色
+                .statusBarColor("#000000")
+                .init();
         binding = DataBindingUtil.bind(view);
         if (binding != null) {
             binding.setLifecycleOwner(this);
             onCreateByBinding(savedInstanceState);
         }
+
     }
 
     protected abstract void onCreateByBinding(Bundle savedInstanceState);
@@ -48,6 +55,12 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         onResult4Setting(requestCode);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ImmersionBar.with(this).destroy();
     }
 
     @Override
@@ -84,18 +97,21 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     protected void onResult4Setting(int requestCode) {
 
     }
+
     protected void showSoftInput() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
     }
+
     public void jump2Activity(Class cls) {
         if (cls != null) {
             Intent intent = new Intent(BaseActivity.this, cls);
             startActivity(intent);
         }
     }
+
     protected void hideSoftInput() {
         try {
             View view = getCurrentFocus();

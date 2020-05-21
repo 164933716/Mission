@@ -53,12 +53,12 @@ public class Layer {
 
     public static Layer create3() {
         Layer layer = new Layer();
-        layer.label = "信息";
+        layer.label = "基础图层";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("景点1", R.drawable.src_img_flags_flagar));
-        layer.items.add(new Item("景点2", R.drawable.src_img_flags_flagau));
-        layer.items.add(new Item("景点3", R.drawable.src_img_flags_flagcn));
-        layer.items.add(new Item("景点4", R.drawable.src_img_flags_flagca));
+        layer.items.add(new Item("水系", R.drawable.src_img_flags_flagar));
+        layer.items.add(new Item("村庄", R.drawable.src_img_flags_flagau));
+        layer.items.add(new Item("山峰", R.drawable.src_img_flags_flagcn));
+        layer.items.add(new Item("道路", R.drawable.src_img_flags_flagca));
         return layer;
     }
 }

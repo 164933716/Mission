@@ -54,10 +54,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreateByBinding(Bundle savedInstanceState) {
-
         Intent intent = new Intent(this, GPSService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
         int heightOK = AndroidUtil.dp2Px(240);
         binding.vGestureOpt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +108,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void itemClick(int index) {
                 binding.drawerLayout.closeDrawer(GravityCompat.START, false);
                 jump2Activity(GPSRecordActivity.class);
+            }
+        });
+        binding.vLayerChoose.setItemClickListener(new LayerChoose.ItemClickListener() {
+            @Override
+            public void itemClick(Layer.Item item) {
+
             }
         });
 

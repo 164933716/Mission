@@ -28,6 +28,7 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.TimeUtils;
 import com.versalinks.mission.databinding.ActivityGpsRecordBinding;
 
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
+import io.realm.RealmAsyncTask;
 
 public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
 
@@ -89,30 +91,59 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
         }
 
         @Override
-        public void trackEnd() {
-            TipDialog tipDialog = new TipDialog(context);
-            tipDialog.show();
-            Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Long>() {
+        public void trackEnd(List<Model_GPS> gpsList) {
+            LogUtils.e("trackEnd");
+            realmAsyncTask = realm.executeTransactionAsync(new Realm.Transaction() {
                 @Override
-                public void onSubscribe(Disposable d) {
-
+                public void execute(@NonNull Realm realm) {
+                    Route route = realm.createObject(Route.class);
+                    for (Model_GPS modelGps : gpsList) {
+                        Model_GPS model_gps = realm.createObject(Model_GPS.class);
+                        model_gps.latitude = modelGps.latitude;
+                        model_gps.longitude = modelGps.longitude;
+                        model_gps.altitude = modelGps.altitude;
+                        route.gpsList.add(model_gps);
+                    }
+                    route.time = TimeUtils.getNowMills();
+                    route.routeName = TimeUtils.getNowString();
                 }
-
+            }, new Realm.Transaction.OnSuccess() {
                 @Override
-                public void onNext(Long aLong) {
+                public void onSuccess() {
+                    LogUtils.e("onSuccess");
+                    // Transaction was a success.
+                    TipDialog tipDialog = new TipDialog(context);
+                    tipDialog.show();
+                    Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Long>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
+                        }
+
+                        @Override
+                        public void onNext(Long aLong) {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            onComplete();
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            tipDialog.dismiss();
+                        }
+                    });
                 }
-
+            }, new Realm.Transaction.OnError() {
                 @Override
-                public void onError(Throwable e) {
-                    onComplete();
-                }
-
-                @Override
-                public void onComplete() {
-                    tipDialog.dismiss();
+                public void onError(Throwable error) {
+                    LogUtils.e("onError" + error);
+                    // Transaction failed and was automatically canceled.
                 }
             });
+
         }
 
         @Override
@@ -190,10 +221,13 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             gpsService = null;
         }
     };
+    private Realm realm;
+    private RealmAsyncTask realmAsyncTask;
 
 
     @Override
     protected void onCreateByBinding(Bundle savedInstanceState) {
+        realm = Realm.getDefaultInstance();
         binding.vScaleView.setScaleClickListener(new ScaleView.ScaleClickListener() {
             @Override
             public void bigClick() {
@@ -230,8 +264,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             @Override
             public void onClick(View v) {
                 if (gpsService != null) {
-                    List<Model_GPS> model_gps = gpsService.stopTrack();
-                    LogUtils.e(model_gps.size());
+                    gpsService.stopTrack();
                     gpsService.removeTrackListener(trackListener);
                 }
             }
@@ -328,6 +361,12 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             unbindService(connection);
         }
         mapView.onDestroy();
+        if (realmAsyncTask != null && !realmAsyncTask.isCancelled()) {
+            realmAsyncTask.cancel();
+        }
+        if (realm != null && !realm.isClosed()) {
+            realm.close();
+        }
         super.onDestroy();
     }
 

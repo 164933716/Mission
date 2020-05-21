@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 public class LayerChoose extends LinearLayout {
+    private ItemClickListener itemClickListener;
     private Set<Layer.Item> choose = new HashSet<>();
 
     public LayerChoose(@NonNull Context context) {
@@ -112,6 +113,9 @@ public class LayerChoose extends LinearLayout {
                         choose.add(item);
                         baseAdapter.notifyItemChanged(position);
                     }
+                    if (itemClickListener != null) {
+                        itemClickListener.itemClick(item);
+                    }
                 }
             });
             recyclerView.setAdapter(baseAdapter);
@@ -136,4 +140,11 @@ public class LayerChoose extends LinearLayout {
         }
     }
 
+    public void setItemClickListener(ItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    interface ItemClickListener {
+        void itemClick(Layer.Item index);
+    }
 }
