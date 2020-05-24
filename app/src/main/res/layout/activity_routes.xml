@@ -13,11 +13,13 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:background="#ffffff"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:minHeight="50dp"
             android:orientation="horizontal"
-            android:paddingLeft="15dp">
+            android:paddingStart="5dp">
 
             <LinearLayout
                 android:id="@+id/vBack"
@@ -30,17 +32,19 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/src_img_fm_icn_fill_map_rotate_left" />
+                    android:src="@drawable/ic_back" />
 
                 <Space
-                    android:layout_width="5dp"
+                    android:layout_width="0dp"
                     android:layout_height="0dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="返回"
-                    android:textColor="#333333" />
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
@@ -57,7 +61,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
             </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -67,7 +71,7 @@
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_margin="15dp"
                 android:src="@drawable/src_img_fm_icn_fill_map_rotate_left"
-                app:civ_border_color="#FFFFFF"
+                app:civ_border_color="#ebebeb"
                 app:civ_border_width="2dp" />
         </FrameLayout>
 

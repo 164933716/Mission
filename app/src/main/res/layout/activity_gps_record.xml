@@ -105,12 +105,16 @@
                             android:id="@+id/tvHeight"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0" />
+                            android:maxLines="1"
+                            android:text="0"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="海拔" />
+                            android:layout_marginTop="3dp"
+                            android:text="海拔"
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -125,12 +129,16 @@
                             android:id="@+id/tvDistance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0" />
+                            android:maxLines="1"
+                            android:text="0"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="距离" />
+                            android:layout_marginTop="3dp"
+                            android:text="距离"
+                            android:textSize="14sp" />
 
                     </LinearLayout>
 
@@ -145,12 +153,16 @@
                             android:id="@+id/tvDuration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="00：00：00" />
+                            android:maxLines="1"
+                            android:text="00:00:00"
+                            android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="时间" />
+                            android:layout_marginTop="3dp"
+                            android:text="时间"
+                            android:textSize="14sp" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -179,14 +191,18 @@
                             android:id="@+id/ivStartOrPause"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/src_img_fm_icn_basic_guidebook" />
+                            android:background="@drawable/shape_oval_white_with_stroke"
+                            android:padding="3dp"
+                            android:src="@drawable/ic_media_start" />
 
                         <TextView
                             android:id="@+id/tvStartOrPause"
 
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="暂停" />
+                            android:layout_marginTop="3dp"
+                            android:text="开始"
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
@@ -205,14 +221,21 @@
                         android:paddingEnd="10dp">
 
                         <ImageView
+                            android:id="@+id/ivStop"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/src_img_fm_icn_basic_guidebook" />
+                            android:background="@drawable/shape_oval_white_with_stroke"
+                            android:padding="3dp"
+                            android:src="@drawable/ic_media_stop" />
 
                         <TextView
+                            android:id="@+id/tvStop"
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="结束" />
+                            android:layout_marginTop="3dp"
+                            android:text="结束"
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 

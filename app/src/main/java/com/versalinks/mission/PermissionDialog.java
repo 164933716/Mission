@@ -32,7 +32,7 @@ public class PermissionDialog extends BaseDialog {
     enum Type {
         File(R.drawable.ic_sdcard, "文件存储"),
         Gps(R.drawable.ic_gps, "地理位置"),
-        ;
+        Camera(R.drawable.ic_camera_permission, "摄像头");
 
         public int resId;
         public String msg;

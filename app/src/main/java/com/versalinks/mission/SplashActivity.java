@@ -2,56 +2,43 @@ package com.versalinks.mission;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.versalinks.mission.databinding.ActivitySplashBinding;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 
 /**
  * OK
  */
 public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
-    private String[] permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private String[] permission = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA};
+    private Handler handler = new Handler(Looper.getMainLooper());
     protected Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            Observable.timer(300, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Long>() {
+            Realm.init(App.getContext());
+            RealmConfiguration config = new RealmConfiguration.Builder().directory(AndroidUtil.getFolder(context)).deleteRealmIfMigrationNeeded().schemaVersion(1).build();
+            Realm.setDefaultConfiguration(config);
+            handler.postDelayed(new Runnable() {
                 @Override
-                public void onSubscribe(Disposable d) {
-
-                }
-
-                @Override
-                public void onNext(Long aLong) {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    onComplete();
-                }
-
-                @Override
-                public void onComplete() {
-
+                public void run() {
                     jump2Activity(MainActivity.class);
                     finish();
                 }
-            });
+            }, 300);
         }
     };
 
@@ -63,6 +50,100 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         } else {
             requestPermissions(permission, 9999, runnable);
         }
+        test();
+    }
+
+    private void test() {
+        binding.ivLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onDataDeal(Model_Route route, String message) {
+                        LogUtils.e(route.toString());
+                    }
+                };
+                Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(new ArrayList<>());
+                baseOb.bindObed(routeObservable);
+            }
+        });
+        binding.ivLogo1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BaseOb<List<Model_Route>> baseOb = new BaseOb<List<Model_Route>>() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onDataDeal(List<Model_Route> route, String message) {
+                        if (route != null) {
+                            LogUtils.e(route.toString());
+                        } else {
+                            LogUtils.e("null");
+                        }
+                    }
+                };
+                Observable<List<Model_Route>> routeObservable = DataUtils.getInstance().queryRoute();
+                baseOb.bindObed(routeObservable);
+            }
+        });
+        binding.ivLogo2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BaseOb<List<Model_Route>> baseOb = new BaseOb<List<Model_Route>>() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onDataDeal(List<Model_Route> route, String message) {
+                        if (route != null) {
+                            LogUtils.e(route.size());
+                        } else {
+                            LogUtils.e("null");
+                        }
+                    }
+                };
+                Observable<List<Model_Route>> routeObservable = DataUtils.getInstance().deleteRoute("");
+                baseOb.bindObed(routeObservable);
+            }
+        });
+        binding.ivLogo3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BaseOb<List<Model_Route>> baseOb = new BaseOb<List<Model_Route>>() {
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onDataDeal(List<Model_Route> route, String message) {
+                        if (route != null) {
+                            LogUtils.e(route.toString());
+                        } else {
+                            LogUtils.e("null");
+                        }
+                    }
+                };
+                Model_Route model_route = new Model_Route();
+                model_route.gpsList = new RealmList<>();
+                model_route.gpsList.add(new Model_GPS());
+                model_route.gpsList.add(new Model_GPS());
+                model_route.gpsList.add(new Model_GPS());
+                model_route.gpsList.add(new Model_GPS());
+                Observable<List<Model_Route>> routeObservable = DataUtils.getInstance().updateRoute("2020-05-21 18:40:01", model_route);
+                baseOb.bindObed(routeObservable);
+            }
+        });
     }
 
     @NonNull
@@ -78,7 +159,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
             if (isPermissionsOk) {
                 runnable.run();
             } else {
-                new PermissionDialog(context, PermissionDialog.Type.File, PermissionDialog.Type.Gps).setClickListener(new PermissionDialog.ClickListener() {
+                new PermissionDialog(context, PermissionDialog.Type.File, PermissionDialog.Type.Gps,PermissionDialog.Type.Camera).setClickListener(new PermissionDialog.ClickListener() {
                     @Override
                     public void exit(PermissionDialog dialog) {
                         dialog.dismiss();
@@ -96,19 +177,4 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         }
     }
 
-    private String getJson(Context context, String fileName) {
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            AssetManager assetManager = context.getAssets();
-            BufferedReader bf = new BufferedReader(new InputStreamReader(
-                    assetManager.open(fileName)));
-            String line;
-            while ((line = bf.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.toString();
-    }
 }

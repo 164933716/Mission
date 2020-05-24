@@ -15,7 +15,6 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.location.AMapLocationQualityReport;
 import com.amap.api.maps.AMapUtils;
-import com.amap.api.maps.model.LatLng;
 import com.blankj.utilcode.util.LogUtils;
 
 import java.util.ArrayList;
@@ -30,8 +29,14 @@ public class GPSService extends Service {
     private List<GPSEnableListener> gpsEnableListeners = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
     private List<Model_GPS> list = new ArrayList<>();
+
+    public long getDuration() {
+        return duration;
+    }
+
     private long duration = 0;
     private double distance = 0;
+    private RecordState recordState = RecordState.Normal;
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -55,9 +60,55 @@ public class GPSService extends Service {
         }
     };
     private Model_GPS modelGps;
+    AMapLocationListener locationListener = new AMapLocationListener() {
+        @Override
+        public void onLocationChanged(AMapLocation mapLocation) {
+            if (mapLocation != null) {
+                if (mapLocation.getErrorCode() == 0) {
+                    double latitude = mapLocation.getLatitude();//获取纬度
+                    double longitude = mapLocation.getLongitude();//获取经度
+                    String city = mapLocation.getCity();//城市信息
+                    double altitude = mapLocation.getAltitude();
+                    modelGps = new Model_GPS(latitude, longitude, altitude);
+                    Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
+                    for (GPSListener gpsListener : gpsListeners) {
+                        gpsListener.gps(modelGps);
+                    }
+                    int locationQualityReport = mapLocation.getLocationQualityReport().getGPSStatus();
+                    String gpsStatusString = getGPSStatusString(locationQualityReport);
+                    for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
+                        gpsEnableListener.enable(gpsStatusString);
+                    }
+
+                } else {
+                    modelGps = null;
+                    Log.e("GPS", "location Error, ErrCode:"
+                            + mapLocation.getErrorCode() + ", errInfo:"
+                            + mapLocation.getErrorInfo());
+                    for (GPSListener gpsListener : gpsListeners) {
+                        gpsListener.gps(modelGps);
+                    }
+                    for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
+                        gpsEnableListener.enable("无法获取GPS");
+                    }
+                }
+            }
+        }
+    };
+
+    public RecordState getRecordState() {
+        return recordState;
+    }
 
     enum SatellitesStatus {
         CONNECTING, NO_SIGNAL, ERROR, OFF, MODEOFF, PERMISSION, CONNECTED
+    }
+
+    enum RecordState {
+        Pause,
+        Ing,
+        Normal
+
     }
 
     public GPSService() {
@@ -74,7 +125,41 @@ public class GPSService extends Service {
     public void onCreate() {
         super.onCreate();
         mBinder = new GPSBinder();
-        initLocation();
+        mLocationClient = new AMapLocationClient(getApplicationContext());
+        mLocationClient.setLocationListener(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation mapLocation) {
+                if (mapLocation != null) {
+                    if (mapLocation.getErrorCode() == 0) {
+                        //longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697
+                        double latitude = mapLocation.getLatitude();//获取纬度
+                        double longitude = mapLocation.getLongitude();//获取经度
+                        String city = mapLocation.getCity();//城市信息
+                        double altitude = mapLocation.getAltitude();
+                        latitude = 27.8601391146;
+                        longitude = 108.7107853492;
+                        altitude = 1446.697;
+                        modelGps = new Model_GPS(latitude, longitude, altitude);
+                        Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
+                        for (GPSListener gpsListener : gpsListeners) {
+                            gpsListener.gps(modelGps);
+                        }
+                        int locationQualityReport = mapLocation.getLocationQualityReport().getGPSStatus();
+                        String gpsStatusString = getGPSStatusString(locationQualityReport);
+                        for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
+                            gpsEnableListener.enable(gpsStatusString);
+                        }
+
+                    } else {
+                        modelGps = null;
+                        Log.e("GPS", "location Error, ErrCode:"
+                                + mapLocation.getErrorCode() + ", errInfo:"
+                                + mapLocation.getErrorInfo());
+                    }
+                }
+            }
+        });
+        setLocationByGPS(3000);
         startLocate();
     }
 
@@ -108,42 +193,12 @@ public class GPSService extends Service {
         return str;
     }
 
-    private void initLocation() {
-        mLocationClient = new AMapLocationClient(getApplicationContext());
-        mLocationClient.setLocationListener(new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation mapLocation) {
-                if (mapLocation != null) {
-                    if (mapLocation.getErrorCode() == 0) {
-                        double latitude = mapLocation.getLatitude();//获取纬度
-                        double longitude = mapLocation.getLongitude();//获取经度
-                        String city = mapLocation.getCity();//城市信息
-                        double altitude = mapLocation.getAltitude();
-                        modelGps = new Model_GPS(latitude, longitude, altitude);
-                        Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
-                        LatLng latLng = new LatLng(latitude, longitude);
-                        for (GPSListener gpsListener : gpsListeners) {
-                            gpsListener.gps(modelGps);
-                        }
-                        int locationQualityReport = mapLocation.getLocationQualityReport().getGPSStatus();
-                        String gpsStatusString = getGPSStatusString(locationQualityReport);
-                        for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
-                            gpsEnableListener.enable(gpsStatusString);
-                        }
 
-                    } else {
-                        modelGps = null;
-                        Log.e("GPS", "location Error, ErrCode:"
-                                + mapLocation.getErrorCode() + ", errInfo:"
-                                + mapLocation.getErrorInfo());
-                    }
-                }
-            }
-        });
+    public void setLocationByGPS(int ms) {
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         mLocationOption.setOnceLocation(false);
-        mLocationOption.setInterval(1000);
+        mLocationOption.setInterval(ms);
         mLocationOption.setNeedAddress(true);
         mLocationOption.setSensorEnable(true);
         mLocationClient.setLocationOption(mLocationOption);
@@ -175,19 +230,43 @@ public class GPSService extends Service {
 
     private void startLocate() {
         if (mLocationClient != null) {
+            AMapLocation lastKnownLocation = mLocationClient.getLastKnownLocation();
+            if (locationListener != null) {
+                locationListener.onLocationChanged(lastKnownLocation);
+            }
             mLocationClient.startLocation();
         }
     }
 
+    public void pauseTrack() {
+        recordState = RecordState.Pause;
+        handler.removeCallbacks(runnable);
+        for (TrackListener trackListener : trackListeners) {
+            trackListener.trackPause();
+        }
+    }
+
+    public void resumeTrack() {
+        recordState = RecordState.Ing;
+        handler.post(runnable);
+        for (TrackListener trackListener : trackListeners) {
+            trackListener.trackResume();
+        }
+    }
+
     public void startTrack() {
+        setLocationByGPS(1000);
+        recordState = RecordState.Ing;
         list.clear();
+        handler.post(runnable);
         for (TrackListener trackListener : trackListeners) {
             trackListener.trackStart();
         }
-        handler.post(runnable);
     }
 
     public void stopTrack() {
+        setLocationByGPS(3000);
+        recordState = RecordState.Normal;
         handler.removeCallbacks(runnable);
         List<Model_GPS> gpsList = new ArrayList<>(list.size());
         gpsList.addAll(list);
@@ -207,6 +286,10 @@ public class GPSService extends Service {
 
     interface TrackListener {
         void trackStart();
+
+        void trackPause();
+
+        void trackResume();
 
         void trackEnd(List<Model_GPS> gpsList);
 

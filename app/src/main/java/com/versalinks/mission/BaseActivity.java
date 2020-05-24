@@ -112,6 +112,12 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         }
     }
 
+    public void jump2Activity(Intent intent) {
+        if (intent != null) {
+            startActivity(intent);
+        }
+    }
+
     protected void hideSoftInput() {
         try {
             View view = getCurrentFocus();

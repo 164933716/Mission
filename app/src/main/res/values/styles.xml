@@ -1,8 +1,8 @@
 <resources>
-    <color name="colorPrimary">#00C853</color>
-    <color name="colorPrimaryDark">#00C853</color>
-    <color name="colorAccent">#03DAC5</color>
-    <color name="common_colorLine">#EAEAEA</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#000000</color>
+    <color name="common_colorLine">#a3a3a3</color>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>

@@ -1,35 +1,37 @@
 package com.versalinks.mission;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.bumptech.glide.Glide;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.simple.SimpleMultiListener;
 import com.versalinks.mission.databinding.ActivityRoutesBinding;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import io.reactivex.Observable;
 
 public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
-    private List<Route> allList = new ArrayList<>();
-    private BaseAdapter<Route> adapter;
-    private Realm realm;
-    private RealmResults<Route> allAsync;
+    private List<Model_Route> allList = new ArrayList<>();
+    private BaseAdapter<Model_Route> adapter;
 
     @Override
     protected void onCreateByBinding(Bundle savedInstanceState) {
-        realm = Realm.getDefaultInstance();
         binding.vBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,21 +49,48 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
                 loadData();
             }
         });
+        binding.recycler.addItemDecoration(new HLineDividerAll(Color.TRANSPARENT, 10f));
         binding.recycler.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-//        binding.ivLogo
+        binding.ivLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        Intent intent = getIntent();
+        Serializable thumbFileSer = intent.getSerializableExtra("thumbFile");
+        if (thumbFileSer instanceof File) {
+            if (((File) thumbFileSer).exists() && ((File) thumbFileSer).length() > 0) {
+                Glide.with(context).load(thumbFileSer).centerCrop().into(binding.ivLogo);
+            }
+        }
         loadData();
     }
 
-    private void initAdapter(List<Route> list) {
+    private void initAdapter(List<Model_Route> list) {
         allList.clear();
         if (list != null) {
             allList.addAll(list);
         }
         if (adapter == null) {
-            adapter = new BaseAdapter<Route>(R.layout.item_route, allList) {
+            adapter = new BaseAdapter<Model_Route>(R.layout.item_route, allList) {
                 @Override
                 protected void convert(View helper, int position, int viewType) {
-
+                    Model_Route item = allList.get(position);
+                    ImageView ivLogo = helper.findViewById(R.id.ivLogo);
+                    TextView tvDistance = helper.findViewById(R.id.tvDistance);
+                    TextView tvDistanceUp = helper.findViewById(R.id.tvDistanceUp);
+                    TextView tvDistanceDown = helper.findViewById(R.id.tvDistanceDown);
+                    TextView tvTitle = helper.findViewById(R.id.tvTitle);
+                    TextView tvDescription = helper.findViewById(R.id.tvDescription);
+                    TextView tvDate = helper.findViewById(R.id.tvDate);
+                    TextView tvShare = helper.findViewById(R.id.tvShare);
+                    tvDistance.setText(DataUtils.random());
+                    tvDistanceUp.setText(DataUtils.randomUpOrDown());
+                    tvDistanceDown.setText(DataUtils.randomUpOrDown());
+                    tvTitle.setText(DataUtils.randomTitle());
+                    tvDescription.setText(DataUtils.randomDescription());
+                    tvDate.setText(DataUtils.convertToDate(item.time));
                 }
             };
             binding.recycler.setAdapter(adapter);
@@ -70,25 +99,20 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
     }
 
     private void loadData() {
-        allAsync = realm.where(Route.class).findAllAsync();
-        allAsync.addChangeListener(new RealmChangeListener<RealmResults<Route>>() {
+        Observable<List<Model_Route>> listObservable = DataUtils.getInstance().queryRoute();
+        BaseOb<List<Model_Route>> baseOb = new BaseOb<List<Model_Route>>() {
             @Override
-            public void onChange(@NonNull RealmResults<Route> routes) {
-                LogUtils.e("onChange" + routes.size());
+            public void onDataDeal(List<Model_Route> data, String message) {
+                LogUtils.e("onChange    " + data.size());
                 binding.refresh.finishRefresh();
-                initAdapter(allAsync);
+                initAdapter(data);
             }
-        });
+        };
+        baseOb.bindObed(listObservable);
     }
 
     @Override
     protected void onDestroy() {
-        if (allAsync != null) {
-            allAsync.removeAllChangeListeners(); // remove all registered listeners
-        }
-        if (realm != null && !realm.isClosed()) {
-            realm.close();
-        }
         super.onDestroy();
     }
 

@@ -28,19 +28,11 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.TimeUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.versalinks.mission.databinding.ActivityGpsRecordBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.realm.Realm;
-import io.realm.RealmAsyncTask;
 
 public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
 
@@ -61,8 +53,10 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
     GPSService.GPSListener gpsListener = new GPSService.GPSListener() {
         @Override
         public void gps(Model_GPS modelGps) {
+            Log.e("TAG", "gps " + modelGps);
+            binding.vCenter.setTag(modelGps);
             if (modelGps != null) {
-                if (userMarker == null || srcMarker.isRemoved()) {
+                if (userMarker == null || userMarker.isRemoved()) {
                     MarkerOptions markerOptions = new MarkerOptions();
                     BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
                     markerOptions.icon(bitmapDescriptor);
@@ -76,10 +70,13 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                     needAnimal = false;
                     animate(modelGps, true);
                 }
+                Log.e("TAG", "gps hahhah");
             } else {
+                needAnimal = true;
                 if (userMarker != null) {
                     userMarker.remove();
                 }
+                Log.e("TAG", "gps hehheh");
             }
 
         }
@@ -87,70 +84,34 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
     GPSService.TrackListener trackListener = new GPSService.TrackListener() {
         @Override
         public void trackStart() {
+            binding.tvStartOrPause.setText("暂停");
+            binding.ivStartOrPause.setImageResource(R.drawable.ic_media_pause);
+        }
 
+        @Override
+        public void trackPause() {
+            binding.tvStartOrPause.setText("开始");
+            binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
+        }
+
+        @Override
+        public void trackResume() {
+            binding.tvStartOrPause.setText("暂停");
+            binding.ivStartOrPause.setImageResource(R.drawable.ic_media_pause);
         }
 
         @Override
         public void trackEnd(List<Model_GPS> gpsList) {
             LogUtils.e("trackEnd");
-            realmAsyncTask = realm.executeTransactionAsync(new Realm.Transaction() {
-                @Override
-                public void execute(@NonNull Realm realm) {
-                    Route route = realm.createObject(Route.class);
-                    for (Model_GPS modelGps : gpsList) {
-                        Model_GPS model_gps = realm.createObject(Model_GPS.class);
-                        model_gps.latitude = modelGps.latitude;
-                        model_gps.longitude = modelGps.longitude;
-                        model_gps.altitude = modelGps.altitude;
-                        route.gpsList.add(model_gps);
-                    }
-                    route.time = TimeUtils.getNowMills();
-                    route.routeName = TimeUtils.getNowString();
-                }
-            }, new Realm.Transaction.OnSuccess() {
-                @Override
-                public void onSuccess() {
-                    LogUtils.e("onSuccess");
-                    // Transaction was a success.
-                    TipDialog tipDialog = new TipDialog(context);
-                    tipDialog.show();
-                    Observable.timer(2000, TimeUnit.MILLISECONDS).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Long>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
 
-                        }
-
-                        @Override
-                        public void onNext(Long aLong) {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            onComplete();
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            tipDialog.dismiss();
-                        }
-                    });
-                }
-            }, new Realm.Transaction.OnError() {
-                @Override
-                public void onError(Throwable error) {
-                    LogUtils.e("onError" + error);
-                    // Transaction failed and was automatically canceled.
-                }
-            });
 
         }
 
         @Override
         public void trackProgress(double altitude, double distance, long duration, List<Model_GPS> list) {
-            binding.tvHeight.setText(String.valueOf(altitude));
-            binding.tvDistance.setText(String.valueOf(distance));
-            binding.tvDuration.setText(String.valueOf(duration));
+            binding.tvHeight.setText(DataUtils.convertToDistance(altitude));
+            binding.tvDistance.setText(DataUtils.convertToDistance(distance));
+            binding.tvDuration.setText(DataUtils.convertToTime(duration));
             List<LatLng> latLngs = new ArrayList<>();
             for (Model_GPS model_gps : list) {
                 latLngs.add(model_gps.getLatLng());
@@ -167,7 +128,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             if (gpsSrc != null) {
                 if (srcMarker == null || srcMarker.isRemoved()) {
                     MarkerOptions markerOptions = new MarkerOptions();
-                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.dibiao1);
+                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_src);
                     markerOptions.icon(bitmapDescriptor);
                     markerOptions.anchor(0.5f, 0.5f);
                     markerOptions.position(gpsSrc.getLatLng());
@@ -183,7 +144,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             if (gpsTarget != null) {
                 if (targetMarker == null) {
                     MarkerOptions markerOptions = new MarkerOptions();
-                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.dibiao2);
+                    BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_target);
                     markerOptions.icon(bitmapDescriptor);
                     markerOptions.anchor(0.5f, 0.5f);
                     markerOptions.position(gpsTarget.getLatLng());
@@ -208,26 +169,30 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
     ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("TAG", "onServiceConnected");
+            Log.e("TAG", "GPSRecordActivity onServiceConnected");
             if (service instanceof GPSService.GPSBinder) {
                 gpsService = ((GPSService.GPSBinder) service).getService();
                 gpsService.addGPSEnableListener(gpsEnableListener);
                 gpsService.addGPSListener(gpsListener);
+                gpsService.addTrackListener(trackListener);
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            if (gpsService != null) {
+                gpsService.removeGPSEnableListener(gpsEnableListener);
+                gpsService.removeGPSListener(gpsListener);
+                gpsService.removeTrackListener(trackListener);
+                gpsService.stopLocate();
+                gpsService.stopTrack();
+            }
             gpsService = null;
         }
     };
-    private Realm realm;
-    private RealmAsyncTask realmAsyncTask;
-
 
     @Override
     protected void onCreateByBinding(Bundle savedInstanceState) {
-        realm = Realm.getDefaultInstance();
         binding.vScaleView.setScaleClickListener(new ScaleView.ScaleClickListener() {
             @Override
             public void bigClick() {
@@ -248,15 +213,24 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
         binding.vCenter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                animate(modelGps, false);
+                Object tag = binding.vCenter.getTag();
+                if (tag instanceof Model_GPS) {
+                    animate((Model_GPS) tag, false);
+                }
             }
         });
         binding.vStartOrPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (gpsService != null) {
-                    gpsService.addTrackListener(trackListener);
-                    gpsService.startTrack();
+                    GPSService.RecordState recordState = gpsService.getRecordState();
+                    if (recordState == GPSService.RecordState.Normal) {
+                        gpsService.startTrack();
+                    } else if (recordState == GPSService.RecordState.Ing) {
+                        gpsService.pauseTrack();
+                    } else if (recordState == GPSService.RecordState.Pause) {
+                        gpsService.resumeTrack();
+                    }
                 }
             }
         });
@@ -264,6 +238,14 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             @Override
             public void onClick(View v) {
                 if (gpsService != null) {
+                    GPSService.RecordState recordState = gpsService.getRecordState();
+                    if (recordState == GPSService.RecordState.Normal) {
+                        return;
+                    }
+                    if (gpsService.getDuration() <= 3) {
+                        ToastUtils.showShort("记录时间过短");
+                        return;
+                    }
                     gpsService.stopTrack();
                     gpsService.removeTrackListener(trackListener);
                 }
@@ -358,15 +340,12 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
     @Override
     public void onDestroy() {
         if (gpsService != null) {
+            gpsService.removeGPSEnableListener(gpsEnableListener);
+            gpsService.removeGPSListener(gpsListener);
+            gpsService.removeTrackListener(trackListener);
             unbindService(connection);
         }
         mapView.onDestroy();
-        if (realmAsyncTask != null && !realmAsyncTask.isCancelled()) {
-            realmAsyncTask.cancel();
-        }
-        if (realm != null && !realm.isClosed()) {
-            realm.close();
-        }
         super.onDestroy();
     }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<path>
+
+    <files-path name="mission_files" path="." />
+    <!--    Context.getFilesDir()-->
+
+
+    <cache-path name="mission_cache" path="." />
+    <!--    Context.getCacheDir()-->
+
+
+    <external-path name="mission_external" path="." />
+    <!--    Environment.getExternalStorageDirectory()-->
+
+
+    <external-files-path name="mission_external-files" path="." />
+    <!--    Context.getExternalFilesDir(null)-->
+
+
+    <external-cache-path name="mission_external-cache" path="." />
+    <!--    Context.getExternalCacheDir()-->
+</path>

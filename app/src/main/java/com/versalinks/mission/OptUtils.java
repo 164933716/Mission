@@ -6,35 +6,48 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OptUtils {
-    public String rotateByLeft() {
+    public static String rotateByLeft() {
         return "javascript:optMap(" + getJson("rotateByLeft", "30") + ")";
     }
 
-    public String rotateByRight() {
+    public static String rotateByRight() {
         return "javascript:optMap(" + getJson("rotateByRight", "30") + ")";
     }
 
-    public String rotateByUp() {
+    public static String rotateByUp() {
         return "javascript:optMap(" + getJson("rotateByUp", "30") + ")";
     }
 
-    public String rotateByDown() {
+    public static String rotateByDown() {
         return "javascript:optMap(" + getJson("rotateByDown", "30") + ")";
     }
 
-    public String moveTo(Model_GPS modelGps) {
-        return "javascript:optMap(" + getJson("moveTo", modelGps) + ")";
+    public static String pointToNorth() {
+        return "javascript:optMap(" + getJson("pointToNorth", null) + ")";
     }
 
-    public String zoomIn() {
+    public static String zoomIn() {
         return "javascript:optMap(" + getJson("zoomIn", null) + ")";
     }
 
-    public String zoomOut() {
+    public static String zoomOut() {
         return "javascript:optMap(" + getJson("zoomOut", null) + ")";
     }
 
-    public String getJson(String action, Object data) {
+    public static String recenter(Model_GPS modelGps) {
+        return "javascript:recenter(" + getJson(modelGps) + ")";
+    }
+
+    public static String updateLocation(Model_GPS modelGps) {
+        return "javascript:updateUserLocation(" + getJson(modelGps) + ")";
+    }
+
+    public static String getJson(Object model) {
+        Gson gson = new Gson();
+        return gson.toJson(model);
+    }
+
+    public static String getJson(String action, Object data) {
         Map<String, Object> map = new HashMap<>();
         map.put("action", action);
         if (data != null) {

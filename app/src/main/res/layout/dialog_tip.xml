@@ -31,7 +31,7 @@
                 android:src="@drawable/icon_ok" />
 
             <TextView
-                android:id="@+id/text"
+                android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -42,7 +42,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/sub_text"
+                android:id="@+id/tvDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

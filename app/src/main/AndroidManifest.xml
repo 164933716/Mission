@@ -39,6 +39,16 @@
         <meta-data
             android:name="notch.config"
             android:value="portrait|landscape" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <service
             android:name=".GPSService"
             android:enabled="true"
@@ -57,9 +67,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:hardwareAccelerated="true" />
         <activity android:name=".GPSRecordActivity" />
         <activity android:name=".RoutesActivity" />
+        <activity android:name=".MarkersActivity" />
+        <activity
+            android:name=".GPSMarkActivity"
+            android:windowSoftInputMode="stateVisible" />
     </application>
 
 </manifest>

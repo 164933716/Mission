@@ -1,13 +1,14 @@
+var terrainExaggeration = 1.0;
 var terrainProvider = new Cesium.CesiumTerrainProvider({url:"http://47.110.155.250:8003/Map/Terrain"});
 var viewer = new Cesium.Viewer('cesiumContainer', {
-    shadows: true,
+    shadows: false,
     animation: false,
     homeButton: false,
     geocoder: false,
     baseLayerPicker: false,
     timeline: false,
     fullscreenButton: true,
-    scene3DOnly: true,
+    scene3DOnly: false,
     sceneModePicker: false,
     navigationInstructionsInitiallyVisible: false,
     navigationHelpButton: false,
@@ -17,19 +18,120 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     selectionIndicator: false,
     shouldAnimate: false,
 
+    terrainExaggeration: terrainExaggeration,
     terrainProvider: terrainProvider,
-    imageryProvider : new Cesium.UrlTemplateImageryProvider({url:"http://47.110.155.250:8003/Map/Image/{z}/{x}/{y}.png"})
+    
+    imageryProvider : new Cesium.UrlTemplateImageryProvider({url:"http://47.110.155.250:8003/Global/Image/{z}/{x}/{y}.png"})
 });
+
+// var mapboxLayer = new Cesium.MapboxStyleImageryProvider({
+//     url : 'https://api.mapbox.com/styles/v1/',
+//     username:'wingwuyf',
+//     styleId: 'cjajfiz60artm2rnxr8wiecli',
+//     accessToken: 'pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg',
+//     scaleFactor: true
+// });
+
+//var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/{z}/{x}/{y}.png?sku=1011hS4giuW7i&access_token=pk.eyJ1Ijoid2ViZXJ0YW8iLCJhIjoiY2pibTdmaWc2MTZqaDJybzFzcm93bGE2eiJ9.cwSE9DYCYP0dIeY4Hhp6Kg"});
+//var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://api.mapbox.com/styles/v1/wingwuyf/cjajfiz60artm2rnxr8wiecli/tiles/512/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
+
+var googleLayer = new Cesium.UrlTemplateImageryProvider({url:"http://mt2.google.cn/vt/lyrs=s@167000000&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}&s=Galil"});
+
+viewer.imageryLayers.removeAll();
+//viewer.imageryLayers.addImageryProvider(mapboxLayer);
+
+viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({url:"http://47.110.155.250:8003/Map/Image/{z}/{x}/{y}.png"}));
 
 viewer._cesiumWidget._creditContainer.style.display = "none";
 
 viewer.scene.globe.depthTestAgainstTerrain = true;
 
-viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10; //相机的高度的最小值
-viewer.scene.screenSpaceCameraController.maximumZoomDistance = 80000; //22000000; //相机高度的最大值
-viewer.scene.screenSpaceCameraController._minimumZoomRate = 1000; //30000; //相机缩小时的速率
-viewer.scene.screenSpaceCameraController._maximumZoomRate = 1000000; //5906376272000; //相机放大时的速率
-viewer.scene.screenSpaceCameraController.maximumMovementRatio = 0.01;
+//viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10; //相机的高度的最小值
+//viewer.scene.screenSpaceCameraController.maximumZoomDistance = 80000; //22000000; //相机高度的最大值
+//viewer.scene.screenSpaceCameraController._minimumZoomRate = 1000; //30000; //相机缩小时的速率
+//viewer.scene.screenSpaceCameraController._maximumZoomRate = 1000000; //5906376272000; //相机放大时的速率
+//viewer.scene.screenSpaceCameraController.maximumMovementRatio = 0.01;
+
+viewer.scene.skyBox.show = false;
+viewer.scene.backgroundColor = new Cesium.Color(48/255, 57/255, 28/255);
+viewer.scene.sun.show = false; 
+viewer.scene.moon.show = false;
+//viewer.scene.globe.show = false;
+viewer.scene.skyAtmosphere.show = false;
+
+var west = 108.5506111775;
+var south = 27.6176314387;
+var east = 108.8606161775;
+var north = 28.0951804387;
+var center = {x : (west + east) / 2, y : (south + north) / 2};
+
+//var position = Cesium.Cartographic.toCartesian(new Cesium.Cartographic.fromDegrees(108.690813, 27.918094, 0));
+//var distance = 7500;
+//var clippingPlanes = new Cesium.ClippingPlaneCollection({
+//    modelMatrix : Cesium.Transforms.eastNorthUpToFixedFrame(position),
+//    planes : [
+//        new Cesium.ClippingPlane(new Cesium.Cartesian3( 1.0,  0.0, 0.0), distance),
+//        new Cesium.ClippingPlane(new Cesium.Cartesian3(-1.0,  0.0, 0.0), distance),
+//        new Cesium.ClippingPlane(new Cesium.Cartesian3( 0.0,  1.0, 0.0), distance),
+//        new Cesium.ClippingPlane(new Cesium.Cartesian3( 0.0, -1.0, 0.0), distance)
+//    ],
+//    unionClippingRegions: true
+//});
+//viewer.scene.globe.clippingPlanes = clippingPlanes;
+//viewer.scene.globe.backFaceCulling = false;
+//viewer.scene.globe.showSkirts = false;
+
+// var request = new XMLHttpRequest();
+// request.open("get", "./test.geojson");
+// request.send(null);
+// request.onload = function () {
+//     if (request.status == 200) {
+//         var geojson = JSON.parse(request.responseText);
+
+//         var positions = [];
+//         for (var j = 0; j < geojson.features[0].geometry.coordinates.length; j++) {
+//             var coordinates = geojson.features[0].geometry.coordinates[j];
+//             for (var k = 0; k < coordinates.length - 1; k++) {
+//                 var coordinate = coordinates[k];
+
+//                 positions.push(coordinate[0]);
+//                 positions.push(coordinate[1]);
+//             }
+//         }
+
+//         var points = Cesium.Cartesian3.fromDegreesArray(positions);
+//         var pointsLength = points.length;
+        
+//         var clippingPlanes = [];
+//         for (var i = 0; i < pointsLength; ++i) {
+//             var nextIndex = (i + 1) % pointsLength;
+//             var midPoint = Cesium.Cartesian3.add(points[i], points[nextIndex], new Cesium.Cartesian3());
+//             midPoint = Cesium.Cartesian3.multiplyByScalar(midPoint, 0.5, midPoint);
+            
+//             var up = Cesium.Cartesian3.normalize(midPoint, new Cesium.Cartesian3());
+//             var right = Cesium.Cartesian3.subtract(points[nextIndex], midPoint, new Cesium.Cartesian3());
+//             right = Cesium.Cartesian3.normalize(right, right);
+            
+//             var normal = Cesium.Cartesian3.cross(right, up, new Cesium.Cartesian3());
+//             normal = Cesium.Cartesian3.normalize(normal, normal);
+            
+//             var originCenteredPlane = new Cesium.Plane(normal, 0.0);
+//             var distance = Cesium.Plane.getPointDistance(originCenteredPlane, midPoint);
+            
+//             clippingPlanes.push(new Cesium.ClippingPlane(normal, distance));
+//         }
+
+//         viewer.scene.globe.clippingPlanes = new Cesium.ClippingPlaneCollection({
+//             planes : clippingPlanes,
+//             edgeWidth: 1.0,
+//             edgeColor: Cesium.Color.YELLOW,
+//             // unionClippingRegions: true
+//         });
+//         viewer.scene.globe.backFaceCulling = false;
+//         viewer.scene.globe.showSkirts = false;
+//     }
+// }
+
 
 function recenter(location) {
 
@@ -67,49 +169,22 @@ function recenter(location) {
     };
     viewer.clock.onTick.addEventListener(exec);
 
-    /*
-    // 相机原地旋转飞行
-    var exec = function TimeExecution() {
-            var delTime = Cesium.JulianDate.secondsDifference(viewer.clock.currentTime, viewer.clock.startTime);
-            var heading = Cesium.Math.toRadians(delTime * angle) + initialHeading;
-            viewer.scene.camera.setView({
-                orientation: {
-                    heading : heading,
-                    pitch : pitch,
+    // // 相机原地旋转飞行
+    // var exec = function TimeExecution() {
+    //         var delTime = Cesium.JulianDate.secondsDifference(viewer.clock.currentTime, viewer.clock.startTime);
+    //         var heading = Cesium.Math.toRadians(delTime * angle) + initialHeading;
+    //         viewer.scene.camera.setView({
+    //             orientation: {
+    //                 heading : heading,
+    //                 pitch : pitch,
 
-                }
-            });
-            if (Cesium.JulianDate.compare(viewer.clock.currentTime, viewer.clock.stopTime) >= 0) {
-                viewer.clock.onTick.removeEventListener(exec);
-            }
-    };
-    viewer.clock.onTick.addEventListener(exec);
-    */
-}
-
-/* 获取camera高度  */
-function getHeight() {
-    if (viewer) {
-        var scene = viewer.scene;
-        var ellipsoid = scene.globe.ellipsoid;
-        var height = ellipsoid.cartesianToCartographic(viewer.camera.position).height;
-        return height;
-    }
-}
-
-/* 获取camera中心点坐标 */
-function getCenterPosition() {
-    var result = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(viewer.canvas.clientWidth / 2, viewer.canvas.clientHeight / 2));
-    var curPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(result);
-    var lon = curPosition.longitude * 180 / Math.PI;
-    var lat = curPosition.latitude * 180 / Math.PI;
-    var height = getHeight();
-    
-    return {
-        lon: lon,
-        lat: lat,
-        height: height
-    };
+    //             }
+    //         });
+    //         if (Cesium.JulianDate.compare(viewer.clock.currentTime, viewer.clock.stopTime) >= 0) {
+    //             viewer.clock.onTick.removeEventListener(exec);
+    //         }
+    // };
+    // viewer.clock.onTick.addEventListener(exec);
 }
 
 function getCurrentExtent() {
@@ -160,12 +235,6 @@ function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-var west = 108.5506111775;
-var south = 27.6176314387;
-var east = 108.8606161775;
-var north = 28.0951804387;
-var center = {x : (west + east) / 2, y : (south + north) / 2};
-
 viewer.camera.setView({
     destination : Cesium.Rectangle.fromDegrees(west, south, east, north)
 });
@@ -199,9 +268,9 @@ viewer.scene.camera.moveEnd.addEventListener(function(){
     }
 
     if (outFlag) {
-        viewer.camera.setView({
-            destination : Cesium.Rectangle.fromDegrees(west, south, east, north)
-        });
+        // viewer.camera.setView({
+        //    destination : Cesium.Rectangle.fromDegrees(west, south, east, north)
+        // });
     }
 
 });
@@ -234,7 +303,7 @@ function updateUserLocation(location) {
 
                 userEntity.position = Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, userLocation.height);
 
-                var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[0].longitude), Cesium.Math.toDegrees(updatedPositions[0].latitude), updatedPositions[0].height);
+                var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[0].longitude), Cesium.Math.toDegrees(updatedPositions[0].latitude), updatedPositions[0].height * terrainExaggeration);
                 var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
                 if (Cesium.defined(canvasPosition)) {
                     htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight / 2 + 'px';
@@ -249,243 +318,245 @@ updateUserLocation({longitude: 108.690813, latitude: 27.918094, height: 2416.760
 
 recenter(userLocation);
 
+var userTourPostitions = [
+    // {
+    //     "name": "我的位置",
+    //     "latitude": 27.918094,
+    //     "longitude": 108.690813
+    // },
+    {
+        "latitude": 27.917657686039245,
+        "longitude": 108.69037617890788
+    },
+    {
+        "latitude": 27.91692192666803,
+        "longitude": 108.69131740982795
+    },
+    {
+        "latitude": 27.9165244381843,
+        "longitude": 108.69121086652304
+    },
+    {
+        "latitude": 27.91623926720558,
+        "longitude": 108.69150739963742
+    },
+    {
+        "latitude": 27.91549104263241,
+        "longitude": 108.69217944202228
+    },
+    {
+        "latitude": 27.91520140130523,
+        "longitude": 108.69191774037297
+    },
+    {
+        "latitude": 27.914740210355973,
+        "longitude": 108.69218819645468
+    },
+    {
+        "latitude": 27.914097411500606,
+        "longitude": 108.69209152516927
+    },
+    {
+        "latitude": 27.913517942581727,
+        "longitude": 108.69209618178225
+    },
+    {
+        "latitude": 27.91342779055449,
+        "longitude": 108.69211555329224
+    },
+    {
+        "latitude": 27.91321153744783,
+        "longitude": 108.69242531118748
+    },
+    {
+        "latitude": 27.91312566950453,
+        "longitude": 108.69271197228235
+    },
+    {
+        "latitude": 27.912906063636527,
+        "longitude": 108.69293865620207
+    },
+    {
+        "latitude": 27.91254061265008,
+        "longitude": 108.69355221152794
+    },
+    {
+        "latitude": 27.912522544991727,
+        "longitude": 108.69362243325165
+    },
+    {
+        "latitude": 27.91242028577075,
+        "longitude": 108.6937926790221
+    },
+    {
+        "latitude": 27.912257863110106,
+        "longitude": 108.69368725330429
+    },
+    {
+        "latitude": 27.91209991079792,
+        "longitude": 108.69377386630566
+    },
+    {
+        "latitude": 27.912075137616885,
+        "longitude": 108.69395901323763
+    },
+    {
+        "latitude": 27.912613814606082,
+        "longitude": 108.69401302994817
+    },
+    {
+        "latitude": 27.91262890203213,
+        "longitude": 108.6940923786333
+    },
+    {
+        "latitude": 27.9124597738488,
+        "longitude": 108.6941987356737
+    },
+    {
+        "latitude": 27.91248566461695,
+        "longitude": 108.69426839860384
+    },
+    {
+        "latitude": 27.91223700148397,
+        "longitude": 108.69442374321275
+    },
+    {
+        "latitude": 27.912044031442196,
+        "longitude": 108.69474970612116
+    },
+    {
+        "latitude": 27.91189446103337,
+        "longitude": 108.69485140654858
+    },
+    {
+        "latitude": 27.91179406445758,
+        "longitude": 108.69524498347741
+    },
+    {
+        "latitude": 27.91138689021886,
+        "longitude": 108.69525895331634
+    },
+    {
+        "latitude": 27.911458229529668,
+        "longitude": 108.69541522924786
+    },
+    {
+        "latitude": 27.91137441049608,
+        "longitude": 108.69561993395433
+    },
+    {
+        "latitude": 27.911426750825942,
+        "longitude": 108.69568978314898
+    },
+    {
+        "latitude": 27.91138875286405,
+        "longitude": 108.69599115914086
+    },
+    {
+        "latitude": 27.911441093193915,
+        "longitude": 108.69598687505693
+    },
+    {
+        "latitude": 27.911441093193915,
+        "longitude": 108.69622827387366
+    },
+    {
+        "latitude": 27.911512432504722,
+        "longitude": 108.69640932298621
+    },
+    {
+        "latitude": 27.911591222396297,
+        "longitude": 108.6965398944141
+    },
+    {
+        "latitude": 27.91156402777651,
+        "longitude": 108.69675540246267
+    },
+    {
+        "latitude": 27.911575762441213,
+        "longitude": 108.69694464721407
+    },
+    {
+        "latitude": 27.91145580809092,
+        "longitude": 108.69708490439695
+    },
+    {
+        "latitude": 27.91128500352692,
+        "longitude": 108.69691335477486
+    },
+    {
+        "latitude": 27.911240672571378,
+        "longitude": 108.6969722143629
+    },
+    {
+        "latitude": 27.911157784860382,
+        "longitude": 108.69687591560653
+    },
+    {
+        "latitude": 27.91104416350374,
+        "longitude": 108.6969800374727
+    },
+    {
+        "latitude": 27.910768492015492,
+        "longitude": 108.69699195840192
+    },
+    {
+        "latitude": 27.910699201614392,
+        "longitude": 108.69695563682069
+    },
+    {
+        "latitude": 27.910645929961934,
+        "longitude": 108.69688131727759
+    },
+    {
+        "latitude": 27.910596942393415,
+        "longitude": 108.69659093089233
+    },
+    {
+        "latitude": 27.910566581276804,
+        "longitude": 108.69616513020169
+    },
+    {
+        "latitude": 27.910468047346207,
+        "longitude": 108.69596862113406
+    },
+    {
+        "latitude": 27.91025980361387,
+        "longitude": 108.69577173953738
+    },
+    {
+        "latitude": 27.910168161470477,
+        "longitude": 108.69558901404416
+    },
+    {
+        "latitude": 27.91015158392828,
+        "longitude": 108.69533103768522
+    },
+    {
+        "latitude": 27.910294635078937,
+        "longitude": 108.69487450334894
+    },
+    {
+        "latitude": 27.910319221995454,
+        "longitude": 108.69441592010295
+    },
+    {
+        "latitude": 27.910382729286447,
+        "longitude": 108.69391299488315
+    },
+    // {
+    //     "name": "金顶",
+    //     "latitude": 27.9112084171,
+    //     "longitude": 108.6940465145
+    // }
+];
+
 function clickPoi() {
     viewer.clock.stopTime = viewer.clock.startTime;
 
-    window.Android.fetchRoute(JSON.stringify(userLocation), JSON.stringify(pois[this.value]));
-
-//    updateUserTour([
-//        {
-//            "name": "我的位置",
-//            "latitude": 27.918094,
-//            "longitude": 108.690813
-//        },
-//        {
-//            "latitude": 27.917657686039245,
-//            "longitude": 108.69037617890788
-//        },
-//        {
-//            "latitude": 27.91692192666803,
-//            "longitude": 108.69131740982795
-//        },
-//        {
-//            "latitude": 27.9165244381843,
-//            "longitude": 108.69121086652304
-//        },
-//        {
-//            "latitude": 27.91623926720558,
-//            "longitude": 108.69150739963742
-//        },
-//        {
-//            "latitude": 27.91549104263241,
-//            "longitude": 108.69217944202228
-//        },
-//        {
-//            "latitude": 27.91520140130523,
-//            "longitude": 108.69191774037297
-//        },
-//        {
-//            "latitude": 27.914740210355973,
-//            "longitude": 108.69218819645468
-//        },
-//        {
-//            "latitude": 27.914097411500606,
-//            "longitude": 108.69209152516927
-//        },
-//        {
-//            "latitude": 27.913517942581727,
-//            "longitude": 108.69209618178225
-//        },
-//        {
-//            "latitude": 27.91342779055449,
-//            "longitude": 108.69211555329224
-//        },
-//        {
-//            "latitude": 27.91321153744783,
-//            "longitude": 108.69242531118748
-//        },
-//        {
-//            "latitude": 27.91312566950453,
-//            "longitude": 108.69271197228235
-//        },
-//        {
-//            "latitude": 27.912906063636527,
-//            "longitude": 108.69293865620207
-//        },
-//        {
-//            "latitude": 27.91254061265008,
-//            "longitude": 108.69355221152794
-//        },
-//        {
-//            "latitude": 27.912522544991727,
-//            "longitude": 108.69362243325165
-//        },
-//        {
-//            "latitude": 27.91242028577075,
-//            "longitude": 108.6937926790221
-//        },
-//        {
-//            "latitude": 27.912257863110106,
-//            "longitude": 108.69368725330429
-//        },
-//        {
-//            "latitude": 27.91209991079792,
-//            "longitude": 108.69377386630566
-//        },
-//        {
-//            "latitude": 27.912075137616885,
-//            "longitude": 108.69395901323763
-//        },
-//        {
-//            "latitude": 27.912613814606082,
-//            "longitude": 108.69401302994817
-//        },
-//        {
-//            "latitude": 27.91262890203213,
-//            "longitude": 108.6940923786333
-//        },
-//        {
-//            "latitude": 27.9124597738488,
-//            "longitude": 108.6941987356737
-//        },
-//        {
-//            "latitude": 27.91248566461695,
-//            "longitude": 108.69426839860384
-//        },
-//        {
-//            "latitude": 27.91223700148397,
-//            "longitude": 108.69442374321275
-//        },
-//        {
-//            "latitude": 27.912044031442196,
-//            "longitude": 108.69474970612116
-//        },
-//        {
-//            "latitude": 27.91189446103337,
-//            "longitude": 108.69485140654858
-//        },
-//        {
-//            "latitude": 27.91179406445758,
-//            "longitude": 108.69524498347741
-//        },
-//        {
-//            "latitude": 27.91138689021886,
-//            "longitude": 108.69525895331634
-//        },
-//        {
-//            "latitude": 27.911458229529668,
-//            "longitude": 108.69541522924786
-//        },
-//        {
-//            "latitude": 27.91137441049608,
-//            "longitude": 108.69561993395433
-//        },
-//        {
-//            "latitude": 27.911426750825942,
-//            "longitude": 108.69568978314898
-//        },
-//        {
-//            "latitude": 27.91138875286405,
-//            "longitude": 108.69599115914086
-//        },
-//        {
-//            "latitude": 27.911441093193915,
-//            "longitude": 108.69598687505693
-//        },
-//        {
-//            "latitude": 27.911441093193915,
-//            "longitude": 108.69622827387366
-//        },
-//        {
-//            "latitude": 27.911512432504722,
-//            "longitude": 108.69640932298621
-//        },
-//        {
-//            "latitude": 27.911591222396297,
-//            "longitude": 108.6965398944141
-//        },
-//        {
-//            "latitude": 27.91156402777651,
-//            "longitude": 108.69675540246267
-//        },
-//        {
-//            "latitude": 27.911575762441213,
-//            "longitude": 108.69694464721407
-//        },
-//        {
-//            "latitude": 27.91145580809092,
-//            "longitude": 108.69708490439695
-//        },
-//        {
-//            "latitude": 27.91128500352692,
-//            "longitude": 108.69691335477486
-//        },
-//        {
-//            "latitude": 27.911240672571378,
-//            "longitude": 108.6969722143629
-//        },
-//        {
-//            "latitude": 27.911157784860382,
-//            "longitude": 108.69687591560653
-//        },
-//        {
-//            "latitude": 27.91104416350374,
-//            "longitude": 108.6969800374727
-//        },
-//        {
-//            "latitude": 27.910768492015492,
-//            "longitude": 108.69699195840192
-//        },
-//        {
-//            "latitude": 27.910699201614392,
-//            "longitude": 108.69695563682069
-//        },
-//        {
-//            "latitude": 27.910645929961934,
-//            "longitude": 108.69688131727759
-//        },
-//        {
-//            "latitude": 27.910596942393415,
-//            "longitude": 108.69659093089233
-//        },
-//        {
-//            "latitude": 27.910566581276804,
-//            "longitude": 108.69616513020169
-//        },
-//        {
-//            "latitude": 27.910468047346207,
-//            "longitude": 108.69596862113406
-//        },
-//        {
-//            "latitude": 27.91025980361387,
-//            "longitude": 108.69577173953738
-//        },
-//        {
-//            "latitude": 27.910168161470477,
-//            "longitude": 108.69558901404416
-//        },
-//        {
-//            "latitude": 27.91015158392828,
-//            "longitude": 108.69533103768522
-//        },
-//        {
-//            "latitude": 27.910294635078937,
-//            "longitude": 108.69487450334894
-//        },
-//        {
-//            "latitude": 27.910319221995454,
-//            "longitude": 108.69441592010295
-//        },
-//        {
-//            "latitude": 27.910382729286447,
-//            "longitude": 108.69391299488315
-//        },
-//        {
-//            "name": "金顶",
-//            "latitude": 27.9112084171,
-//            "longitude": 108.6940465145
-//        }
-//    ]);
+    //window.Android.fetchRoute(JSON.stringify(userLocation), JSON.stringify(pois[this.value]));
+    getUserTourHeights(JSON.stringify(userTourPostitions));
+    updateUserTour(userTourPostitions);
 }
 
 function updatePoiLocation(pois) {
@@ -497,9 +568,10 @@ function updatePoiLocation(pois) {
         htmlOverlay.style = 'cursor: pointer;';
         htmlOverlay.value = i;
         htmlOverlay.className = 'imgContent';
-        htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        htmlOverlay.innerHTML = '<img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(pois[i].longitude, pois[i].latitude));
@@ -515,7 +587,7 @@ function updatePoiLocation(pois) {
 
                     pois[htmlOverlay.value].height = updatedPositions[htmlOverlay.value].height;
 
-                    var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height);
+                    var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
                     var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
                     if (Cesium.defined(canvasPosition)) {
                         htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
@@ -531,9 +603,6 @@ function updatePoiLocation(pois) {
 
 var pois = [
     {name: "金顶", longitude: 108.6940465145, latitude: 27.9112084171, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
-    {name: "九龙池", longitude: 108.6883161949, latitude: 27.9028590332, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
-    {name: "鱼坳", longitude: 108.7227589833, latitude: 27.8964451440, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
-    {name: "烂茶顶", longitude: 108.6977088697, latitude: 27.9260234287, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"}
 ];
 
 updatePoiLocation(pois);
@@ -541,53 +610,53 @@ updatePoiLocation(pois);
 var userTour = null;
 
 function updateUserTour(positions) {
-    var xmin = 180.0;
-    var ymin = 90.0;
-    var xmax = -180.0;
-    var ymax = -90.0;
 
     var positionArray = [];
     for (var i = 0; i < positions.length; i++) {
-        positionArray.push(positions[i].longitude);
-        positionArray.push(positions[i].latitude);
-        positionArray.push(0.0);
-
-        if (xmin > positions[i].longitude) {
-            xmin = positions[i].longitude;
-        }
-        if (xmax < positions[i].longitude) {
-            xmax = positions[i].longitude;
-        }
-        if (ymin > positions[i].latitude) {
-            ymin = positions[i].latitude;
-        }
-        if (ymax < positions[i].latitude) {
-            ymax = positions[i].latitude;
-        }
+        // positionArray.push(positions[i].longitude);
+        // positionArray.push(positions[i].latitude);
+        // positionArray.push(0.0);
+        positionArray.push(Cesium.Cartographic.fromDegrees(positions[i].longitude, positions[i].latitude));
     }
     if (userTour) {
         viewer.entities.remove(userTour);
         userTour = null;
     }
-    userTour = viewer.entities.add({
-        polyline : {
-            positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionArray),
-            clampToGround : true,
-            width : 3,
-            material : new Cesium.PolylineOutlineMaterialProperty({
-                color : Cesium.Color.SPRINGGREEN,
-                outlineWidth : 1,
-                outlineColor : Cesium.Color.SPRINGGREEN
-            }),
-            depthFailMaterial : new Cesium.PolylineOutlineMaterialProperty({
-                color : Cesium.Color.SPRINGGREEN,
-                outlineWidth : 1,
-                outlineColor : Cesium.Color.SPRINGGREEN
-            })
+    promise = Cesium.sampleTerrain(terrainProvider, 14, positionArray);
+    Cesium.when(promise, function (updatedPositions) {
+        var positionsVolume = [];
+        for (var i = 0; i < positions.length; i++) {
+            positionsVolume.push(positions[i].longitude);
+            positionsVolume.push(positions[i].latitude);
+            positionsVolume.push(updatedPositions[i].height + 5);
         }
-    });
 
-    viewer.flyTo(userTour);
+        userTour = viewer.entities.add({
+            polylineVolume: {
+                positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionsVolume),
+                shape: computeCircle(3.0),
+                material: Cesium.Color.RED.withAlpha(0.8)
+            }
+            // polyline : {
+            //     positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionArray),
+            //     clampToGround : true,
+            //     width : 3,
+            //     material : new Cesium.PolylineOutlineMaterialProperty({
+            //         color : Cesium.Color.SPRINGGREEN,
+            //         outlineWidth : 1,
+            //         outlineColor : Cesium.Color.SPRINGGREEN
+            //     }),
+            //     depthFailMaterial : new Cesium.PolylineOutlineMaterialProperty({
+            //         color : Cesium.Color.SPRINGGREEN,
+            //         outlineWidth : 1,
+            //         outlineColor : Cesium.Color.SPRINGGREEN
+            //     })
+            // }
+        });
+
+        viewer.flyTo(userTour);
+
+    });
 }
 
 function clearUserTour() {
@@ -601,10 +670,26 @@ function clearUserTour() {
 
 function startNavigation() {
     viewer.trackedEntity = userEntity;
+
+    viewer.flyTo(userEntity);
 }
 
 function stopNavigation() {
     viewer.trackedEntity = undefined;
+}
+
+function computeCircle(radius) {
+    var positions = [];
+    for (var i = 0; i < 360; i++) {
+        var radians = Cesium.Math.toRadians(i);
+        positions.push(
+            new Cesium.Cartesian2(
+                radius * Math.cos(radians),
+                radius * Math.sin(radians)
+            )
+        );
+    }
+    return positions;
 }
 
 function addRoadBackgroundLayer(road) {
@@ -617,17 +702,31 @@ function addRoadBackgroundLayer(road) {
             positions.push(road.features[i].geometry.coordinates[j][2]);
         }
     
-        var redLine = viewer.entities.add({
-            name : '景区石阶小路',
+        viewer.entities.add({
+            name : 'ssroad',
             polyline : {
                 positions : Cesium.Cartesian3.fromDegreesArrayHeights(positions),
-                width : 5,
+                width : 3,
                 clampToGround : true,
                 material : new Cesium.ImageMaterialProperty({
-                    color: Cesium.Color.WHITE.withAlpha(0.25),
-                    outlineWidth : 1,
-                    outlineColor : Cesium.Color.WHITE.withAlpha(0.25)
+                    color: Cesium.Color.GRAY.withAlpha(0.5)
                 })
+            }
+        });
+
+        var promise = Cesium.GeoJsonDataSource.load(
+            './sroad.geojson', { clampToGround: true } 
+        );
+        promise.then(function (dataSource) {
+            viewer.dataSources.add(dataSource);
+            for (var i = 0; i < dataSource.entities.values.length; i++) {
+                var entity = dataSource.entities.values[i];
+                
+                // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+                entity.polyline.width = 3;
+                entity.polyline.material = new Cesium.ImageMaterialProperty({
+                    color: Cesium.Color.GRAY.withAlpha(0.5)
+                });
             }
         });
     }
@@ -647,6 +746,107 @@ addRoadBackgroundLayer({
     }
 );
 
+function addAreaBackgroundLayer() {
+    var parea = Cesium.GeoJsonDataSource.load(
+        "./parea.geojson",
+        {
+            clampToGround: true   
+        }
+    );
+    parea.then(function (dataSource) {
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            
+            // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+            entity.polyline.width = 5;
+            entity.polyline.material = new Cesium.ImageMaterialProperty({
+                color: Cesium.Color.YELLOW.withAlpha(0.25)
+            });
+        }
+    });
+
+    var carea = Cesium.GeoJsonDataSource.load(
+        "./carea.geojson",
+        {
+            clampToGround: true   
+        }
+    );
+    carea.then(function (dataSource) {
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            
+            // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+            entity.polyline.width = 5;
+            entity.polyline.material = new Cesium.ImageMaterialProperty({
+                color: Cesium.Color.GREEN.withAlpha(0.5)
+            });
+        }
+    });
+    
+    return;
+
+    viewer.dataSources.add(
+        Cesium.GeoJsonDataSource.load(
+            "./tarea.geojson",
+            {
+                stroke: Cesium.Color.HOTPINK,
+                fill: new Cesium.Color(208/255, 227/255, 197/255, 0.5),
+                strokeWidth: 3,
+                clampToGround: true
+            }
+        )
+    );
+    viewer.dataSources.add(
+        Cesium.GeoJsonDataSource.load(
+            "./barea.geojson",
+            {
+                stroke: Cesium.Color.HOTPINK,
+                fill: new Cesium.Color(177/255, 210/255, 167/255, 0.5),
+                strokeWidth: 3,
+                clampToGround: true
+            }
+        )
+    );
+}
+
+// addAreaBackgroundLayer();
+
+function addSceneLayer() {
+    var dataSource1 = Cesium.GeoJsonDataSource.load(
+        "./scene.geojson",
+        {
+            clampToGround: true
+        }
+    );
+    dataSource1.then(function (dataSource) {
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            var name = entity.name;
+        }
+    });
+
+    var dataSource2 = Cesium.GeoJsonDataSource.load(
+        "./animal.geojson",
+        {
+            clampToGround: true
+        }
+    );
+    viewer.dataSources.add(dataSource2);
+
+    var dataSource3 = Cesium.GeoJsonDataSource.load(
+        "./plant.geojson",
+        {
+            clampToGround: true
+        }
+    );
+    viewer.dataSources.add(dataSource3);
+}
+
+// addSceneLayer();
+
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
 handler.setInputAction(function(click) { // 点击事件
@@ -658,22 +858,245 @@ handler.setInputAction(function(click) { // 点击事件
     }
 }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
+//position_A绕position_B逆时针旋转angle度（角度）得到新点
+function rotatedPointByAngleXY(position_A, position_B, angle) {
+    //以B点为原点建立局部坐标系（东方向为x轴,北方向为y轴,垂直于地面为z轴），得到一个局部坐标到世界坐标转换的变换矩阵
+    var localToWorld_Matrix = Cesium.Transforms.eastNorthUpToFixedFrame(position_B);
+    //求世界坐标到局部坐标的变换矩阵
+    var worldToLocal_Matrix = Cesium.Matrix4.inverse(localToWorld_Matrix, new Cesium.Matrix4());
+    //B点在局部坐标的位置，其实就是局部坐标原点
+    var localPosition_B = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_B, new Cesium.Cartesian3());
+    //A点在以B点为原点的局部的坐标位置
+    var localPosition_A = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_A, new Cesium.Cartesian3());
+    //根据数学公式A点逆时针旋转angle度后在局部坐标系中的x,y,z位置
+    var new_x = localPosition_A.x * Math.cos(Cesium.Math.toRadians(angle)) + localPosition_A.y *   Math.sin(Cesium.Math.toRadians(angle));
+    var new_y = localPosition_A.y * Math.cos(Cesium.Math.toRadians(angle)) - localPosition_A.x * Math.sin(Cesium.Math.toRadians(angle));
+    var new_z = localPosition_A.z;
+    //最后应用局部坐标到世界坐标的转换矩阵求得旋转后的A点世界坐标
+    return Cesium.Matrix4.multiplyByPoint(localToWorld_Matrix, new Cesium.Cartesian3(new_x, new_y, new_z), new Cesium.Cartesian3());
+}
+
+function rotateLeftRight(angle) {
+    var scene = viewer.scene;
+    var ellipsoid = scene.globe.ellipsoid;
+    var canvas = scene.canvas;
+    let center_position =  viewer.scene.camera.pickEllipsoid(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0), ellipsoid);
+
+    //viewer.scene.camera.rotate(center_position, Cesium.Math.toRadians(angle));
+
+    let new_position = rotatedPointByAngleXY(viewer.camera.position, center_position, angle);
+
+    var heading = viewer.camera.heading + Cesium.Math.toRadians(angle);
+    var pitch = viewer.camera.pitch;
+    var roll = viewer.camera.roll;
+
+    viewer.scene.camera.flyTo({
+        destination : new_position,
+        orientation: {
+            heading : heading,
+            pitch : pitch,
+            roll : roll
+        }
+    });
+}
+
+function rotatedPointByAngleYZ(position_A, position_B, angle) {
+    //以B点为原点建立局部坐标系（东方向为x轴,北方向为y轴,垂直于地面为z轴），得到一个局部坐标到世界坐标转换的变换矩阵
+    var localToWorld_Matrix = Cesium.Transforms.eastNorthUpToFixedFrame(position_B);
+    //求世界坐标到局部坐标的变换矩阵
+    var worldToLocal_Matrix = Cesium.Matrix4.inverse(localToWorld_Matrix, new Cesium.Matrix4());
+    //B点在局部坐标的位置，其实就是局部坐标原点
+    var localPosition_B = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_B, new Cesium.Cartesian3());
+    //A点在以B点为原点的局部的坐标位置
+    var localPosition_A = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_A, new Cesium.Cartesian3());
+    //根据数学公式A点逆时针旋转angle度后在局部坐标系中的x,y,z位置
+    var new_x = localPosition_A.x;
+    var new_y = localPosition_A.y * Math.cos(Cesium.Math.toRadians(angle)) - localPosition_A.z * Math.sin(Cesium.Math.toRadians(angle));
+    var new_z = localPosition_A.z * Math.cos(Cesium.Math.toRadians(angle)) + localPosition_A.y * Math.sin(Cesium.Math.toRadians(angle));
+    //最后应用局部坐标到世界坐标的转换矩阵求得旋转后的A点世界坐标
+    return Cesium.Matrix4.multiplyByPoint(localToWorld_Matrix, new Cesium.Cartesian3(new_x, new_y, new_z), new Cesium.Cartesian3());
+}
+
+function rotateUpDown(angle) {
+    var scene = viewer.scene;
+    var ellipsoid = scene.globe.ellipsoid;
+    var canvas = scene.canvas;
+    let center_position =  viewer.scene.camera.pickEllipsoid(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0), ellipsoid);
+
+    let new_position = rotatedPointByAngleYZ(viewer.camera.position, center_position, angle);
+
+    var heading = viewer.camera.heading;
+    var pitch = viewer.camera.pitch + Cesium.Math.toRadians(angle);
+    var roll = viewer.camera.roll;
+
+    viewer.scene.camera.flyTo({
+        destination : new_position,
+        orientation: {
+            heading : heading,
+            pitch : pitch,
+            roll : roll
+        }
+    });
+}
+
+function changeMapMode() {
+    var angle = Cesium.Math.toDegrees(viewer.camera.pitch);
+    if (Math.round(Math.abs(angle)) === 90) {
+        angle = 60;
+    }
+    else {
+        angle = - (angle + 90);
+    }
+
+    rotateUpDown(angle);
+}
+
+document.addEventListener('keydown', function (e) {
+    setKey(e);
+}, false);
+//
+//function optMap(action, data) {
+//    if (action === "rotateByLeft") {
+//        let angle = parseInt(data);
+//        rotateLeftRight(angle);
+//    }
+//    else if (action === "rotateByRight") {
+//        let angle = parseInt(data);
+//        rotateLeftRight(-angle);
+//    }
+//    else if (action === "rotateByUp") {
+//        let angle = parseInt(data);
+//        rotateUpDown(angle);
+//    }
+//    else if (action === "rotateByDown") {
+//        let angle = parseInt(data);
+//        rotateUpDown(-angle);
+//    }
+//    else if (action === "zoomIn") {
+//        viewer.camera.zoomIn(viewer.camera.positionCartographic.height / 2);
+//    }
+//    else if (action === "zoomOut") {
+//        viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
+//    }
+//    else if (action === "pointToNorth") {
+//        rotateLeftRight(Cesium.Math.toDegrees(-viewer.camera.heading));
+//    }
+//}
+function optMap(opt) {
+    if (opt.action === "rotateByLeft") {
+        rotateLeftRight(opt.data);
+    }
+    else if (opt.action === "rotateByRight") {
+        rotateLeftRight(-opt.data);
+    }
+    else if (opt.action === "rotateByUp") {
+        rotateUpDown(opt.data);
+    }
+    else if (opt.action === "opt.rotateByDown") {
+        rotateUpDown(-opt.data);
+    }
+    else if (opt.action === "zoomIn") {
+        viewer.camera.zoomIn(viewer.camera.positionCartographic.height / 2);
+    }
+    else if (opt.action === "zoomOut") {
+        viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
+    }
+    else if (opt.action === "pointToNorth") {
+        rotateLeftRight(Cesium.Math.toDegrees(-viewer.camera.heading));
+    }
+}
+
+function setKey(event) {
+    console.log(event.keyCode);
+    if (event.keyCode === 77) {
+        changeMapMode();
+    }
+    else if (event.keyCode === 78) {
+        rotateLeftRight(Cesium.Math.toDegrees(-viewer.camera.heading));
+    }
+    else if (event.keyCode === 187) {
+        viewer.camera.zoomIn(viewer.camera.positionCartographic.height / 2);
+    }
+    else if (event.keyCode === 189) {
+        viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
+    }
+
+    if (event.ctrlKey){
+        if (event.keyCode === 39) {  // right arrow
+            rotateLeftRight(15);
+        } else if (event.keyCode === 37) {  // left arrow
+            rotateLeftRight(-15);
+        } else if (event.keyCode === 40) {  // up arrow
+            rotateUpDown(15);
+        } else if (event.keyCode === 38) {  // down arrow
+            rotateUpDown(-15);
+        }
+    }
+    else {
+        var horizontalDegrees = 5.0;
+        var verticalDegrees = 5.0;
+        var scratchRectangle = new Cesium.Rectangle();
+        Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+
+        var viewRect = viewer.camera.computeViewRectangle(viewer.scene.globe.ellipsoid, scratchRectangle);
+        if (Cesium.defined(viewRect)) {
+            horizontalDegrees *= Cesium.Math.toDegrees(viewRect.east - viewRect.west) / 360.0;
+            verticalDegrees *= Cesium.Math.toDegrees(viewRect.north - viewRect.south) / 180.0;
+        }
+
+        if (event.keyCode === 39) {  // right arrow
+            viewer.camera.rotateRight(Cesium.Math.toRadians(horizontalDegrees));
+        } else if (event.keyCode === 37) {  // left arrow
+            viewer.camera.rotateLeft(Cesium.Math.toRadians(horizontalDegrees));
+        } else if (event.keyCode === 40) {  // up arrow
+            viewer.camera.rotateUp(Cesium.Math.toRadians(verticalDegrees));
+        } else if (event.keyCode === 38) {  // down arrow
+            viewer.camera.rotateDown(Cesium.Math.toRadians(verticalDegrees));
+        }
+    }
+}
+
 handler.setInputAction(function(click) { // 点击事件
     viewer.clock.stopTime = viewer.clock.startTime; //viewer.clock.stopTime 赋值为 viewer.clock.startTime 即可停止旋转
 
-    //clearUserTour();
-
-    var pickElement = viewer.scene.pick(click.position);
-    if (pickElement && pickElement.id){
-
-    }
+    
 }, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
 
 handler.setInputAction(function(wheelment) { // 滚轮事件
 
 }, Cesium.ScreenSpaceEventType.WHEEL);
 
-viewer.scene.camera.moveEnd.addEventListener(function(){ // 相机移动结束事件
-    height = Math.ceil(viewer.camera.positionCartographic.height); // 相机高度
+function getUserTourHeights(userTour) { // 异步调用
+    var userTourJSON = JSON.parse(userTour);
+    var positions = [];
+    for (var i = 0; i < userTourJSON.length; i++) {
+        positions.push(Cesium.Cartographic.fromDegrees(userTourJSON[i].longitude, userTourJSON[i].latitude));
+    }
 
-});
+    promise = Cesium.sampleTerrain(terrainProvider, 14, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            for (var i = 0; i <userTourJSON.length; i++) {
+                userTourJSON[i].height = updatedPositions[i].height;
+            }
+            window.Android.putUserTourHeights(JSON.stringify(userTourJSON));
+        }
+    });
+}
+
+var options = {};
+function resetView() {
+    recenter(userLocation);
+}
+// 用于在使用重置导航重置地图视图时设置默认视图控制。接受的值是Cesium.Cartographic 和 Cesium.Rectangle。
+options.defaultResetView = resetView;
+// 用于启用或禁用罗盘。true是启用罗盘，false是禁用罗盘。默认值为true。如果将选项设置为false，则罗盘将不会添加到地图中。
+options.enableCompass = true;
+// 用于启用或禁用缩放控件。true是启用，false是禁用。默认值为true。如果将选项设置为false，则缩放控件将不会添加到地图中。
+options.enableZoomControls = true;
+// 用于启用或禁用距离图例。true是启用，false是禁用。默认值为true。如果将选项设置为false，距离图例将不会添加到地图中。
+options.enableDistanceLegend = true;
+// 用于启用或禁用指南针外环。true是启用，false是禁用。默认值为true。如果将选项设置为false，则该环将可见但无效。
+options.enableCompassOuterRing = true;
+
+CesiumNavigation.umd(viewer, options);

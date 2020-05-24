@@ -24,6 +24,18 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/vMarkOpt"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@drawable/shape_oval_white"
+                    android:padding="5dp"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_mark" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="10dp" />
+                <ImageView
                     android:id="@+id/vGpsOpt"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
@@ -67,6 +79,7 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/ivInfo"
                     android:layout_width="23dp"
                     android:layout_height="23dp"
                     android:layout_gravity="center"
@@ -79,6 +92,7 @@
                     android:layout_height="10dp" />
 
                 <ImageView
+                    android:id="@+id/ivCompass"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/shape_oval_black"
@@ -108,6 +122,7 @@
                         tools:layout_height="240dp">
 
                         <ImageView
+                            android:id="@+id/iv1"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -121,6 +136,7 @@
                             android:layout_height="10dp" />
 
                         <ImageView
+                            android:id="@+id/iv2"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -134,6 +150,7 @@
                             android:layout_height="10dp" />
 
                         <ImageView
+                            android:id="@+id/iv3"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -147,6 +164,7 @@
                             android:layout_height="10dp" />
 
                         <ImageView
+                            android:id="@+id/iv4"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -160,6 +178,7 @@
                             android:layout_height="10dp" />
 
                         <ImageView
+                            android:id="@+id/iv5"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -173,6 +192,7 @@
                             android:layout_height="10dp" />
 
                         <ImageView
+                            android:id="@+id/iv6"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -201,6 +221,7 @@
                     android:layout_height="10dp" />
 
                 <ImageView
+                    android:id="@+id/ivCurrent"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:background="@drawable/shape_oval_white"

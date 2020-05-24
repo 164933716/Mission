@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.TypedValue;
@@ -37,7 +38,6 @@ import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class AndroidUtil {
     public static final String folder = File.separator + "AA_" + BuildConfig.modeName + File.separator + BuildConfig.BUILD_TYPE;
-    public static final String tempFolder = folder + File.separator + "Temp";
     public static final String imageExt = ".jpg";
     public static final String videoExt = ".mp4";
     public static final String txtExt = ".txt";
@@ -71,17 +71,24 @@ public class AndroidUtil {
         return formatDate + "_" + getRandom() + videoExt;
     }
 
+    private static File getStorageDir(Context context) {
+        File var1 = Environment.getExternalStorageDirectory();
+        if (var1.exists()) {
+            return var1;
+        }
+        return context.getFilesDir();
+    }
+
+    public static File getFolder(Context context) {
+        File dir = new File(getStorageDir(context), folder);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
 
     public static File getTempImageFile(Context context) {
-        File var1 = context.getExternalFilesDir(DIRECTORY_PICTURES);
-        if (var1 == null) {
-            var1 = context.getFilesDir();
-        } else {
-            if (!var1.exists()) {
-                var1.mkdirs();
-            }
-        }
-        File dir = new File(var1, tempFolder);
+        File dir = new File(getStorageDir(context), folder);
         if (!dir.exists()) {
             dir.mkdirs();
         }
