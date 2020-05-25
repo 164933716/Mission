@@ -3,168 +3,154 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="5dp"
     android:layout_marginStart="10dp"
-    android:layout_marginEnd="10dp">
+    android:layout_marginEnd="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <com.versalinks.mission.AsImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/src_img_placeholder_img_placeholder_adventure_land"></com.versalinks.mission.AsImageView>
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="6dp"
+            android:text="搜索时"
+            android:textColor="#666666"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp">
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="3dp" />
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="100dp">
+
+                <com.versalinks.mission.AsImageView
+                    android:id="@+id/ivLogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/src_img_placeholder_img_placeholder_adventure_land"></com.versalinks.mission.AsImageView>
+
+                <ImageView
+                    android:id="@+id/ivMode"
+                    android:layout_width="20dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="bottom"
+                    android:background="#489f88"
+                    android:src="@drawable/src_img_activitiesicon_ichiking" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:paddingStart="10dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/src_img_fmicnlinerouteruler" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvDifficult"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="搜索时"
+                        android:textColor="#8d5d31"
+                        android:textSize="12sp" />
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/shape_oval_gray" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/src_img_fmicnlinerouteruler" />
+
+
+                    <TextView
+                        android:id="@+id/tvDistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="搜索时"
+                        android:textColor="#666666"
+                        android:textSize="12sp" />
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="3dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/shape_oval_gray" />
+
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/src_img_fmicnlinerouteascent" />
+
+                    <TextView
+                        android:id="@+id/tvDistanceUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="搜索时"
+                        android:textColor="#666666"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <Space
-                    android:layout_width="3dp"
-                    android:layout_height="match_parent" />
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
 
                 <TextView
-                    android:id="@+id/tvDistance"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="搜索时"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去"
+                    android:textColor="#344956"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
+
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去"
                     android:textColor="#666666"
                     android:textSize="12sp" />
 
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
 
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="3dp"
-                    android:background="@drawable/shape_oval_gray" />
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/src_img_fmicnlinerouteascent" />
-
-                <Space
-                    android:layout_width="3dp"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:id="@+id/tvDistanceUp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="搜索时"
-                    android:textColor="#666666"
-                    android:textSize="12sp" />
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="3dp"
-                    android:background="@drawable/shape_oval_gray" />
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/src_img_fmicnlineroutedescent" />
-
-                <TextView
-                    android:id="@+id/tvDistanceDown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="搜索时"
-                    android:textColor="#666666"
-                    android:textSize="12sp" />
             </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
-
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="去去去"
-                android:textColor="#344956"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
-
-            <TextView
-                android:id="@+id/tvDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="去去去"
-                android:textColor="#666666"
-                android:textSize="12sp" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvDate"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="搜索时"
-                    android:textColor="#666666"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvShare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="分享"
-                    android:textColor="#666666"
-                    android:textSize="12sp" />
-            </LinearLayout>
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="10dp" />
         </LinearLayout>
+
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

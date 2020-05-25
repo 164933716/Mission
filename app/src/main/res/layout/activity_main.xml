@@ -35,6 +35,7 @@
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="10dp" />
+
                 <ImageView
                     android:id="@+id/vGpsOpt"
                     android:layout_width="35dp"
@@ -243,6 +244,8 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/src_img_buttons_fmicnlinedarkmapoverlays" />
             </LinearLayout>
+
+
         </FrameLayout>
 
         <com.versalinks.mission.MenuChoose

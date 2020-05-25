@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.google.gson.Gson;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -30,6 +33,8 @@ import com.versalinks.mission.databinding.ActivityMainBinding;
 import java.io.File;
 import java.util.List;
 
+import io.realm.RealmList;
+
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private WebView webView;
@@ -37,6 +42,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     GPSService.GPSListener gpsListener = new GPSService.GPSListener() {
         @Override
         public void gps(Model_GPS modelGps) {
+            modelGps.latitude = 27.8601391146d;
+            modelGps.longitude = 108.7107853492d;
+            modelGps.height = 1446.697d;
             binding.ivCurrent.setTag(modelGps);
             webView.evaluateJavascript(OptUtils.updateLocation(modelGps), null);
         }
@@ -165,14 +173,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 }
                 Intent intent = new Intent(context, RoutesActivity.class);
                 intent.putExtra("thumbFile", file);
-                jump2Activity(intent);
+                jump2Activity(intent, 669);
             }
         });
         binding.vMenuChoose.setItemClickListener(new MenuChoose.ItemClickListener() {
             @Override
             public void itemClick(int index) {
                 if (index == 1) {
-                    jump2Activity(RoutesActivity.class);
+                    jump2Activity(RecordsActivity.class, 668);
                     binding.drawerLayout.closeDrawer(GravityCompat.START, false);
                 } else if (index == 2) {
                     jump2Activity(MarkersActivity.class);
@@ -184,8 +192,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         });
         binding.vLayerChoose.setItemClickListener(new LayerChoose.ItemClickListener() {
             @Override
-            public void itemClick(Layer.Item item) {
-
+            public void itemClick(Layer.Item item, boolean check) {
+                if (TextUtils.equals(item.label, "道路")) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.END, true);
+                    if (check) {
+                        webView.evaluateJavascript(OptUtils.showRoadLayer(), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.hideRoadLayer(), null);
+                    }
+                }
             }
         });
         binding.iv1.setOnClickListener(new View.OnClickListener() {
@@ -215,13 +230,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.iv5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.zoomOut(), null);
+                webView.evaluateJavascript(OptUtils.zoomIn(), null);
             }
         });
         binding.iv6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.zoomIn(), null);
+                webView.evaluateJavascript(OptUtils.zoomOut(), null);
             }
         });
         binding.ivCurrent.setOnClickListener(new View.OnClickListener() {
@@ -285,9 +300,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 //        animator.start();
     }
 
-    public static class JSInterface {
+    public class JSInterface {
         @JavascriptInterface
         public void fetchRoute(String jsonPoi1, String jsonPoi2) {
+        }
+
+        @JavascriptInterface
+        public void putUserTourHeights(String jsonPoi) {
+
         }
     }
 
@@ -320,20 +340,49 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private File captureWebViewX(WebView webView) {
-
         int wholeWidth = webView.computeHorizontalScrollRange();
         int wholeHeight = webView.computeVerticalScrollRange();
         Bitmap bitmap = Bitmap.createBitmap(wholeWidth, wholeHeight, Bitmap.Config.ARGB_8888);
-
         Canvas x5canvas = new Canvas(bitmap);
         x5canvas.scale((float) wholeWidth / (float) webView.getContentWidth(), (float) wholeHeight / (float) webView.getContentHeight());
         if (webView.getX5WebViewExtension() == null) {
             return null;
         }
-
         webView.getX5WebViewExtension().snapshotWholePage(x5canvas, false, false);
         File tempImageFile = AndroidUtil.getTempImageFile(context);
         AndroidUtil.bitmap2File(bitmap, tempImageFile);
         return tempImageFile;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 669) {
+            if (data != null) {
+                //路线选择
+                Parcelable model_routeSer = data.getParcelableExtra("model_route");
+                if (model_routeSer instanceof Model_Route) {
+                    LogUtils.e(model_routeSer.toString());
+                    if (webView != null) {
+                        RealmList<Model_GPS> gpsList = ((Model_Route) model_routeSer).gpsList;
+                        String json = new Gson().toJson(gpsList);
+                        LogUtils.e(json);
+                        webView.evaluateJavascript(OptUtils.updateUserTour(json), null);
+                        //展示线路
+                    }
+                }
+
+            }
+        } else if (requestCode == 668) {
+            if (data != null) {
+                //路线选择
+                Parcelable model_recordSer = data.getParcelableExtra("model_record");
+                if (model_recordSer instanceof Model_Record) {
+                    LogUtils.e(model_recordSer.toString());
+                }
+            }
+        } else {
+
+        }
     }
 }

@@ -110,11 +110,20 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
             Intent intent = new Intent(BaseActivity.this, cls);
             startActivity(intent);
         }
+    }public void jump2Activity(Class cls,int code) {
+        if (cls != null) {
+            Intent intent = new Intent(BaseActivity.this, cls);
+            startActivityForResult(intent,code);
+        }
     }
 
     public void jump2Activity(Intent intent) {
         if (intent != null) {
             startActivity(intent);
+        }
+    }    public void jump2Activity(Intent intent,int code) {
+        if (intent != null) {
+            startActivityForResult(intent,code);
         }
     }
 

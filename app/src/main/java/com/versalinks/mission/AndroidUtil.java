@@ -30,8 +30,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-import static android.os.Environment.DIRECTORY_PICTURES;
-
 /**
  * Created by Ksy.
  */
@@ -93,6 +91,18 @@ public class AndroidUtil {
             dir.mkdirs();
         }
         File file = new File(dir, getTempImageName());
+        if (file.exists()) {
+            file.delete();
+        }
+        return file;
+    }
+
+    public static File getTempTxtFile(Context context, String txtName) {
+        File dir = new File(getStorageDir(context), folder);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, txtName);
         if (file.exists()) {
             file.delete();
         }

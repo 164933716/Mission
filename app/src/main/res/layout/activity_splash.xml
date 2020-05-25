@@ -17,7 +17,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/ivLogo"
+                android:id="@+id/ivAdd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -25,7 +25,7 @@
                 android:text="添加" />
 
             <Button
-                android:id="@+id/ivLogo1"
+                android:id="@+id/ivQuery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -33,7 +33,7 @@
                 android:text="查询" />
 
             <Button
-                android:id="@+id/ivLogo2"
+                android:id="@+id/ivDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -41,19 +41,38 @@
                 android:text="删除" />
 
             <Button
-                android:id="@+id/ivLogo3"
+                android:id="@+id/ivUpdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="30dp"
-                android:text="更新" />
+                android:text="更新" /><Button
+                android:id="@+id/ivJson"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="30dp"
+                android:text="Json" />
         </LinearLayout>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#ffffff"
-            android:src="@drawable/guide_3" />
+            android:src="@drawable/guide_3"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <com.versalinks.mission.ChartView
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_gravity="bottom" />
+        </FrameLayout>
     </FrameLayout>
 
 </layout>

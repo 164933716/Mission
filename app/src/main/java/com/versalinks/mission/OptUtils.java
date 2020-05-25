@@ -42,6 +42,29 @@ public class OptUtils {
         return "javascript:updateUserLocation(" + getJson(modelGps) + ")";
     }
 
+    public static String getUserTourHeights(String jsonPois) {
+        return "javascript:getUserTourHeights(" + jsonPois + ")";
+    }
+
+    public static String showRoadLayer() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("sroad", "./sroad.geojson");
+        map.put("ssroad", "./ssroad.geojson");
+        return "javascript:addRoadBackgroundLayer(" + getJson(map) + ")";
+    }
+
+    public static String hideRoadLayer() {
+        return "javascript:removeRoadBackgroundLayer(" + "" + ")";
+    }
+
+    public static String updateUserTour(String jsonPois) {
+        return "javascript:updateUserTour(" + jsonPois + ")";
+    }
+
+    public static String clearUserTour() {
+        return "javascript:clearUserTour()";
+    }
+
     public static String getJson(Object model) {
         Gson gson = new Gson();
         return gson.toJson(model);

@@ -28,10 +28,19 @@ public class GPSService extends Service {
     private List<GPSListener> gpsListeners = new ArrayList<>();
     private List<GPSEnableListener> gpsEnableListeners = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
+
+    public List<Model_GPS> getList() {
+        return list;
+    }
+
     private List<Model_GPS> list = new ArrayList<>();
 
     public long getDuration() {
         return duration;
+    }
+
+    public double getDistance() {
+        return distance;
     }
 
     private long duration = 0;
@@ -54,7 +63,7 @@ public class GPSService extends Service {
                 distance += v;
             }
             for (TrackListener trackListener : trackListeners) {
-                trackListener.trackProgress(list.size() > 0 ? list.get(list.size() - 1).altitude : 0, distance, duration, list);
+                trackListener.trackProgress(list.size() > 0 ? list.get(list.size() - 1).height : 0, distance, duration, list);
             }
             handler.postDelayed(this, 1000);
         }
@@ -107,7 +116,8 @@ public class GPSService extends Service {
     enum RecordState {
         Pause,
         Ing,
-        Normal
+        Normal,
+        NUll
 
     }
 
@@ -126,39 +136,7 @@ public class GPSService extends Service {
         super.onCreate();
         mBinder = new GPSBinder();
         mLocationClient = new AMapLocationClient(getApplicationContext());
-        mLocationClient.setLocationListener(new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation mapLocation) {
-                if (mapLocation != null) {
-                    if (mapLocation.getErrorCode() == 0) {
-                        //longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697
-                        double latitude = mapLocation.getLatitude();//获取纬度
-                        double longitude = mapLocation.getLongitude();//获取经度
-                        String city = mapLocation.getCity();//城市信息
-                        double altitude = mapLocation.getAltitude();
-                        latitude = 27.8601391146;
-                        longitude = 108.7107853492;
-                        altitude = 1446.697;
-                        modelGps = new Model_GPS(latitude, longitude, altitude);
-                        Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
-                        for (GPSListener gpsListener : gpsListeners) {
-                            gpsListener.gps(modelGps);
-                        }
-                        int locationQualityReport = mapLocation.getLocationQualityReport().getGPSStatus();
-                        String gpsStatusString = getGPSStatusString(locationQualityReport);
-                        for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
-                            gpsEnableListener.enable(gpsStatusString);
-                        }
-
-                    } else {
-                        modelGps = null;
-                        Log.e("GPS", "location Error, ErrCode:"
-                                + mapLocation.getErrorCode() + ", errInfo:"
-                                + mapLocation.getErrorInfo());
-                    }
-                }
-            }
-        });
+        mLocationClient.setLocationListener(locationListener);
         setLocationByGPS(3000);
         startLocate();
     }
@@ -257,6 +235,8 @@ public class GPSService extends Service {
     public void startTrack() {
         setLocationByGPS(1000);
         recordState = RecordState.Ing;
+        distance = 0;
+        duration = 0;
         list.clear();
         handler.post(runnable);
         for (TrackListener trackListener : trackListeners) {
@@ -266,7 +246,7 @@ public class GPSService extends Service {
 
     public void stopTrack() {
         setLocationByGPS(3000);
-        recordState = RecordState.Normal;
+        recordState = RecordState.NUll;
         handler.removeCallbacks(runnable);
         List<Model_GPS> gpsList = new ArrayList<>(list.size());
         gpsList.addAll(list);

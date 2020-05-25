@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +36,10 @@ import com.versalinks.mission.databinding.ActivityGpsRecordBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
+import io.reactivex.Observable;
 
+public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
+    private Handler handler = new Handler(Looper.getMainLooper());
     private AMap map;
     private MapView mapView;
     private GPSService gpsService;
@@ -103,8 +107,25 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
         @Override
         public void trackEnd(List<Model_GPS> gpsList) {
             LogUtils.e("trackEnd");
-
-
+            gpsService.removeTrackListener(trackListener);
+            binding.tvStartOrPause.setText("开始");
+            binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
+            Observable<Model_Record> o = DataUtils.getInstance().saveRecord(gpsList);
+            BaseOb<Model_Record> baseOb = new BaseOb<Model_Record>() {
+                @Override
+                public void onDataDeal(Model_Record data, String message) {
+                    TipDialog tipDialog = new TipDialog(context, "本次轨迹已保存", "可在我的-我的轨迹里进行管理");
+                    tipDialog.show();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            tipDialog.dismiss();
+                            finish();
+                        }
+                    }, 1000);
+                }
+            };
+            baseOb.bindObed(o);
         }
 
         @Override
@@ -175,6 +196,20 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                 gpsService.addGPSEnableListener(gpsEnableListener);
                 gpsService.addGPSListener(gpsListener);
                 gpsService.addTrackListener(trackListener);
+
+                GPSService.RecordState recordState = gpsService.getRecordState();
+                if (recordState == GPSService.RecordState.Normal) {
+                    binding.tvStartOrPause.setText("开始");
+                    binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
+                } else if (recordState == GPSService.RecordState.Ing) {
+                    binding.tvStartOrPause.setText("暂停");
+                    binding.ivStartOrPause.setImageResource(R.drawable.ic_media_pause);
+                    trackListener.trackProgress(gpsService.getList().size() > 0 ? gpsService.getList().get(gpsService.getList().size() - 1).height : 0, gpsService.getDistance(), gpsService.getDuration(), gpsService.getList());
+                } else if (recordState == GPSService.RecordState.Pause) {
+                    binding.tvStartOrPause.setText("开始");
+                    binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
+                    trackListener.trackProgress(gpsService.getList().size() > 0 ? gpsService.getList().get(gpsService.getList().size() - 1).height : 0, gpsService.getDistance(), gpsService.getDuration(), gpsService.getList());
+                }
             }
         }
 
@@ -242,15 +277,18 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                     if (recordState == GPSService.RecordState.Normal) {
                         return;
                     }
+                    if (recordState == GPSService.RecordState.NUll) {
+                        return;
+                    }
                     if (gpsService.getDuration() <= 3) {
                         ToastUtils.showShort("记录时间过短");
                         return;
                     }
                     gpsService.stopTrack();
-                    gpsService.removeTrackListener(trackListener);
                 }
             }
         });
+
         mapView = new MapView(context);
         binding.container.addView(mapView, 0, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         mapView.onCreate(savedInstanceState);
@@ -339,6 +377,9 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
 
     @Override
     public void onDestroy() {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
         if (gpsService != null) {
             gpsService.removeGPSEnableListener(gpsEnableListener);
             gpsService.removeGPSListener(gpsListener);
@@ -369,7 +410,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
         }
         CameraUpdate cameraUpdate;
         if (needScale) {
-            cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(modelGps.getLatLng(), map.getMaxZoomLevel() - 2, 45, 0));
+            cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(modelGps.getLatLng(), map.getMaxZoomLevel(), 45, 0));
         } else {
             cameraUpdate = CameraUpdateFactory.newLatLng(modelGps.getLatLng());
         }

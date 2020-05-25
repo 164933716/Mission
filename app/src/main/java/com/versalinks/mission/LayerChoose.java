@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -18,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -106,15 +109,22 @@ public class LayerChoose extends LinearLayout {
                 @Override
                 public void onItemClick(View view, int position, int viewType) {
                     Layer.Item item = layer.items.get(position);
+                    if (!TextUtils.equals(item.label, "道路")) {
+                        ToastUtils.showShort("数据暂未开放");
+                        return;
+                    }
+                    boolean check;
                     if (choose.contains(item)) {
+                        check = false;
                         choose.remove(item);
                         baseAdapter.notifyItemChanged(position);
                     } else {
+                        check = true;
                         choose.add(item);
                         baseAdapter.notifyItemChanged(position);
                     }
                     if (itemClickListener != null) {
-                        itemClickListener.itemClick(item);
+                        itemClickListener.itemClick(item, check);
                     }
                 }
             });
@@ -145,6 +155,6 @@ public class LayerChoose extends LinearLayout {
     }
 
     interface ItemClickListener {
-        void itemClick(Layer.Item index);
+        void itemClick(Layer.Item index, boolean check);
     }
 }

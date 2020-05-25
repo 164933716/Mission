@@ -24,13 +24,17 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
     imageryProvider : new Cesium.UrlTemplateImageryProvider({url:"http://47.110.155.250:8003/Global/Image/{z}/{x}/{y}.png"})
 });
 
-// var mapboxLayer = new Cesium.MapboxStyleImageryProvider({
-//     url : 'https://api.mapbox.com/styles/v1/',
-//     username:'wingwuyf',
-//     styleId: 'cjajfiz60artm2rnxr8wiecli',
-//     accessToken: 'pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg',
-//     scaleFactor: true
-// });
+if (!viewer.scene.pickPositionSupported) {
+    window.alert("This browser does not support pickPosition.");
+}
+
+var mapboxLayer = new Cesium.MapboxStyleImageryProvider({
+    url : 'https://api.mapbox.com/styles/v1/',
+    username:'wingwuyf',
+    styleId: 'cjajfiz60artm2rnxr8wiecli',
+    accessToken: 'pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg',
+    scaleFactor: true
+});
 
 //var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/{z}/{x}/{y}.png?sku=1011hS4giuW7i&access_token=pk.eyJ1Ijoid2ViZXJ0YW8iLCJhIjoiY2pibTdmaWc2MTZqaDJybzFzcm93bGE2eiJ9.cwSE9DYCYP0dIeY4Hhp6Kg"});
 //var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://api.mapbox.com/styles/v1/wingwuyf/cjajfiz60artm2rnxr8wiecli/tiles/512/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
@@ -38,7 +42,7 @@ var viewer = new Cesium.Viewer('cesiumContainer', {
 var googleLayer = new Cesium.UrlTemplateImageryProvider({url:"http://mt2.google.cn/vt/lyrs=s@167000000&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}&s=Galil"});
 
 viewer.imageryLayers.removeAll();
-//viewer.imageryLayers.addImageryProvider(mapboxLayer);
+viewer.imageryLayers.addImageryProvider(mapboxLayer);
 
 viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({url:"http://47.110.155.250:8003/Map/Image/{z}/{x}/{y}.png"}));
 
@@ -52,12 +56,11 @@ viewer.scene.globe.depthTestAgainstTerrain = true;
 //viewer.scene.screenSpaceCameraController._maximumZoomRate = 1000000; //5906376272000; //相机放大时的速率
 //viewer.scene.screenSpaceCameraController.maximumMovementRatio = 0.01;
 
-viewer.scene.skyBox.show = false;
-viewer.scene.backgroundColor = new Cesium.Color(48/255, 57/255, 28/255);
-viewer.scene.sun.show = false; 
-viewer.scene.moon.show = false;
-//viewer.scene.globe.show = false;
-viewer.scene.skyAtmosphere.show = false;
+// viewer.scene.skyBox.show = false;
+// viewer.scene.backgroundColor = new Cesium.Color(48/255, 57/255, 28/255);
+// viewer.scene.sun.show = false; 
+// viewer.scene.moon.show = false;
+// viewer.scene.skyAtmosphere.show = false;
 
 var west = 108.5506111775;
 var south = 27.6176314387;
@@ -65,9 +68,9 @@ var east = 108.8606161775;
 var north = 28.0951804387;
 var center = {x : (west + east) / 2, y : (south + north) / 2};
 
-//var position = Cesium.Cartographic.toCartesian(new Cesium.Cartographic.fromDegrees(108.690813, 27.918094, 0));
-//var distance = 7500;
-//var clippingPlanes = new Cesium.ClippingPlaneCollection({
+// var position = Cesium.Cartographic.toCartesian(new Cesium.Cartographic.fromDegrees(108.690813, 27.918094, 0));
+// var distance = 7500;
+// var clippingPlanes = new Cesium.ClippingPlaneCollection({
 //    modelMatrix : Cesium.Transforms.eastNorthUpToFixedFrame(position),
 //    planes : [
 //        new Cesium.ClippingPlane(new Cesium.Cartesian3( 1.0,  0.0, 0.0), distance),
@@ -76,10 +79,10 @@ var center = {x : (west + east) / 2, y : (south + north) / 2};
 //        new Cesium.ClippingPlane(new Cesium.Cartesian3( 0.0, -1.0, 0.0), distance)
 //    ],
 //    unionClippingRegions: true
-//});
-//viewer.scene.globe.clippingPlanes = clippingPlanes;
-//viewer.scene.globe.backFaceCulling = false;
-//viewer.scene.globe.showSkirts = false;
+// });
+// viewer.scene.globe.clippingPlanes = clippingPlanes;
+// viewer.scene.globe.backFaceCulling = false;
+// viewer.scene.globe.showSkirts = false;
 
 // var request = new XMLHttpRequest();
 // request.open("get", "./test.geojson");
@@ -555,7 +558,7 @@ function clickPoi() {
     viewer.clock.stopTime = viewer.clock.startTime;
 
     //window.Android.fetchRoute(JSON.stringify(userLocation), JSON.stringify(pois[this.value]));
-    getUserTourHeights(JSON.stringify(userTourPostitions));
+    //getUserTourHeights(JSON.stringify(userTourPostitions));
     updateUserTour(userTourPostitions);
 }
 
@@ -612,51 +615,58 @@ var userTour = null;
 function updateUserTour(positions) {
 
     var positionArray = [];
-    for (var i = 0; i < positions.length; i++) {
-        // positionArray.push(positions[i].longitude);
-        // positionArray.push(positions[i].latitude);
-        // positionArray.push(0.0);
-        positionArray.push(Cesium.Cartographic.fromDegrees(positions[i].longitude, positions[i].latitude));
-    }
+
     if (userTour) {
         viewer.entities.remove(userTour);
         userTour = null;
     }
-    promise = Cesium.sampleTerrain(terrainProvider, 14, positionArray);
-    Cesium.when(promise, function (updatedPositions) {
-        var positionsVolume = [];
-        for (var i = 0; i < positions.length; i++) {
-            positionsVolume.push(positions[i].longitude);
-            positionsVolume.push(positions[i].latitude);
-            positionsVolume.push(updatedPositions[i].height + 5);
+
+    for (var i = 0; i < positions.length; i++) {
+        positionArray.push(positions[i].longitude);
+        positionArray.push(positions[i].latitude);
+        positionArray.push(0.0);
+    }
+    userTour = viewer.entities.add({
+        polyline : {
+            positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionArray),
+            clampToGround : true,
+            width : 3,
+            material : new Cesium.PolylineOutlineMaterialProperty({
+                color : Cesium.Color.SPRINGGREEN,
+                outlineWidth : 1,
+                outlineColor : Cesium.Color.SPRINGGREEN
+            }),
+            depthFailMaterial : new Cesium.PolylineOutlineMaterialProperty({
+                color : Cesium.Color.SPRINGGREEN,
+                outlineWidth : 1,
+                outlineColor : Cesium.Color.SPRINGGREEN
+            })
         }
-
-        userTour = viewer.entities.add({
-            polylineVolume: {
-                positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionsVolume),
-                shape: computeCircle(3.0),
-                material: Cesium.Color.RED.withAlpha(0.8)
-            }
-            // polyline : {
-            //     positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionArray),
-            //     clampToGround : true,
-            //     width : 3,
-            //     material : new Cesium.PolylineOutlineMaterialProperty({
-            //         color : Cesium.Color.SPRINGGREEN,
-            //         outlineWidth : 1,
-            //         outlineColor : Cesium.Color.SPRINGGREEN
-            //     }),
-            //     depthFailMaterial : new Cesium.PolylineOutlineMaterialProperty({
-            //         color : Cesium.Color.SPRINGGREEN,
-            //         outlineWidth : 1,
-            //         outlineColor : Cesium.Color.SPRINGGREEN
-            //     })
-            // }
-        });
-
-        viewer.flyTo(userTour);
-
     });
+    viewer.flyTo(userTour);
+
+
+    // for (var i = 0; i < positions.length; i++) {
+    //     positionArray.push(Cesium.Cartographic.fromDegrees(positions[i].longitude, positions[i].latitude));
+    // }
+    // promise = Cesium.sampleTerrain(terrainProvider, 14, positionArray);
+    // Cesium.when(promise, function (updatedPositions) {
+    //     var positionsVolume = [];
+    //     for (var i = 0; i < positions.length; i++) {
+    //         positionsVolume.push(positions[i].longitude);
+    //         positionsVolume.push(positions[i].latitude);
+    //         positionsVolume.push(updatedPositions[i].height + 10);
+    //     }
+
+    //     userTour = viewer.entities.add({
+    //         polylineVolume: {
+    //             positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionsVolume),
+    //             shape: computeCircle(5.0),
+    //             material: Cesium.Color.RED.withAlpha(0.8)
+    //         }
+    //     });
+    //     viewer.flyTo(userTour);
+    // });
 }
 
 function clearUserTour() {
@@ -694,57 +704,48 @@ function computeCircle(radius) {
 
 function addRoadBackgroundLayer(road) {
 
-    for (var i = 0; i < road.features.length; i++) {
-        var positions = [];
-        for (var j = 0; j < road.features[i].geometry.coordinates.length; j++) {
-            positions.push(road.features[i].geometry.coordinates[j][0]);
-            positions.push(road.features[i].geometry.coordinates[j][1]);
-            positions.push(road.features[i].geometry.coordinates[j][2]);
+    var promiseSSRoad = Cesium.GeoJsonDataSource.load(
+        road.ssroad, { clampToGround: true } 
+    );
+    promiseSSRoad.then(function (dataSource) {
+        dataSource.name = "ssroad";
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            
+            // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+            entity.polyline.width = 3;
+            entity.polyline.material = new Cesium.ImageMaterialProperty({
+                color: Cesium.Color.GRAY.withAlpha(0.5)
+            });
         }
-    
-        viewer.entities.add({
-            name : 'ssroad',
-            polyline : {
-                positions : Cesium.Cartesian3.fromDegreesArrayHeights(positions),
-                width : 3,
-                clampToGround : true,
-                material : new Cesium.ImageMaterialProperty({
-                    color: Cesium.Color.GRAY.withAlpha(0.5)
-                })
-            }
-        });
+    });
 
-        var promise = Cesium.GeoJsonDataSource.load(
-            './sroad.geojson', { clampToGround: true } 
-        );
-        promise.then(function (dataSource) {
-            viewer.dataSources.add(dataSource);
-            for (var i = 0; i < dataSource.entities.values.length; i++) {
-                var entity = dataSource.entities.values[i];
-                
-                // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
-                entity.polyline.width = 3;
-                entity.polyline.material = new Cesium.ImageMaterialProperty({
-                    color: Cesium.Color.GRAY.withAlpha(0.5)
-                });
-            }
-        });
-    }
+    var promiseSRoad = Cesium.GeoJsonDataSource.load(
+        road.sroad, { clampToGround: true } 
+    );
+    promiseSRoad.then(function (dataSource) {
+        dataSource.name = "sroad";
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            
+            // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+            entity.polyline.width = 3;
+            entity.polyline.material = new Cesium.ImageMaterialProperty({
+                color: Cesium.Color.GRAY.withAlpha(0.5)
+            });
+        }
+    });
 }
 
-addRoadBackgroundLayer({
-    "type": "FeatureCollection",
-    "features": [
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "0.00000000000e+000", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.696955788146582, 27.910699212574428, 0.0 ], [ 108.696991964126937, 27.910768650495708, 0.0 ], [ 108.696987243503543, 27.910866512701915, 0.0 ], [ 108.696980163829011, 27.911044307292187, 0.0 ], [ 108.696875922165944, 27.911157869516593, 0.0 ], [ 108.696972314543274, 27.911240777467583, 0.0 ], [ 108.69691340836232, 27.911285101571849, 0.0 ], [ 108.697085015224985, 27.911455834111774, 0.0 ], [ 108.69694470031547, 27.911575781721091, 0.0 ], [ 108.696755544439895, 27.911564087900743, 0.0 ], [ 108.696539973616282, 27.911591355835686, 0.0 ], [ 108.696409364932379, 27.911512545882065, 0.0 ], [ 108.696228441105205, 27.911441218076835, 0.0 ], [ 108.695986975324871, 27.911441157355615, 0.0 ], [ 108.695991252219386, 27.911388880269289, 0.0 ], [ 108.695689833730285, 27.911426831509647, 0.0 ], [ 108.695619998373544, 27.911374585934247, 0.0 ], [ 108.6954153435195, 27.911458383751601, 0.0 ], [ 108.695258961518633, 27.91138696681789, 0.0 ], [ 108.695245080037566, 27.911794108033778, 0.0 ], [ 108.694851499923161, 27.91189455975498, 0.0 ], [ 108.694749839743864, 27.912044114942834, 0.0 ], [ 108.694423923111245, 27.912237085581573, 0.0 ], [ 108.694268519546355, 27.912485818745374, 0.0 ], [ 108.694198781388863, 27.912459920781441, 0.0 ], [ 108.694092439261723, 27.912628926832308, 0.0 ], [ 108.694013160617189, 27.912613851003172, 0.0 ], [ 108.693973105411615, 27.912271599494201, 0.0 ], [ 108.693959083130622, 27.912075308317384, 0.0 ], [ 108.693773988184603, 27.912099945898742, 0.0 ], [ 108.693687394346441, 27.912258023871185, 0.0 ], [ 108.69375123304593, 27.91235752096285, 0.0 ], [ 108.693792804808467, 27.912420341130726, 0.0 ], [ 108.693622436518993, 27.912522651369926, 0.0 ] ] } },
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "2.21332400000e+003", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.692382238407234, 27.910501594532231, 2213.323974609375 ], [ 108.692344859039707, 27.910336046536703, 2213.323974609375 ], [ 108.692606004934021, 27.91024311703055, 2213.323974609375 ], [ 108.692676122524773, 27.910414879946774, 2213.323974609375 ], [ 108.692382238407234, 27.910501594532231, 2213.323974609375 ] ] } },
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "2.21285300000e+003", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.692517995215823, 27.910269917499001, 2212.85302734375 ], [ 108.692379685518631, 27.909802776879456, 2212.85302734375 ], [ 108.692118078150216, 27.909288809860076, 2212.85302734375 ], [ 108.691507095651403, 27.90907620677876, 2212.85302734375 ], [ 108.691391316257111, 27.908862072160002, 2212.85302734375 ], [ 108.69109271548426, 27.908663428084218, 2212.85302734375 ], [ 108.691026167888623, 27.908055690364858, 2212.85302734375 ], [ 108.690791815280875, 27.907642602739756, 2212.85302734375 ], [ 108.690586055395514, 27.907355376523473, 2212.85302734375 ], [ 108.690502454410733, 27.907222066302158, 2212.85302734375 ], [ 108.690433669908529, 27.907065797952832, 2212.85302734375 ], [ 108.690355994837958, 27.906854701753105, 2212.85302734375 ], [ 108.690241766110063, 27.905930727471421, 2212.85302734375 ], [ 108.689033335377076, 27.904947559524427, 2212.85302734375 ], [ 108.687471052183042, 27.90350276812794, 2212.85302734375 ], [ 108.687161092793758, 27.903198974825944, 2212.85302734375 ] ] } },
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "2.10171100000e+003", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.696955788146582, 27.910699212574428, 2101.7109375 ], [ 108.696881426936827, 27.910646115254863, 2101.7109375 ], [ 108.696590942014012, 27.910597107142859, 2101.7109375 ], [ 108.696165243074645, 27.910566738936467, 2101.7109375 ], [ 108.695968787071536, 27.910468057633906, 2101.7109375 ], [ 108.695771833447481, 27.910259868543655, 2101.7109375 ], [ 108.695589176990438, 27.910168200461793, 2101.7109375 ], [ 108.695331082276624, 27.910151745512625, 2101.7109375 ], [ 108.694874588155628, 27.910294754225724, 2101.7109375 ], [ 108.6944160057798, 27.910319400792048, 2101.7109375 ], [ 108.693631250856228, 27.910418419110396, 2101.7109375 ], [ 108.693135364912322, 27.91029927825106, 2101.7109375 ], [ 108.69282394335292, 27.910305447414981, 2101.7109375 ] ] } },
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "2.31342400000e+003", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.697625793148902, 27.925940665296864, 2313.424072265625 ], [ 108.697046750560204, 27.925145917051342, 2313.424072265625 ], [ 108.696088894024797, 27.923039244259115, 2313.424072265625 ], [ 108.695724257900594, 27.921085773914704, 2313.424072265625 ], [ 108.695208959010145, 27.917861959295806, 2313.424072265625 ], [ 108.694657749993269, 27.91657125923118, 2313.424072265625 ], [ 108.694488985793328, 27.916079956518779, 2313.424072265625 ], [ 108.694236542388452, 27.914164805269134, 2313.424072265625 ], [ 108.694128844785126, 27.913886547144251, 2313.424072265625 ], [ 108.69391626588623, 27.913602149082486, 2313.424072265625 ], [ 108.693754651811958, 27.913160276315129, 2313.424072265625 ], [ 108.693763859428032, 27.913062315209313, 2313.424072265625 ], [ 108.693715438643366, 27.912824129462241, 2313.424072265625 ], [ 108.693622436518993, 27.912522651369926, 2313.424072265625 ], [ 108.693552308264003, 27.912540654696041, 2313.424072265625 ], [ 108.692938744023678, 27.91290614815367, 2313.424072265625 ], [ 108.692712053120275, 27.913125686130197, 2313.424072265625 ], [ 108.692425317847025, 27.913211552784318, 2313.424072265625 ], [ 108.69265119891908, 27.913021021091865, 2313.424072265625 ], [ 108.692703848844317, 27.912852168933007, 2313.424072265625 ], [ 108.693209227207618, 27.912097718876534, 2313.424072265625 ], [ 108.693199991591499, 27.911880856837797, 2313.424072265625 ], [ 108.692971782990128, 27.911664483306552, 2313.424072265625 ], [ 108.692753881568947, 27.911214834349472, 2313.424072265625 ], [ 108.692676494661967, 27.910908313977291, 2313.424072265625 ], [ 108.692441182552201, 27.910679802430995, 2313.424072265625 ], [ 108.692407516966455, 27.910499301774546, 2313.424072265625 ], [ 108.692517995215823, 27.910269917499001, 2313.424072265625 ], [ 108.692379685518631, 27.909802776879456, 2313.424072265625 ], [ 108.692118078150216, 27.909288809860076, 2313.424072265625 ], [ 108.691507095651403, 27.90907620677876, 2313.424072265625 ], [ 108.691391316257111, 27.908862072160002, 2313.424072265625 ], [ 108.69109271548426, 27.908663428084218, 2313.424072265625 ], [ 108.691026167888623, 27.908055690364858, 2313.424072265625 ], [ 108.690791815280875, 27.907642602739756, 2313.424072265625 ], [ 108.690586055395514, 27.907355376523473, 2313.424072265625 ], [ 108.690502454410733, 27.907222066302158, 2313.424072265625 ], [ 108.690433669908529, 27.907065797952832, 2313.424072265625 ], [ 108.690355994837958, 27.906854701753105, 2313.424072265625 ], [ 108.690241766110063, 27.905930727471421, 2313.424072265625 ], [ 108.689033335377076, 27.904947559524427, 2313.424072265625 ], [ 108.687471052183042, 27.90350276812794, 2313.424072265625 ], [ 108.687161092793758, 27.903198974825944, 2313.424072265625 ] ] } },
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "2.23459300000e+003", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.692425317847025, 27.913211552784318, 2234.593017578125 ], [ 108.69211572405095, 27.913427843081401, 2234.593017578125 ], [ 108.692096266260066, 27.913517978037078, 2234.593017578125 ], [ 108.692091597858735, 27.914097567163168, 2234.593017578125 ], [ 108.692188233807244, 27.914740263160624, 2234.593017578125 ], [ 108.691917912926428, 27.915201489778553, 2234.593017578125 ], [ 108.692179476147743, 27.915491085859113, 2234.593017578125 ], [ 108.691507569651904, 27.91623934818119, 2234.593017578125 ], [ 108.691210979981264, 27.916524529255692, 2234.593017578125 ], [ 108.691317430331338, 27.916922006185104, 2234.593017578125 ], [ 108.690293561527923, 27.917722398921686, 2234.593017578125 ], [ 108.689744539560365, 27.918027728564336, 2234.593017578125 ], [ 108.689093208620392, 27.918253258412115, 2234.593017578125 ], [ 108.68834395222801, 27.91874917867214, 2234.593017578125 ], [ 108.687654087456281, 27.918758915398662, 2234.593017578125 ], [ 108.687409531652932, 27.918719440350301, 2234.593017578125 ], [ 108.686705673164255, 27.919269907201191, 2234.593017578125 ], [ 108.686305917803935, 27.919680027358876, 2234.593017578125 ], [ 108.684682106620855, 27.919490866139977, 2234.593017578125 ], [ 108.683464018590584, 27.919067324315797, 2234.593017578125 ], [ 108.682924951293103, 27.918458868958908, 2234.593017578125 ], [ 108.680548917473459, 27.917702312847076, 2234.593017578125 ], [ 108.679951842839742, 27.917691980106483, 2234.593017578125 ], [ 108.678361480609709, 27.917681416870675, 2234.593017578125 ], [ 108.677535288699715, 27.917478772904264, 2234.593017578125 ], [ 108.675794604900332, 27.916720603155422, 2234.593017578125 ], [ 108.674869593686623, 27.916465739313807, 2234.593017578125 ], [ 108.67350271556549, 27.916196337681573, 2234.593017578125 ], [ 108.672867166605769, 27.916049455002788, 2234.593017578125 ], [ 108.672299906274418, 27.91582081613549, 2234.593017578125 ], [ 108.671648913617673, 27.915350787341158, 2234.593017578125 ], [ 108.670811892121648, 27.914712144667277, 2234.593017578125 ], [ 108.670622989107429, 27.914630029777673, 2234.593017578125 ], [ 108.669943110621475, 27.914631182773856, 2234.593017578125 ], [ 108.669603958134246, 27.914735520957475, 2234.593017578125 ], [ 108.66902216537963, 27.91469341154313, 2234.593017578125 ], [ 108.668810305429702, 27.914637619222564, 2234.593017578125 ], [ 108.66813274140813, 27.914270165398396, 2234.593017578125 ], [ 108.667526845849935, 27.913948597632412, 2234.593017578125 ], [ 108.667300784385787, 27.913842781837332, 2234.593017578125 ], [ 108.666917070648708, 27.913777180485738, 2234.593017578125 ], [ 108.666416048629785, 27.913313844394732, 2234.593017578125 ], [ 108.666164953503312, 27.913139072228706, 2234.593017578125 ], [ 108.665275278921825, 27.912853526586009, 2234.593017578125 ], [ 108.664982774813168, 27.912787109108741, 2234.593017578125 ], [ 108.664190277178974, 27.912486360530185, 2234.593017578125 ], [ 108.663961586105899, 27.912559282252495, 2234.593017578125 ], [ 108.663608038579767, 27.912553614273399, 2234.593017578125 ], [ 108.663254230223473, 27.912583427434239, 2234.593017578125 ], [ 108.663012978492134, 27.91249082504509, 2234.593017578125 ], [ 108.662718478158297, 27.912531432231201, 2234.593017578125 ], [ 108.662447428090317, 27.912474642545359, 2234.593017578125 ], [ 108.662199313611382, 27.912530916020081, 2234.593017578125 ], [ 108.661762302286704, 27.912621204588575, 2234.593017578125 ], [ 108.66133970352162, 27.912397545619989, 2234.593017578125 ], [ 108.660691987101188, 27.912304896488717, 2234.593017578125 ], [ 108.660247101284568, 27.912404963530488, 2234.593017578125 ], [ 108.659991068060876, 27.912472198592408, 2234.593017578125 ], [ 108.65924789074883, 27.912594590484709, 2234.593017578125 ], [ 108.658516140882583, 27.912561311688812, 2234.593017578125 ], [ 108.65751923763834, 27.912203010845715, 2234.593017578125 ], [ 108.657208805444952, 27.912046706054038, 2234.593017578125 ], [ 108.656434343191734, 27.911876930397415, 2234.593017578125 ], [ 108.656088832650582, 27.911795496708141, 2234.593017578125 ], [ 108.656070838201728, 27.911776199236741, 2234.593017578125 ] ] } },
-            { "type": "Feature", "properties": { "FID_": "0", "Entity": "LWPolyline", "Layer": "景区石阶小路", "Color": "4", "Linetype": "CONTINUOUS", "Elevation": "2.10174600000e+003", "LineWt": "25", "RefName": "" }, "geometry": { "type": "LineString", "coordinates": [ [ 108.696947710000529, 27.91070355769963, 2101.74609375 ], [ 108.697242772903593, 27.910652253967136, 2101.74609375 ], [ 108.697968808041509, 27.910489165690031, 2101.74609375 ], [ 108.698879355871938, 27.909529565721108, 2101.74609375 ], [ 108.699084617804459, 27.908952134614207, 2101.74609375 ], [ 108.699874493309181, 27.90819802975437, 2101.74609375 ], [ 108.700642065354046, 27.907792668384353, 2101.74609375 ], [ 108.701122906094696, 27.907702701691711, 2101.74609375 ], [ 108.702190775739297, 27.907306269972985, 2101.74609375 ], [ 108.702238463619153, 27.906802890896348, 2101.74609375 ], [ 108.702164158375524, 27.90567196726203, 2101.74609375 ], [ 108.703119119232042, 27.904332473681126, 2101.74609375 ], [ 108.703866621072493, 27.903622687801256, 2101.74609375 ], [ 108.70379811882357, 27.902499134400042, 2101.74609375 ], [ 108.703553204910861, 27.902162507114063, 2101.74609375 ], [ 108.703752936399383, 27.901721957688974, 2101.74609375 ], [ 108.70386744036918, 27.901058898164116, 2101.74609375 ], [ 108.704351463294103, 27.899765701323336, 2101.74609375 ], [ 108.704678240493294, 27.899391157933941, 2101.74609375 ], [ 108.706365897228636, 27.899406083419333, 2101.74609375 ], [ 108.70676634704634, 27.899221085451156, 2101.74609375 ], [ 108.708080087238471, 27.899661708913136, 2101.74609375 ], [ 108.708590964403214, 27.899472672927637, 2101.74609375 ], [ 108.709125212311292, 27.899053422811228, 2101.74609375 ], [ 108.709252527529046, 27.898889882911934, 2101.74609375 ], [ 108.710006037766547, 27.898959579226478, 2101.74609375 ], [ 108.710398955039025, 27.898871206897102, 2101.74609375 ], [ 108.711269033297796, 27.898717024996145, 2101.74609375 ], [ 108.711724256554675, 27.898730473932275, 2101.74609375 ], [ 108.712411388497301, 27.898523648063968, 2101.74609375 ], [ 108.713129102862979, 27.897995205025349, 2101.74609375 ], [ 108.713874757232574, 27.897261932000085, 2101.74609375 ], [ 108.714385803766731, 27.897338482479331, 2101.74609375 ], [ 108.714719944625102, 27.897352008061574, 2101.74609375 ], [ 108.715030652445009, 27.897312758341194, 2101.74609375 ], [ 108.715312197477601, 27.897137214064639, 2101.74609375 ], [ 108.715726140432864, 27.897070816191405, 2101.74609375 ], [ 108.716163911603033, 27.897066303122848, 2101.74609375 ], [ 108.716898978716785, 27.897270021545083, 2101.74609375 ], [ 108.717781270198785, 27.897652366336288, 2101.74609375 ], [ 108.718732627914491, 27.897823383260619, 2101.74609375 ], [ 108.718954438965838, 27.897609766078645, 2101.74609375 ], [ 108.719940101167865, 27.897321215319181, 2101.74609375 ], [ 108.720598172195707, 27.897202047343903, 2101.74609375 ], [ 108.720946041075678, 27.897181295755001, 2101.74609375 ], [ 108.721350050397689, 27.896878064662541, 2101.74609375 ], [ 108.722309383354514, 27.896844794057309, 2101.74609375 ], [ 108.722870174916963, 27.896749424161214, 2101.74609375 ], [ 108.721838299267361, 27.896581447435054, 2101.74609375 ], [ 108.721232019529779, 27.896341961501843, 2101.74609375 ], [ 108.720783376762441, 27.896087932337306, 2101.74609375 ], [ 108.720791459917564, 27.895507007478241, 2101.74609375 ], [ 108.722024901485838, 27.894783518287792, 2101.74609375 ], [ 108.721713690136085, 27.894340641590976, 2101.74609375 ] ] } }
-        ]
-    }
-);
+function removeRoadBackgroundLayer(road) {
+    let dataSourceSSRoad = viewer.dataSources.getByName("ssroad");
+    viewer.dataSources.remove(dataSourceSSRoad[0]);
+
+    let dataSourceSRoad = viewer.dataSources.getByName("sroad");
+    viewer.dataSources.remove(dataSourceSRoad[0]);
+}
 
 function addAreaBackgroundLayer() {
     var parea = Cesium.GeoJsonDataSource.load(
@@ -859,7 +860,7 @@ handler.setInputAction(function(click) { // 点击事件
 }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
 //position_A绕position_B逆时针旋转angle度（角度）得到新点
-function rotatedPointByAngleXY(position_A, position_B, angle) {
+function rotatedPointByAngle(position_A, position_B, angle) {
     //以B点为原点建立局部坐标系（东方向为x轴,北方向为y轴,垂直于地面为z轴），得到一个局部坐标到世界坐标转换的变换矩阵
     var localToWorld_Matrix = Cesium.Transforms.eastNorthUpToFixedFrame(position_B);
     //求世界坐标到局部坐标的变换矩阵
@@ -877,14 +878,12 @@ function rotatedPointByAngleXY(position_A, position_B, angle) {
 }
 
 function rotateLeftRight(angle) {
-    var scene = viewer.scene;
-    var ellipsoid = scene.globe.ellipsoid;
-    var canvas = scene.canvas;
-    let center_position =  viewer.scene.camera.pickEllipsoid(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0), ellipsoid);
-
+    var canvas = viewer.scene.canvas;
+    let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
+    
     //viewer.scene.camera.rotate(center_position, Cesium.Math.toRadians(angle));
 
-    let new_position = rotatedPointByAngleXY(viewer.camera.position, center_position, angle);
+    let new_position = rotatedPointByAngle(viewer.camera.position, center_position, angle);
 
     var heading = viewer.camera.heading + Cesium.Math.toRadians(angle);
     var pitch = viewer.camera.pitch;
@@ -896,7 +895,8 @@ function rotateLeftRight(angle) {
             heading : heading,
             pitch : pitch,
             roll : roll
-        }
+        },
+        duration: 0.5
     });
 }
 
@@ -918,10 +918,8 @@ function rotatedPointByAngleYZ(position_A, position_B, angle) {
 }
 
 function rotateUpDown(angle) {
-    var scene = viewer.scene;
-    var ellipsoid = scene.globe.ellipsoid;
-    var canvas = scene.canvas;
-    let center_position =  viewer.scene.camera.pickEllipsoid(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0), ellipsoid);
+    var canvas = viewer.scene.canvas;
+    let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
 
     let new_position = rotatedPointByAngleYZ(viewer.camera.position, center_position, angle);
 
@@ -935,7 +933,8 @@ function rotateUpDown(angle) {
             heading : heading,
             pitch : pitch,
             roll : roll
-        }
+        },
+        duration: 0.5
     });
 }
 
@@ -992,7 +991,7 @@ function optMap(opt) {
     else if (opt.action === "rotateByUp") {
         rotateUpDown(opt.data);
     }
-    else if (opt.action === "opt.rotateByDown") {
+    else if (opt.action === "rotateByDown") {
         rotateUpDown(-opt.data);
     }
     else if (opt.action === "zoomIn") {
@@ -1019,6 +1018,14 @@ function setKey(event) {
     }
     else if (event.keyCode === 189) {
         viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
+    }
+    else if (event.keyCode === 65) {
+        addRoadBackgroundLayer({ "sroad" : "./sroad.geojson", "ssroad" : "./ssroad.geojson"});
+    } 
+    else if (event.keyCode === 68) {
+        removeRoadBackgroundLayer();
+    } else if (event.keyCode === 84) {
+        getUserTourHeights(userTourPostitions);
     }
 
     if (event.ctrlKey){
@@ -1067,7 +1074,7 @@ handler.setInputAction(function(wheelment) { // 滚轮事件
 }, Cesium.ScreenSpaceEventType.WHEEL);
 
 function getUserTourHeights(userTour) { // 异步调用
-    var userTourJSON = JSON.parse(userTour);
+    var userTourJSON = userTour;
     var positions = [];
     for (var i = 0; i < userTourJSON.length; i++) {
         positions.push(Cesium.Cartographic.fromDegrees(userTourJSON[i].longitude, userTourJSON[i].latitude));

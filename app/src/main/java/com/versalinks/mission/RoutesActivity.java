@@ -78,21 +78,31 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
                 protected void convert(View helper, int position, int viewType) {
                     Model_Route item = allList.get(position);
                     ImageView ivLogo = helper.findViewById(R.id.ivLogo);
+                    ImageView ivMode = helper.findViewById(R.id.ivMode);
+                    TextView tvDuration = helper.findViewById(R.id.tvDuration);
+                    TextView tvDifficult = helper.findViewById(R.id.tvDifficult);
                     TextView tvDistance = helper.findViewById(R.id.tvDistance);
                     TextView tvDistanceUp = helper.findViewById(R.id.tvDistanceUp);
-                    TextView tvDistanceDown = helper.findViewById(R.id.tvDistanceDown);
                     TextView tvTitle = helper.findViewById(R.id.tvTitle);
                     TextView tvDescription = helper.findViewById(R.id.tvDescription);
-                    TextView tvDate = helper.findViewById(R.id.tvDate);
-                    TextView tvShare = helper.findViewById(R.id.tvShare);
-                    tvDistance.setText(DataUtils.random());
-                    tvDistanceUp.setText(DataUtils.randomUpOrDown());
-                    tvDistanceDown.setText(DataUtils.randomUpOrDown());
-                    tvTitle.setText(DataUtils.randomTitle());
-                    tvDescription.setText(DataUtils.randomDescription());
-                    tvDate.setText(DataUtils.convertToDate(item.time));
+                    tvDuration.setText("大约需要" + DataUtils.convertToDuration(item.goDuration));
+                    tvDifficult.setText(item.goDifficult);
+                    tvDistance.setText(DataUtils.convertToDistance(item.distance));
+                    tvDistanceUp.setText(DataUtils.convertToDistance(item.goUp));
+                    tvTitle.setText(item.name);
+                    tvDescription.setText(item.description);
                 }
             };
+            adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, int viewType) {
+                    Model_Route model_route = allList.get(position);
+                    Intent intent = new Intent();
+                    intent.putExtra("model_route", model_route);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            });
             binding.recycler.setAdapter(adapter);
         }
         adapter.notifyDataSetChanged();

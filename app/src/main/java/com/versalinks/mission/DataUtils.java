@@ -7,7 +7,10 @@ import android.content.res.AssetManager;
 
 import androidx.annotation.NonNull;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -26,7 +29,9 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class DataUtils {
     private static DataUtils dataUtils;
@@ -58,8 +63,28 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            RealmResults<Model_Route> all = realm.where(Model_Route.class).findAll();
+                            RealmResults<Model_Route> all = realm.where(Model_Route.class).sort("createTime", Sort.DESCENDING).findAll();
                             List<Model_Route> routes = realm.copyFromRealm(all);
+                            emitter.onNext(routes);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+            }
+        });
+        return listObservable;
+    }
+
+    public Observable<List<Model_Record>> queryRecord() {
+        Observable<List<Model_Record>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Record>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Model_Record>> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            RealmResults<Model_Record> all = realm.where(Model_Record.class).sort("createTime", Sort.DESCENDING).findAll();
+                            List<Model_Record> routes = realm.copyFromRealm(all);
                             emitter.onNext(routes);
                             emitter.onComplete();
                         }
@@ -78,7 +103,7 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            RealmResults<Model_Marker> all = realm.where(Model_Marker.class).findAll();
+                            RealmResults<Model_Marker> all = realm.where(Model_Marker.class).sort("createTime", Sort.DESCENDING).findAll();
                             List<Model_Marker> markers = realm.copyFromRealm(all);
                             emitter.onNext(markers);
                             emitter.onComplete();
@@ -90,8 +115,7 @@ public class DataUtils {
         return listObservable;
     }
 
-    public Observable<List<Model_Route>> updateRoute(String name, Model_Route modelRoute) {
-        //Route{time=1590057601112, routeName='2020-05-21 18:40:01', gpsList= 0}
+    public Observable<List<Model_Route>> deleteRoute() {
         Observable<List<Model_Route>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Route>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Model_Route>> emitter) throws Exception {
@@ -99,34 +123,7 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            RealmResults<Model_Route> all = realm.where(Model_Route.class).equalTo("routeName", name).findAll();
-                            for (Model_Route model_route : all) {
-                                model_route.time = DataUtils.getNowMills();
-                                model_route.gpsList.clear();
-                                model_route.gpsList.addAll(modelRoute.gpsList);
-                            }
-                            List<Model_Route> routes = realm.copyFromRealm(all);
-                            emitter.onNext(routes);
-                            emitter.onComplete();
-                        }
-                    });
-                }
-
-            }
-        });
-        return listObservable;
-
-    }
-
-    public Observable<List<Model_Route>> deleteRoute(String name) {
-        Observable<List<Model_Route>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Route>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Model_Route>> emitter) throws Exception {
-                try (Realm realm = Realm.getDefaultInstance()) {
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(@NonNull Realm realm) {
-                            RealmResults<Model_Route> all = realm.where(Model_Route.class).equalTo("routeName", name).findAll();
+                            RealmResults<Model_Route> all = realm.where(Model_Route.class).findAll();
                             List<Model_Route> routes = realm.copyFromRealm(all);
                             all.deleteAllFromRealm();
                             emitter.onNext(routes);
@@ -140,7 +137,59 @@ public class DataUtils {
         return listObservable;
     }
 
-    public Observable<Model_Route> saveRoute(List<Model_GPS> gpsList) {
+    public Observable<List<Model_Route>> deleteRoute(String name) {
+        Observable<List<Model_Route>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Route>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Model_Route>> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            RealmResults<Model_Route> all = realm.where(Model_Route.class).equalTo("name", name).findAll();
+                            List<Model_Route> routes = realm.copyFromRealm(all);
+                            all.deleteAllFromRealm();
+                            emitter.onNext(routes);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+
+            }
+        });
+        return listObservable;
+    }
+
+    public Observable<Model_Record> saveRecord(List<Model_GPS> gpsList) {
+        Observable<Model_Record> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Record>() {
+            @Override
+            public void subscribe(ObservableEmitter<Model_Record> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            Model_Record route = realm.createObject(Model_Record.class);
+                            for (Model_GPS modelGps : gpsList) {
+                                Model_GPS model_gps = realm.createObject(Model_GPS.class);
+                                model_gps.latitude = modelGps.latitude;
+                                model_gps.longitude = modelGps.longitude;
+                                model_gps.height = modelGps.height;
+                                route.gpsList.add(model_gps);
+                            }
+                            route.createTime = DataUtils.getNowMills();
+                            route.name = DataUtils.getNowString();
+                            Model_Record model_route = realm.copyFromRealm(route);
+                            emitter.onNext(model_route);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+            }
+        });
+        return routeObservable;
+
+    }
+
+    public Observable<Model_Route> saveRoute(Model_Route modelRoute) {
         Observable<Model_Route> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Route>() {
             @Override
             public void subscribe(ObservableEmitter<Model_Route> emitter) throws Exception {
@@ -148,18 +197,8 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            Model_Route route = realm.createObject(Model_Route.class);
-                            for (Model_GPS modelGps : gpsList) {
-                                Model_GPS model_gps = realm.createObject(Model_GPS.class);
-                                model_gps.latitude = modelGps.latitude;
-                                model_gps.longitude = modelGps.longitude;
-                                model_gps.altitude = modelGps.altitude;
-                                route.gpsList.add(model_gps);
-                            }
-                            route.time = DataUtils.getNowMills();
-                            route.routeName = DataUtils.getNowString();
-                            Model_Route model_route = realm.copyFromRealm(route);
-                            emitter.onNext(model_route);
+                            realm.copyToRealmOrUpdate(modelRoute);
+                            emitter.onNext(modelRoute);
                             emitter.onComplete();
                         }
                     });
@@ -191,7 +230,7 @@ public class DataUtils {
                             Model_GPS object1 = realm.createObject(Model_GPS.class);
                             object1.latitude = gps.latitude;
                             object1.longitude = gps.longitude;
-                            object1.altitude = gps.altitude;
+                            object1.height = gps.height;
                             item.gps = object1;
                             item.photos.addAll(photos);
                             Model_Marker modelMarker = realm.copyFromRealm(item);
@@ -206,26 +245,45 @@ public class DataUtils {
 
     }
 
-    public static String random() {
+    public static int randomDuration() {
+        Random random = new Random();
+        return random.nextInt(1000 * 60 * 300);
+    }
+
+    public static double randomDistance() {
         Random random = new Random();
         double random1 = Math.random();
         double v = 600 + random1 * random.nextInt(3000);
-        return convertToDistance(v);
+        return v;
     }
 
-    public static String randomUpOrDown() {
+    public static double randomHeight() {
+        Random random = new Random();
+        double random1 = Math.random();
+        return random1 * random.nextInt(500);
+    }
+
+    public static double randomUpOrDown() {
         Random random = new Random();
         double random1 = Math.random();
         double v = 100 + random1 * random.nextInt(500);
-        return convertToDistance(v);
+        return v;
     }
 
     public static String randomTitle() {
-        return "武大科技园-光谷软件园";
+        return "金顶-九龙池";
+    }
+
+    public static String randomGoMode() {
+        return "walk";
+    }
+
+    public static String randomGoDiffclut() {
+        return "easy";
     }
 
     public static String randomDescription() {
-        return "从武大科技园出发步行到光谷软件园，沿路经过万科红郡、万科城市花园、关山大道、关南小区等，全长大约3公里";
+        return "从金顶出发步行到九龙池，沿路经过护国寺、棉絮岭、薄刀岭、静心池等，全长大约3公里";
     }
 
     public static String convertToDistance(double distance) {
@@ -245,6 +303,23 @@ public class DataUtils {
 
     public static String convertToDate(long seconds, SimpleDateFormat format) {
         return TimeUtils.millis2String(seconds, format);
+    }
+
+    public static String convertToDuration(long seconds) {
+        String durationString;
+        if (seconds < 60 * 1000) {
+            durationString = "1分钟";
+        } else if (seconds < 60 * 60 * 1000) {
+            int i = new BigDecimal(seconds / (60 * 1000)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            durationString = i + "分钟";
+        } else {
+            int h = new BigDecimal(seconds / (60 * 60 * 1000)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            int m = new BigDecimal((seconds % (60 * 60 * 1000) / 60)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            String hString = h + "小时";
+            String mString = m + "分钟";
+            durationString = hString + mString;
+        }
+        return durationString;
     }
 
     public static String convertToTime(long seconds) {
@@ -287,7 +362,7 @@ public class DataUtils {
         return TimeUtils.getNowString();
     }
 
-    public String getJson(Context context, String fileName) {
+    public static String getJson(Context context, String fileName) {
         StringBuilder stringBuilder = new StringBuilder();
         try {
             AssetManager assetManager = context.getAssets();
@@ -318,5 +393,66 @@ public class DataUtils {
                 .imageEngine(new GlideEngine())
                 .showPreview(true) // Default is `true`
                 .forResult(code);
+    }
+    public void createRouteByJson(Context context) {
+        BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onDataDeal(Model_Route route, String message) {
+                if (route != null) {
+                    String json = new Gson().toJson(route);
+                    AndroidUtil.saveText(AndroidUtil.getTempTxtFile(context, "route.txt"), json);
+                } else {
+                    LogUtils.e("null");
+                }
+            }
+        };
+        String json = DataUtils.getJson(context, "route.json");
+        Model_Route o = new Gson().fromJson(json, new TypeToken<Model_Route>() {
+        }.getType());
+        Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(o);
+        baseOb.bindObed(routeObservable);
+    }
+
+    public void createRoute(Context context) {
+        BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onDataDeal(Model_Route route, String message) {
+                if (route != null) {
+                    String json = new Gson().toJson(route);
+                    AndroidUtil.saveText(AndroidUtil.getTempTxtFile(context, "route.txt"), json);
+                } else {
+                    LogUtils.e("null");
+                }
+            }
+        };
+        Model_Route model_route = new Model_Route();
+        model_route.createTime = DataUtils.getNowMills();
+        model_route.goDuration = DataUtils.randomDuration();
+        model_route.name = DataUtils.randomTitle();
+        model_route.description = DataUtils.randomDescription();
+        model_route.goMode = DataUtils.randomGoMode();
+        model_route.goDifficult = DataUtils.randomGoDiffclut();
+        model_route.distance = DataUtils.randomDistance();
+        model_route.goUp = DataUtils.randomUpOrDown();
+        model_route.goDown = DataUtils.randomUpOrDown();
+        String json = DataUtils.getJson(context, "route_gps_list.json");
+        List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
+        }.getType());
+        if (o != null) {
+            model_route.gpsList = new RealmList<>();
+            model_route.gpsList.addAll(o);
+        }
+        Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(model_route);
+        baseOb.bindObed(routeObservable);
     }
 }

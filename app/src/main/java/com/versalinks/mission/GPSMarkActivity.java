@@ -113,6 +113,7 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
         binding.tvType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideSoftInput();
                 MarkerTypeChoose markerTypeChoose = new MarkerTypeChoose(context);
                 markerTypeChoose.showChoose(new MarkerTypeChoose.ChooseListener() {
                     @Override
@@ -129,6 +130,7 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
         binding.tvDate.setText(s);
         binding.tvType.setText("默认动物");
         binding.tvType.setTag(new Model_MarkerType("默认动物"));
+        binding.etName.requestFocus();
         Intent intent = new Intent(this, GPSService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
@@ -138,7 +140,7 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
             ToastUtils.showShort("请输入标注名称");
             return false;
         }
-        if (TextUtils.isEmpty(binding.tvType.getText())) {
+        if (!(binding.tvType.getTag() instanceof Model_MarkerType)) {
             ToastUtils.showShort("请选择标注类型");
             return false;
         }
@@ -146,10 +148,10 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
             ToastUtils.showShort("定位信息未找到，请稍后重试");
             return false;
         }
-        if (allList.isEmpty()) {
-            ToastUtils.showShort("请添加照片");
-            return false;
-        }
+//        if (allList.isEmpty()) {
+//            ToastUtils.showShort("请添加照片");
+//            return false;
+//        }
 
         return true;
     }
@@ -250,6 +252,9 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
 
     @Override
     public void onDestroy() {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
         if (gpsService != null) {
             gpsService.removeGPSListener(gpsListener);
             unbindService(connection);
