@@ -13,20 +13,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.bumptech.glide.Glide;
 import com.scwang.smart.refresh.header.ClassicsHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.simple.SimpleMultiListener;
-import com.versalinks.mission.databinding.ActivityRoutesBinding;
+import com.versalinks.mission.databinding.ActivityRecordsBinding;
 
-import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
 
-public class RecordsActivity extends BaseActivity<ActivityRoutesBinding> {
+public class RecordsActivity extends BaseActivity<ActivityRecordsBinding> {
     private List<Model_Record> allList = new ArrayList<>();
     private BaseAdapter<Model_Record> adapter;
 
@@ -51,19 +48,7 @@ public class RecordsActivity extends BaseActivity<ActivityRoutesBinding> {
         });
         binding.recycler.addItemDecoration(new HLineDividerAll(Color.TRANSPARENT, 10f));
         binding.recycler.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-        binding.ivLogo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        Intent intent = getIntent();
-        Serializable thumbFileSer = intent.getSerializableExtra("thumbFile");
-        if (thumbFileSer instanceof File) {
-            if (((File) thumbFileSer).exists() && ((File) thumbFileSer).length() > 0) {
-                Glide.with(context).load(thumbFileSer).centerCrop().into(binding.ivLogo);
-            }
-        }
+
         loadData();
     }
 
@@ -73,14 +58,13 @@ public class RecordsActivity extends BaseActivity<ActivityRoutesBinding> {
             allList.addAll(list);
         }
         if (adapter == null) {
-            adapter = new BaseAdapter<Model_Record>(R.layout.item_route, allList) {
+            adapter = new BaseAdapter<Model_Record>(R.layout.item_record, allList) {
                 @Override
                 protected void convert(View helper, int position, int viewType) {
                     Model_Record item = allList.get(position);
                     ImageView ivLogo = helper.findViewById(R.id.ivLogo);
                     TextView tvDistance = helper.findViewById(R.id.tvDistance);
                     TextView tvDistanceUp = helper.findViewById(R.id.tvDistanceUp);
-                    TextView tvDistanceDown = helper.findViewById(R.id.tvDistanceDown);
                     TextView tvTitle = helper.findViewById(R.id.tvTitle);
                     TextView tvDescription = helper.findViewById(R.id.tvDescription);
                     TextView tvDate = helper.findViewById(R.id.tvDate);
@@ -128,6 +112,6 @@ public class RecordsActivity extends BaseActivity<ActivityRoutesBinding> {
     @NonNull
     @Override
     protected View createView(Context context) {
-        return createViewByID(R.layout.activity_routes);
+        return createViewByID(R.layout.activity_records);
     }
 }

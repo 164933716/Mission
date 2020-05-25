@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.realm.RealmList;
 
 public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -86,11 +87,18 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
             @Override
             public void onClick(View v) {
                 if (check()) {
-                    long createTimeTemp = createTime;
                     String name = binding.etName.getText().toString();
                     Model_GPS tag = (Model_GPS) binding.tvGps.getTag();
                     Model_MarkerType tag1 = (Model_MarkerType) binding.tvType.getTag();
-                    Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(createTimeTemp, name, tag1, tag, allList);
+
+                    Model_Marker item = new Model_Marker();
+                    item.createTime = createTime;
+                    item.name = name;
+                    item.type = tag1;
+                    item.gps = tag;
+                    item.photos = new RealmList<>();
+                    item.photos.addAll(allList);
+                    Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
                     BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
                         @Override
                         public void onDataDeal(Model_Marker data, String message) {

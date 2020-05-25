@@ -67,8 +67,8 @@ public class MarkersActivity extends BaseActivity<ActivityMarkersBinding> {
                     ImageView ivDelete = helper.findViewById(R.id.ivDelete);
                     TextView tvDistance = helper.findViewById(R.id.tvDistance);
                     tvDistance.setText(DataUtils.convertToDistance(item.gps.height));
-                    tvTitle.setText(item.markerName);
-                    tvDescription.setText(item.markerType.name);
+                    tvTitle.setText(item.name);
+                    tvDescription.setText(item.type.name);
                     tvDate.setText(DataUtils.convertToDate(item.createTime));
                     ivDelete.setOnClickListener(new View.OnClickListener() {
                         @Override

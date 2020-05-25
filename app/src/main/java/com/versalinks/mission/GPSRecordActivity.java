@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.realm.RealmList;
 
 public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -110,7 +111,15 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             gpsService.removeTrackListener(trackListener);
             binding.tvStartOrPause.setText("开始");
             binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
-            Observable<Model_Record> o = DataUtils.getInstance().saveRecord(gpsList);
+            Model_Record model_record = new Model_Record();
+            model_record.createTime = DataUtils.getNowMills();
+            model_record.distance = gpsService.getDistance();
+            model_record.goUp = DataUtils.randomUpOrDown();
+            model_record.name = DataUtils.getNowString();
+            model_record.description = DataUtils.randomDescription();
+            model_record.gpsList = new RealmList<>();
+            model_record.gpsList.addAll(gpsList);
+            Observable<Model_Record> o = DataUtils.getInstance().saveRecord(model_record);
             BaseOb<Model_Record> baseOb = new BaseOb<Model_Record>() {
                 @Override
                 public void onDataDeal(Model_Record data, String message) {

@@ -48,7 +48,6 @@
 
         </LinearLayout>
 
-
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/refresh"
             android:layout_width="match_parent"

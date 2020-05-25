@@ -4,10 +4,12 @@ import java.io.Serializable;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class Model_Record extends RealmObject implements Serializable {
     public long createTime;
     public long goDuration;
+    @PrimaryKey
     public String name;
     public String description;
     public String goMode;

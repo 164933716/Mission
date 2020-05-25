@@ -159,7 +159,7 @@ public class DataUtils {
         return listObservable;
     }
 
-    public Observable<Model_Record> saveRecord(List<Model_GPS> gpsList) {
+    public Observable<Model_Record> saveRecord(Model_Record model_record) {
         Observable<Model_Record> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Record>() {
             @Override
             public void subscribe(ObservableEmitter<Model_Record> emitter) throws Exception {
@@ -167,18 +167,8 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            Model_Record route = realm.createObject(Model_Record.class);
-                            for (Model_GPS modelGps : gpsList) {
-                                Model_GPS model_gps = realm.createObject(Model_GPS.class);
-                                model_gps.latitude = modelGps.latitude;
-                                model_gps.longitude = modelGps.longitude;
-                                model_gps.height = modelGps.height;
-                                route.gpsList.add(model_gps);
-                            }
-                            route.createTime = DataUtils.getNowMills();
-                            route.name = DataUtils.getNowString();
-                            Model_Record model_route = realm.copyFromRealm(route);
-                            emitter.onNext(model_route);
+                            realm.copyToRealmOrUpdate(model_record);
+                            emitter.onNext(model_record);
                             emitter.onComplete();
                         }
                     });
@@ -209,11 +199,7 @@ public class DataUtils {
 
     }
 
-    public Observable<Model_Marker> saveMarker(long createTime,
-                                               String markerName,
-                                               Model_MarkerType markerType,
-                                               Model_GPS gps,
-                                               List<String> photos) {
+    public Observable<Model_Marker> saveMarker(Model_Marker modelMarker) {
         Observable<Model_Marker> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Marker>() {
             @Override
             public void subscribe(ObservableEmitter<Model_Marker> emitter) throws Exception {
@@ -221,19 +207,7 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            Model_Marker item = realm.createObject(Model_Marker.class);
-                            item.createTime = createTime;
-                            item.markerName = markerName;
-                            Model_MarkerType object = realm.createObject(Model_MarkerType.class);
-                            object.name = markerType.name;
-                            item.markerType = object;
-                            Model_GPS object1 = realm.createObject(Model_GPS.class);
-                            object1.latitude = gps.latitude;
-                            object1.longitude = gps.longitude;
-                            object1.height = gps.height;
-                            item.gps = object1;
-                            item.photos.addAll(photos);
-                            Model_Marker modelMarker = realm.copyFromRealm(item);
+                            realm.copyToRealmOrUpdate(modelMarker);
                             emitter.onNext(modelMarker);
                             emitter.onComplete();
                         }
@@ -268,6 +242,13 @@ public class DataUtils {
         double random1 = Math.random();
         double v = 100 + random1 * random.nextInt(500);
         return v;
+    }
+
+    public static double randomUpOrDown(double max) {
+        Random random = new Random();
+        double random1 = Math.random();
+        double v = max - 10 - random1 * random.nextInt(500);
+        return Math.abs(v);
     }
 
     public static String randomTitle() {
@@ -394,6 +375,7 @@ public class DataUtils {
                 .showPreview(true) // Default is `true`
                 .forResult(code);
     }
+
     public void createRouteByJson(Context context) {
         BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
             @Override
