@@ -422,6 +422,57 @@ public class DataUtils {
         baseOb.bindObed(routeObservable);
     }
 
+    public void createMarker静心池() {
+        Model_Marker item = new Model_Marker();
+        item.createTime = getNowMills();
+        item.name = "静心池";
+        item.type = new Model_MarkerType("景点");
+        item.gps = new Model_GPS(27.91111937344167, 108.6853329610836, 1829.925377177459);
+        item.photos = new RealmList<>();
+        Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
+        BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
+            @Override
+            public void onDataDeal(Model_Marker data, String message) {
+
+            }
+        };
+        baseOb.bindObed(o);
+    }
+
+    public void createMarker九龙池() {
+        Model_Marker item = new Model_Marker();
+        item.createTime = getNowMills();
+        item.name = "九龙池";
+        item.type = new Model_MarkerType("景点");
+        item.gps = new Model_GPS(27.90580461792431, 108.6793671948208, 1651.492238157933);
+        item.photos = new RealmList<>();
+        Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
+        BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
+            @Override
+            public void onDataDeal(Model_Marker data, String message) {
+
+            }
+        };
+        baseOb.bindObed(o);
+    }
+
+    public void createMarker鱼坳() {
+        Model_Marker item = new Model_Marker();
+        item.createTime = getNowMills();
+        item.name = "鱼坳";
+        item.type = new Model_MarkerType("景点");
+        item.gps = new Model_GPS(27.9011899072281, 108.7111769767164, 1348.817705876677);
+        item.photos = new RealmList<>();
+        Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
+        BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
+            @Override
+            public void onDataDeal(Model_Marker data, String message) {
+
+            }
+        };
+        baseOb.bindObed(o);
+    }
+
     public void createRoute(Context context) {
         BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
             @Override
@@ -439,24 +490,60 @@ public class DataUtils {
                 }
             }
         };
-        Model_Route model_route = new Model_Route();
-        model_route.createTime = DataUtils.getNowMills();
-        model_route.goDuration = DataUtils.randomDuration();
-        model_route.name = DataUtils.randomTitle();
-        model_route.description = DataUtils.randomDescription();
-        model_route.goMode = DataUtils.randomGoMode();
-        model_route.goDifficult = DataUtils.randomGoDiffclut();
-        model_route.distance = DataUtils.randomDistance();
-        model_route.goUp = DataUtils.randomUpOrDown();
-        model_route.goDown = DataUtils.randomUpOrDown();
+        Model_Route item = new Model_Route();
+        item.createTime = DataUtils.getNowMills();
+        item.goDuration = DataUtils.randomDuration();
+        item.name = DataUtils.randomTitle();
+        item.description = DataUtils.randomDescription();
+        item.goMode = DataUtils.randomGoMode();
+        item.goDifficult = DataUtils.randomGoDiffclut();
+        item.distance = DataUtils.randomDistance();
+        item.goUp = DataUtils.randomUpOrDown();
+        item.goDown = DataUtils.randomUpOrDown();
         String json = DataUtils.getJson(context, "route_gps_list.json");
         List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
         }.getType());
         if (o != null) {
-            model_route.gpsList = new RealmList<>();
-            model_route.gpsList.addAll(o);
+            item.gpsList = new RealmList<>();
+            item.gpsList.addAll(o);
         }
-        Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(model_route);
+        Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(item);
+        baseOb.bindObed(routeObservable);
+    }
+
+    public void createRecord(Context context) {
+        BaseOb<Model_Record> baseOb = new BaseOb<Model_Record>() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onDataDeal(Model_Record route, String message) {
+                if (route != null) {
+                } else {
+                    LogUtils.e("null");
+                }
+            }
+        };
+        Model_Record item = new Model_Record();
+        item.createTime = DataUtils.getNowMills();
+        item.goDuration = DataUtils.randomDuration();
+        item.name = DataUtils.randomTitle();
+        item.description = DataUtils.randomDescription();
+        item.goMode = DataUtils.randomGoMode();
+        item.goDifficult = DataUtils.randomGoDiffclut();
+        item.distance = DataUtils.randomDistance();
+        item.goUp = DataUtils.randomUpOrDown();
+        item.goDown = DataUtils.randomUpOrDown();
+        String json = DataUtils.getJson(context, "route_gps_list.json");
+        List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
+        }.getType());
+        if (o != null) {
+            item.gpsList = new RealmList<>();
+            item.gpsList.addAll(o);
+        }
+        Observable<Model_Record> routeObservable = DataUtils.getInstance().saveRecord(item);
         baseOb.bindObed(routeObservable);
     }
 }

@@ -61,9 +61,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        webView.evaluateJavascript(OptUtils.recenter(model_gps), null);
+                        webView.evaluateJavascript(OptUtils.recenter(), null);
                     }
-                }, 1000);
+                }, 500);
                 needAnimal = false;
             }
         }
@@ -260,10 +260,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.ivCurrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object tag = binding.ivCurrent.getTag();
-                if (tag instanceof Model_GPS) {
-                    webView.evaluateJavascript(OptUtils.recenter((Model_GPS) tag), null);
-                }
+                webView.evaluateJavascript(OptUtils.recenter(), null);
             }
         });
         binding.ivCompass.setOnClickListener(new View.OnClickListener() {
@@ -421,13 +418,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     binding.tvRouteInfoTitle.setText(null);
                     binding.tvRouteInfoDescription.setText(null);
 
-
-                    LogUtils.e(model_markerSer.toString());
                     Model_Marker modelMarker = (Model_Marker) model_markerSer;
-                    Model_GPS model_gps = new Model_GPS(27.9112084171d, 108.6940465145d, 0);
-                    modelMarker.gps = model_gps;
                     webView.evaluateJavascript(OptUtils.updatePoiLocation(modelMarker), null);
-                    webView.evaluateJavascript(OptUtils.recenter(modelMarker.gps), null);
                     binding.containerNormalAndRoute.setVisibility(View.GONE);
                     binding.containerMarker.setVisibility(View.VISIBLE);
                     binding.tvMarkerName.setText(modelMarker.name);
@@ -458,6 +450,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void showRoute(Model_Route item) {
+        webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
+        binding.tvMarkerName.setText(null);
+        binding.tvMarkerGPS.setText(null);
+        binding.tvMarkerHeight.setText(null);
+        binding.containerMarker.setVisibility(View.GONE);
+        binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
+
         RealmList<Model_GPS> gpsList = item.gpsList;
         webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
         //展示线路
@@ -520,6 +519,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void showRecord(Model_Record item) {
+        webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
+        binding.tvMarkerName.setText(null);
+        binding.tvMarkerGPS.setText(null);
+        binding.tvMarkerHeight.setText(null);
+        binding.containerMarker.setVisibility(View.GONE);
+        binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
+
+
         RealmList<Model_GPS> gpsList = item.gpsList;
         webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
         //展示线路

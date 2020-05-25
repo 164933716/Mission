@@ -136,9 +136,9 @@ var center = {x : (west + east) / 2, y : (south + north) / 2};
 // }
 
 
-function recenter(location) {
+function recenter() {
 
-    var position = Cesium.Cartesian3.fromDegrees(location.longitude, location.latitude, location.height);
+    var position = Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, userLocation.height);
 
     var pitch = Cesium.Math.toRadians(-30);
     var angle = 360 / 10;
@@ -295,7 +295,7 @@ var userEntity = viewer.entities.add({
 function updateUserLocation(location) {
     userLocation = location;
 
-    promise = Cesium.sampleTerrain(terrainProvider, 14, [Cesium.Cartographic.fromDegrees(location.longitude, location.latitude)]);
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, [Cesium.Cartographic.fromDegrees(location.longitude, location.latitude)]);
     Cesium.when(promise, function (updatedPositions) {
         if (updatedPositions.length > 0) {
             var htmlOverlay = document.getElementById('imgOverlay');
@@ -317,9 +317,7 @@ function updateUserLocation(location) {
     });
 }
 
-updateUserLocation({longitude: 108.690813, latitude: 27.918094, height: 2416.7601452398626});
-
-recenter(userLocation);
+updateUserLocation(userLocation);
 
 var userTourPostitions = [
     // {
@@ -557,12 +555,12 @@ var userTourPostitions = [
 function clickPoi() {
     viewer.clock.stopTime = viewer.clock.startTime;
 
-    //window.Android.fetchRoute(JSON.stringify(userLocation), JSON.stringify(pois[this.value]));
-    //getUserTourHeights(JSON.stringify(userTourPostitions));
     updateUserTour(userTourPostitions);
 }
 
 function updatePoiLocation(pois) {
+    clearPoiLocation();
+
     var positions = [];
     for (var i = 0; i < pois.length; i++) {
         var htmlOverlay = document.createElement('div');
@@ -580,35 +578,45 @@ function updatePoiLocation(pois) {
         positions.push(Cesium.Cartographic.fromDegrees(pois[i].longitude, pois[i].latitude));
     }
 
-    promise = Cesium.sampleTerrain(terrainProvider, 14, positions);
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
     Cesium.when(promise, function (updatedPositions) {
         if (updatedPositions.length > 0) {
             viewer.scene.preRender.addEventListener(function(l, t) {
                 for (var i = 0; i < updatedPositions.length; i++) {
                     var htmlOverlay = document.getElementById('htmlOverlay' + i);
-                    var scratch = new Cesium.Cartesian2();
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
 
-                    pois[htmlOverlay.value].height = updatedPositions[htmlOverlay.value].height;
+                        pois[htmlOverlay.value].height = updatedPositions[htmlOverlay.value].height;
 
-                    var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
-                    var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
-                    if (Cesium.defined(canvasPosition)) {
-                        htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
-                        htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
 
-                        htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
                     }
                 }
+            });
+            viewer.camera.flyTo({
+                destination : Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[0].longitude), Cesium.Math.toDegrees(updatedPositions[0].latitude), 12000)
             });
         }
     });
 }
 
+function clearPoiLocation() {
+    var elements = document.getElementsByClassName('imgContent');
+    for (i = 0; i < elements.length; i++) {
+        elements[i].parentNode.removeChild(elements[i]);
+    }
+}
+
 var pois = [
     {name: "金顶", longitude: 108.6940465145, latitude: 27.9112084171, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
 ];
-
-updatePoiLocation(pois);
 
 var userTour = null;
 
@@ -880,6 +888,8 @@ function rotatedPointByAngle(position_A, position_B, angle) {
 function rotateLeftRight(angle) {
     var canvas = viewer.scene.canvas;
     let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
+
+    //var cartographic = Cesium.Cartographic.fromCartesian(center_position);
     
     //viewer.scene.camera.rotate(center_position, Cesium.Math.toRadians(angle));
 
@@ -953,34 +963,7 @@ function changeMapMode() {
 document.addEventListener('keydown', function (e) {
     setKey(e);
 }, false);
-//
-//function optMap(action, data) {
-//    if (action === "rotateByLeft") {
-//        let angle = parseInt(data);
-//        rotateLeftRight(angle);
-//    }
-//    else if (action === "rotateByRight") {
-//        let angle = parseInt(data);
-//        rotateLeftRight(-angle);
-//    }
-//    else if (action === "rotateByUp") {
-//        let angle = parseInt(data);
-//        rotateUpDown(angle);
-//    }
-//    else if (action === "rotateByDown") {
-//        let angle = parseInt(data);
-//        rotateUpDown(-angle);
-//    }
-//    else if (action === "zoomIn") {
-//        viewer.camera.zoomIn(viewer.camera.positionCartographic.height / 2);
-//    }
-//    else if (action === "zoomOut") {
-//        viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
-//    }
-//    else if (action === "pointToNorth") {
-//        rotateLeftRight(Cesium.Math.toDegrees(-viewer.camera.heading));
-//    }
-//}
+
 function optMap(opt) {
     if (opt.action === "rotateByLeft") {
         rotateLeftRight(opt.data);
@@ -1025,7 +1008,9 @@ function setKey(event) {
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
     } else if (event.keyCode === 84) {
-        getUserTourHeights(userTourPostitions);
+        //getUserTourHeights(userTourPostitions);
+        updatePoiLocation(pois);
+        //recenter();
     }
 
     if (event.ctrlKey){
@@ -1080,20 +1065,22 @@ function getUserTourHeights(userTour) { // 异步调用
         positions.push(Cesium.Cartographic.fromDegrees(userTourJSON[i].longitude, userTourJSON[i].latitude));
     }
 
-    promise = Cesium.sampleTerrain(terrainProvider, 14, positions);
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
     Cesium.when(promise, function (updatedPositions) {
         if (updatedPositions.length > 0) {
             for (var i = 0; i <userTourJSON.length; i++) {
                 userTourJSON[i].height = updatedPositions[i].height;
             }
-            window.Android.putUserTourHeights(JSON.stringify(userTourJSON));
+            if (window.Android) {
+                window.Android.putUserTourHeights(JSON.stringify(userTourJSON));
+            }
         }
     });
 }
 
 var options = {};
 function resetView() {
-    recenter(userLocation);
+    recenter();
 }
 // 用于在使用重置导航重置地图视图时设置默认视图控制。接受的值是Cesium.Cartographic 和 Cesium.Rectangle。
 options.defaultResetView = resetView;
@@ -1119,5 +1106,7 @@ viewer.scene.postRender.addEventListener(function () {
         pitch : viewer.camera.pitch,
         roll : viewer.camera.roll
     };
-    window.Android.putCameraParam(JSON.stringify(cameraParam));
+    if (window.Android) {
+        window.Android.putCameraParam(JSON.stringify(cameraParam));
+    }
 });

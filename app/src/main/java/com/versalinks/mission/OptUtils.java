@@ -36,8 +36,8 @@ public class OptUtils {
         return "javascript:optMap(" + getJson("zoomOut", null) + ")";
     }
 
-    public static String recenter(Model_GPS modelGps) {
-        return "javascript:recenter(" + getJson(modelGps) + ")";
+    public static String recenter() {
+        return "javascript:recenter()";
     }
 
     public static String updateLocation(Model_GPS modelGps) {
@@ -66,7 +66,6 @@ public class OptUtils {
     public static String updatePoiLocation(Model_Marker modelMarker) {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        //108.6793671948208,27.90580461792431,1651.492238157933
         map.put("name", modelMarker.name);
         map.put("latitude", modelMarker.gps.latitude);
         map.put("longitude", modelMarker.gps.longitude);
@@ -77,7 +76,7 @@ public class OptUtils {
     }
 
     public static String clearPoiLocation() {
-        return "javascript:updatePoiLocation(" + "[]" + ")";
+        return "javascript:clearPoiLocation()";
     }
 
     public static String clearUserTour() {

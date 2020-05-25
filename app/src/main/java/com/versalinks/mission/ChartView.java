@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import androidx.annotation.Nullable;
 
 import com.amap.api.maps.AMapUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -18,6 +19,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,30 +42,46 @@ public class ChartView extends LineChart {
     }
 
     public void setPoints(List<Model_GPS> gpsList) {
+
+
         List<Entry> entries = new ArrayList<>();
         float distance = 0;
-
+        float minY = 0;
+        float maxY = 0;
         for (int i = 0; i < gpsList.size(); i++) {
             Model_GPS modelGps = gpsList.get(i);
             if (modelGps == null) {
                 continue;
             }
 
+            float height = (float) modelGps.height;
             if (i == 0) {
-                Entry entry = new Entry(0f, (float) modelGps.height);
+                Entry entry = new Entry(0f, height);
+                minY = height;
+                maxY = height;
                 entries.add(entry);
             } else {
+                if (minY > height) {
+                    minY = height;
+                }
+                if (maxY < height) {
+                    maxY = height;
+                }
                 Model_GPS modelGpsLast = gpsList.get(i - 1);
                 if (modelGpsLast == null) {
                     continue;
                 }
                 float v = AMapUtils.calculateLineDistance(modelGps.getLatLng(), modelGpsLast.getLatLng());
                 distance += v;
-                Entry entry = new Entry(distance, (float) modelGps.height);
+                Entry entry = new Entry(distance, height);
                 entries.add(entry);
             }
         }
-        initLineChart(0, distance, 2000, 2500, entries);
+        LogUtils.e("minY    " + minY);
+        LogUtils.e("maxY    " + maxY);
+        int y1 = new BigDecimal(minY).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+        int y2 = new BigDecimal(maxY).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+        initLineChart(0, distance, y1, y2, entries);
     }
 
     /**

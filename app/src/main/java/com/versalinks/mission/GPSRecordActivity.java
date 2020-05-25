@@ -31,8 +31,6 @@ import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.versalinks.mission.databinding.ActivityGpsRecordBinding;
 
 import java.util.ArrayList;
@@ -113,6 +111,10 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             gpsService.removeTrackListener(trackListener);
             binding.tvStartOrPause.setText("开始");
             binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
+            if (gpsList.size() < 2) {
+                ToastUtils.showShort("轨迹信息不可用，无法保存");
+                return;
+            }
             Model_Record model_record = new Model_Record();
             model_record.createTime = DataUtils.getNowMills();
             model_record.distance = DataUtils.randomDistance();
@@ -120,13 +122,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             model_record.name = DataUtils.getNowString();
             model_record.description = DataUtils.randomDescription();
             model_record.gpsList = new RealmList<>();
-            String json = DataUtils.getJson(context, "route_gps_list.json");
-            List<Model_GPS> gpsListTemp = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
-            }.getType());
-            if (gpsListTemp != null) {
-                model_record.gpsList.addAll(gpsListTemp);
-            }
-//            model_record.gpsList.addAll(gpsList);
+            model_record.gpsList.addAll(gpsList);
             Observable<Model_Record> o = DataUtils.getInstance().saveRecord(model_record);
             BaseOb<Model_Record> baseOb = new BaseOb<Model_Record>() {
                 @Override

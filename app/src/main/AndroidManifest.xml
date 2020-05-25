@@ -90,7 +90,6 @@
         <activity
             android:name=".GPSMarkActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateVisible"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".RecordsActivity"

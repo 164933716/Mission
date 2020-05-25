@@ -27,6 +27,10 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
             RealmConfiguration config = new RealmConfiguration.Builder().directory(AndroidUtil.getFolder(context)).deleteRealmIfMigrationNeeded().schemaVersion(1).build();
             Realm.setDefaultConfiguration(config);
             DataUtils.getInstance().createRoute(context);
+            DataUtils.getInstance().createMarker九龙池();
+            DataUtils.getInstance().createMarker静心池();
+            DataUtils.getInstance().createMarker鱼坳();
+            DataUtils.getInstance().createRecord(context);
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
