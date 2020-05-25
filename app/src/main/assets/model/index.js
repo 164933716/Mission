@@ -319,7 +319,7 @@ function updateUserLocation(location) {
 
 updateUserLocation({longitude: 108.690813, latitude: 27.918094, height: 2416.7601452398626});
 
-//recenter(userLocation);
+recenter(userLocation);
 
 var userTourPostitions = [
     // {
@@ -608,7 +608,7 @@ var pois = [
     {name: "金顶", longitude: 108.6940465145, latitude: 27.9112084171, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
 ];
 
-//updatePoiLocation(pois);
+updatePoiLocation(pois);
 
 var userTour = null;
 
@@ -1025,8 +1025,7 @@ function setKey(event) {
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
     } else if (event.keyCode === 84) {
-        //getUserTourHeights(userTourPostitions);
-        updatePoiLocation(pois);
+        getUserTourHeights(userTourPostitions);
     }
 
     if (event.ctrlKey){
@@ -1120,5 +1119,5 @@ viewer.scene.postRender.addEventListener(function () {
         pitch : viewer.camera.pitch,
         roll : viewer.camera.roll
     };
-    //window.Android.putCameraParam(JSON.stringify(cameraParam));
+    window.Android.putCameraParam(JSON.stringify(cameraParam));
 });
