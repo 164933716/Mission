@@ -60,19 +60,7 @@
             android:layout_height="match_parent"
             android:background="#ffffff"
             android:src="@drawable/guide_3"
-            android:visibility="gone" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <com.versalinks.mission.ChartView
-                android:id="@+id/chart"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_gravity="bottom" />
-        </FrameLayout>
+            android:visibility="visible" />
     </FrameLayout>
 
 </layout>

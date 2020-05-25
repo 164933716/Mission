@@ -85,7 +85,7 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
                     TextView tvDistanceUp = helper.findViewById(R.id.tvDistanceUp);
                     TextView tvTitle = helper.findViewById(R.id.tvTitle);
                     TextView tvDescription = helper.findViewById(R.id.tvDescription);
-                    tvDuration.setText("大约需要" + DataUtils.convertToDuration(item.goDuration));
+                    tvDuration.setText("大约需要1小时21分钟");
                     tvDifficult.setText(item.goDifficult);
                     tvDistance.setText(DataUtils.convertToDistance(item.distance));
                     tvDistanceUp.setText(DataUtils.convertToDistance(item.goUp));

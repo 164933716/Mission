@@ -32,7 +32,7 @@ public class Model_Record extends RealmObject implements Parcelable {
                 ", distance=" + distance +
                 ", goUp=" + goUp +
                 ", goDown=" + goDown +
-                ", gpsList=" + gpsList +
+                ", gpsList=" + (gpsList==null?"null":gpsList.size()) +
                 '}';
     }
 
@@ -52,7 +52,7 @@ public class Model_Record extends RealmObject implements Parcelable {
         dest.writeDouble(this.distance);
         dest.writeDouble(this.goUp);
         dest.writeDouble(this.goDown);
-        dest.writeTypedList(this.gpsList);
+        dest.writeList(this.gpsList);
     }
 
     public Model_Record() {

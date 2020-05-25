@@ -41,7 +41,7 @@ public class Model_GPS extends RealmObject implements Parcelable {
 
     @NonNull
     public String toShow() {
-        return "{" + latitude + ", " + longitude + ", " + height + '}';
+        return "{" + latitude + ", " + longitude+ '}';
     }
 
     @Override

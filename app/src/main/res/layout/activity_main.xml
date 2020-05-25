@@ -17,234 +17,522 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
+                android:id="@+id/containerNormalAndRoute"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="visible">
 
-                <ImageView
-                    android:id="@+id/vMarkOpt"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_oval_white"
-                    android:padding="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_mark" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp" />
-
-                <ImageView
-                    android:id="@+id/vGpsOpt"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_oval_white"
-                    android:padding="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_gps" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp" />
-
-                <ImageView
-                    android:id="@+id/vMenuOpt"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_oval_white"
-                    android:padding="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/src_img_fm_icn_fill_filter" />
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/vRoutesOpt"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_margin="10dp"
-                android:background="@drawable/shape_oval_white"
-                android:padding="5dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/src_img_fm_icn_basic_guidebook" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="10dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/ivInfo"
-                    android:layout_width="23dp"
-                    android:layout_height="23dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/shape_oval_white"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/src_img_fm_icn_line_basic_info" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp" />
-
-                <ImageView
-                    android:id="@+id/ivCompass"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_oval_black"
-                    android:padding="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/src_img_fm_icn_colour_map_compass" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp" />
-
-                <LinearLayout
-                    android:layout_width="35dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape_corner5_bg"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="2dp">
+                <FrameLayout
+                    android:id="@+id/containerNormal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
                     <LinearLayout
-                        android:id="@+id/vGestureLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:orientation="vertical"
-                        android:visibility="visible"
-                        tools:ignore="Suspicious0dp"
-                        tools:layout_height="240dp">
+                        android:id="@+id/containerNormalOpt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
 
                         <ImageView
-                            android:id="@+id/iv1"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:id="@+id/vMarkOpt"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:background="@drawable/shape_oval_white"
                             android:padding="5dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/src_img_fm_icn_fill_map_tilt_down" />
+                            android:src="@drawable/ic_mark" />
 
                         <Space
                             android:layout_width="wrap_content"
                             android:layout_height="10dp" />
 
                         <ImageView
-                            android:id="@+id/iv2"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:id="@+id/vGpsOpt"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:background="@drawable/shape_oval_white"
                             android:padding="5dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/src_img_fm_icn_fill_map_tilt_up" />
+                            android:src="@drawable/ic_gps" />
 
                         <Space
                             android:layout_width="wrap_content"
                             android:layout_height="10dp" />
 
                         <ImageView
-                            android:id="@+id/iv3"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:id="@+id/vMenuOpt"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
                             android:background="@drawable/shape_oval_white"
                             android:padding="5dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/src_img_fm_icn_fill_map_rotate_left" />
+                            android:src="@drawable/src_img_fm_icn_fill_filter" />
 
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="10dp" />
-
-                        <ImageView
-                            android:id="@+id/iv4"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/shape_oval_white"
-                            android:padding="5dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/src_img_fm_icn_fill_map_rotate_right" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="10dp" />
-
-                        <ImageView
-                            android:id="@+id/iv5"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/shape_oval_white"
-                            android:padding="5dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/src_img_fm_icn_fill_map_plus" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="10dp" />
-
-                        <ImageView
-                            android:id="@+id/iv6"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/shape_oval_white"
-                            android:padding="5dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/src_img_fm_icn_fill_map_minus" />
-
-                        <Space
-                            android:layout_width="wrap_content"
-                            android:layout_height="10dp" />
                     </LinearLayout>
 
                     <ImageView
-                        android:id="@+id/vGestureOpt"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/shape_oval_black"
+                        android:id="@+id/vRoutesOpt"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/shape_oval_white"
+                        android:padding="5dp"
                         android:scaleType="centerInside"
-                        android:src="@drawable/src_img_fm_icn_line_map_deathstar_white" />
+                        android:src="@drawable/src_img_fm_icn_basic_guidebook" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/ivInfo"
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/shape_oval_white"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_line_basic_info" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="5dp" />
+
+                        <ImageView
+                            android:id="@+id/ivCompass"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:background="@drawable/shape_oval_black"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_colour_map_compass" />
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="5dp" />
+
+                        <LinearLayout
+                            android:layout_width="35dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/shape_corner5_bg"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="2dp">
+
+                            <LinearLayout
+                                android:id="@+id/vGestureLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:orientation="vertical"
+                                android:visibility="visible"
+                                tools:ignore="Suspicious0dp"
+                                tools:layout_height="210dp">
+
+                                <ImageView
+                                    android:id="@+id/iv1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/shape_oval_white"
+                                    android:padding="5dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/src_img_fm_icn_fill_map_tilt_down" />
+
+                                <Space
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="5dp" />
+
+                                <ImageView
+                                    android:id="@+id/iv2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/shape_oval_white"
+                                    android:padding="5dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/src_img_fm_icn_fill_map_tilt_up" />
+
+                                <Space
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="5dp" />
+
+                                <ImageView
+                                    android:id="@+id/iv3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/shape_oval_white"
+                                    android:padding="5dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/src_img_fm_icn_fill_map_rotate_left" />
+
+                                <Space
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="5dp" />
+
+                                <ImageView
+                                    android:id="@+id/iv4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/shape_oval_white"
+                                    android:padding="5dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/src_img_fm_icn_fill_map_rotate_right" />
+
+                                <Space
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="5dp" />
+
+                                <ImageView
+                                    android:id="@+id/iv5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/shape_oval_white"
+                                    android:padding="5dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/src_img_fm_icn_fill_map_plus" />
+
+                                <Space
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="5dp" />
+
+                                <ImageView
+                                    android:id="@+id/iv6"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/shape_oval_white"
+                                    android:padding="5dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/src_img_fm_icn_fill_map_minus" />
+
+                                <Space
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="5dp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/vGestureOpt"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:background="@drawable/shape_oval_black"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/src_img_fm_icn_line_map_deathstar_white" />
+
+                        </LinearLayout>
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="5dp" />
+
+                        <ImageView
+                            android:id="@+id/ivCurrent"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_fm_icn_colour_my_position_inviewport" />
+
+
+                        <Space
+                            android:layout_width="wrap_content"
+                            android:layout_height="5dp" />
+
+                        <ImageView
+                            android:id="@+id/vLayerOpt"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:background="@drawable/shape_oval_white"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/src_img_buttons_fmicnlinedarkmapoverlays" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/containerRoute"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/containerRouteInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <ImageView
+                                android:id="@+id/vRouteInfoFly"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:background="@drawable/shape_oval_white"
+                                android:padding="5dp"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_fly" />
+
+                            <ImageView
+                                android:id="@+id/vRouteInfoCurrent"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:background="@drawable/shape_oval_white"
+                                android:padding="5dp"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_current" />
+
+                            <ImageView
+                                android:id="@+id/vRouteInfoHeight"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:background="@drawable/shape_oval_white"
+                                android:padding="5dp"
+                                android:scaleType="centerInside"
+                                android:src="@drawable/ic_chart" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="#ffffff"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="10dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+
+                                <TextView
+                                    android:id="@+id/tvRouteInfoTitle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去"
+                                    android:textColor="#344956"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <Space
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp" />
+
+                                <TextView
+                                    android:id="@+id/tvRouteInfoDescription"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:lineSpacingMultiplier="1.1"
+                                    android:text="去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去"
+                                    android:textColor="#666666"
+                                    android:textSize="14sp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/vContainerRouteInfoClose"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:padding="5dp"
+                                android:src="@drawable/ic_close" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/containerRouteChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="#000000"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp">
+
+                            <TextView
+                                android:id="@+id/tvRouteChart"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:text=""
+                                android:textColor="#ffffff"
+                                android:textSize="16sp" />
+
+                            <ImageView
+                                android:id="@+id/vRouteChartClose"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:padding="5dp"
+                                android:src="@drawable/ic_close_white" />
+                        </LinearLayout>
+
+                        <com.versalinks.mission.ChartView
+                            android:id="@+id/routeChart"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp" />
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/containerMarker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="50dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="5dp">
+
+                    <LinearLayout
+                        android:id="@+id/vShareBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_back" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="返回"
+                            android:textColor="#333333"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
-                <ImageView
-                    android:id="@+id/ivCurrent"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_oval_white"
-                    android:padding="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/src_img_fm_icn_colour_my_position_inviewport" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="#a3313e"
+                            android:orientation="vertical"
+                            android:padding="10dp">
 
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp" />
+                            <Space
+                                android:layout_width="match_parent"
+                                android:layout_height="5dp" />
 
-                <ImageView
-                    android:id="@+id/vLayerOpt"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_oval_white"
-                    android:padding="5dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/src_img_buttons_fmicnlinedarkmapoverlays" />
-            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
+                                <ImageView
+                                    android:layout_width="35dp"
+                                    android:layout_height="35dp"
+                                    android:padding="5dp"
+                                    android:src="@drawable/ic_marker_anchor" />
+
+                                <TextView
+                                    android:id="@+id/tvMarkerName"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="去去去"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+
+                            <TextView
+                                android:id="@+id/tvMarkerGPS"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="35dp"
+                                android:text="去去去"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvMarkerHeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:background="#ffffff"
+                            android:drawableLeft="@drawable/ic_altitude"
+                            android:gravity="center_vertical"
+                            android:paddingStart="15dp"
+                            android:text="分享"
+                            android:textColor="#666666"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/ivMarkerShare"
+                        android:layout_width="40dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="25dp"
+                        android:background="#ccf1fd"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_menu_share" />
+                </FrameLayout>
+            </FrameLayout>
 
         </FrameLayout>
 

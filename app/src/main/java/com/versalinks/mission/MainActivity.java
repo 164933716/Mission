@@ -9,7 +9,9 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,11 +26,17 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.google.gson.Gson;
+import com.blankj.utilcode.util.ToastUtils;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import com.versalinks.mission.databinding.ActivityMainBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
@@ -39,14 +47,25 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private WebView webView;
     private GPSService gpsService;
+    boolean needAnimal = true;
     GPSService.GPSListener gpsListener = new GPSService.GPSListener() {
         @Override
         public void gps(Model_GPS modelGps) {
-            modelGps.latitude = 27.8601391146d;
-            modelGps.longitude = 108.7107853492d;
-            modelGps.height = 1446.697d;
-            binding.ivCurrent.setTag(modelGps);
-            webView.evaluateJavascript(OptUtils.updateLocation(modelGps), null);
+            Model_GPS model_gps = new Model_GPS();
+            model_gps.latitude = 27.8601391146d;
+            model_gps.longitude = 108.7107853492d;
+            model_gps.height = 1446.697d;
+            binding.ivCurrent.setTag(model_gps);
+            webView.evaluateJavascript(OptUtils.updateLocation(model_gps), null);
+            if (needAnimal) {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        webView.evaluateJavascript(OptUtils.recenter(model_gps), null);
+                    }
+                }, 1000);
+                needAnimal = false;
+            }
         }
     };
     GPSService.TrackListener trackListener = new GPSService.TrackListener() {
@@ -115,9 +134,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         valueAnimatorForRecord.setRepeatMode(ValueAnimator.REVERSE);
         valueAnimatorForRecord.setRepeatCount(ValueAnimator.INFINITE);
         valueAnimatorForRecord.setDuration(600);
-        Intent intent = new Intent(this, GPSService.class);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
-        int heightOK = AndroidUtil.dp2Px(240);
+
+        int heightOK = AndroidUtil.dp2Px(210);
         binding.vGestureOpt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +201,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     jump2Activity(RecordsActivity.class, 668);
                     binding.drawerLayout.closeDrawer(GravityCompat.START, false);
                 } else if (index == 2) {
-                    jump2Activity(MarkersActivity.class);
+                    jump2Activity(MarkersActivity.class, 667);
                     binding.drawerLayout.closeDrawer(GravityCompat.START, false);
                 } else {
 
@@ -287,17 +305,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         container.addView(webView, 0, layoutParams);
         webView.addJavascriptInterface(new JSInterface(), "Android");
         webView.loadUrl("file:///android_asset/model/map.html");
-//        ValueAnimator animator = ValueAnimator.ofFloat(0.2f, 1f);
-//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                float v1 = (Float) animation.getAnimatedValue();
-//                binding.container.setAlpha(v1);
-//            }
-//        });
-//        animator.setInterpolator(new DecelerateInterpolator());
-//        animator.setDuration(3000);
-//        animator.start();
+        Intent intent = new Intent(this, GPSService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 
     public class JSInterface {
@@ -306,8 +315,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
 
         @JavascriptInterface
-        public void putUserTourHeights(String jsonPoi) {
+        public void putUserTourHeights(String json) {
 
+        }
+
+        @JavascriptInterface
+        public void putCameraParam(String json) {
+
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                double heading = jsonObject.optDouble("heading");
+//                LogUtils.e("heading     " + heading);
+                binding.ivCompass.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.ivCompass.setRotation((float) heading);
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -362,27 +389,209 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 //路线选择
                 Parcelable model_routeSer = data.getParcelableExtra("model_route");
                 if (model_routeSer instanceof Model_Route) {
-                    LogUtils.e(model_routeSer.toString());
+                    Model_Route item = (Model_Route) model_routeSer;
                     if (webView != null) {
-                        RealmList<Model_GPS> gpsList = ((Model_Route) model_routeSer).gpsList;
-                        String json = new Gson().toJson(gpsList);
-                        LogUtils.e(json);
-                        webView.evaluateJavascript(OptUtils.updateUserTour(json), null);
-                        //展示线路
+                        showRoute(item);
                     }
                 }
 
             }
         } else if (requestCode == 668) {
             if (data != null) {
-                //路线选择
+                //轨迹选择
                 Parcelable model_recordSer = data.getParcelableExtra("model_record");
                 if (model_recordSer instanceof Model_Record) {
-                    LogUtils.e(model_recordSer.toString());
+                    Model_Record item = (Model_Record) model_recordSer;
+                    if (webView != null) {
+                        showRecord(item);
+                    }
+                }
+            }
+        } else if (requestCode == 667) {
+            if (data != null) {
+                //标注选择
+                Parcelable model_markerSer = data.getParcelableExtra("model_marker");
+                if (model_markerSer instanceof Model_Marker) {
+                    webView.evaluateJavascript(OptUtils.clearUserTour(), null);
+                    binding.containerNormalOpt.setVisibility(View.VISIBLE);
+                    binding.vRoutesOpt.setVisibility(View.VISIBLE);
+                    binding.containerRoute.setVisibility(View.GONE);
+                    binding.containerRouteInfo.setVisibility(View.GONE);
+                    binding.containerRouteChart.setVisibility(View.GONE);
+                    binding.tvRouteInfoTitle.setText(null);
+                    binding.tvRouteInfoDescription.setText(null);
+
+
+                    LogUtils.e(model_markerSer.toString());
+                    Model_Marker modelMarker = (Model_Marker) model_markerSer;
+                    Model_GPS model_gps = new Model_GPS(27.9112084171d, 108.6940465145d, 0);
+                    modelMarker.gps = model_gps;
+                    webView.evaluateJavascript(OptUtils.updatePoiLocation(modelMarker), null);
+                    webView.evaluateJavascript(OptUtils.recenter(modelMarker.gps), null);
+                    binding.containerNormalAndRoute.setVisibility(View.GONE);
+                    binding.containerMarker.setVisibility(View.VISIBLE);
+                    binding.tvMarkerName.setText(modelMarker.name);
+                    binding.tvMarkerGPS.setText(modelMarker.gps.toShow());
+                    binding.tvMarkerHeight.setText(DataUtils.convertToDistance(modelMarker.gps.height));
+                    binding.ivMarkerShare.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ToastUtils.showShort("分享");
+                        }
+                    });
+                    binding.vShareBack.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
+                            binding.tvMarkerName.setText(null);
+                            binding.tvMarkerGPS.setText(null);
+                            binding.tvMarkerHeight.setText(null);
+                            binding.containerMarker.setVisibility(View.GONE);
+                            binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
+                        }
+                    });
                 }
             }
         } else {
 
         }
+    }
+
+    private void showRoute(Model_Route item) {
+        RealmList<Model_GPS> gpsList = item.gpsList;
+        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
+        //展示线路
+        binding.containerRoute.setVisibility(View.VISIBLE);
+        binding.containerNormalOpt.setVisibility(View.GONE);
+        binding.vRoutesOpt.setVisibility(View.GONE);
+
+        binding.containerRouteInfo.setVisibility(View.VISIBLE);
+        binding.containerRouteChart.setVisibility(View.GONE);
+
+        binding.tvRouteInfoTitle.setText(item.name);
+        binding.tvRouteInfoDescription.setText(item.description);
+        binding.vContainerRouteInfoClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                webView.evaluateJavascript(OptUtils.clearUserTour(), null);
+
+                binding.containerNormalOpt.setVisibility(View.VISIBLE);
+                binding.vRoutesOpt.setVisibility(View.VISIBLE);
+                binding.containerRoute.setVisibility(View.GONE);
+                binding.containerRouteInfo.setVisibility(View.GONE);
+                binding.containerRouteChart.setVisibility(View.GONE);
+                binding.tvRouteInfoTitle.setText(null);
+                binding.tvRouteInfoDescription.setText(null);
+            }
+        });
+        binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.containerRouteChart.setVisibility(View.VISIBLE);
+                binding.containerRouteInfo.setVisibility(View.GONE);
+                binding.routeChart.setPoints(item.gpsList);
+                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
+
+            }
+        });
+        binding.vRouteChartClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.containerRouteChart.setVisibility(View.GONE);
+                binding.containerRouteInfo.setVisibility(View.VISIBLE);
+            }
+        });
+        binding.routeChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                Object data1 = e.getData();
+                LogUtils.e(data1);
+                float x = e.getX();
+                float y = e.getY();
+                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(x) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(y));
+            }
+
+            @Override
+            public void onNothingSelected() {
+                binding.tvRouteChart.setText(null);
+
+            }
+        });
+    }
+
+    private void showRecord(Model_Record item) {
+        RealmList<Model_GPS> gpsList = item.gpsList;
+        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
+        //展示线路
+        binding.containerRoute.setVisibility(View.VISIBLE);
+        binding.containerNormalOpt.setVisibility(View.GONE);
+        binding.vRoutesOpt.setVisibility(View.GONE);
+
+        binding.containerRouteInfo.setVisibility(View.VISIBLE);
+        binding.containerRouteChart.setVisibility(View.GONE);
+
+        binding.tvRouteInfoTitle.setText(item.name);
+        binding.tvRouteInfoDescription.setText(item.description);
+        binding.vContainerRouteInfoClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                webView.evaluateJavascript(OptUtils.clearUserTour(), null);
+
+                binding.containerNormalOpt.setVisibility(View.VISIBLE);
+                binding.vRoutesOpt.setVisibility(View.VISIBLE);
+                binding.containerRoute.setVisibility(View.GONE);
+                binding.containerRouteInfo.setVisibility(View.GONE);
+                binding.containerRouteChart.setVisibility(View.GONE);
+                binding.tvRouteInfoTitle.setText(null);
+                binding.tvRouteInfoDescription.setText(null);
+            }
+        });
+        binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.containerRouteChart.setVisibility(View.VISIBLE);
+                binding.containerRouteInfo.setVisibility(View.GONE);
+                binding.routeChart.setPoints(item.gpsList);
+                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
+
+            }
+        });
+        binding.vRouteChartClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.containerRouteChart.setVisibility(View.GONE);
+                binding.containerRouteInfo.setVisibility(View.VISIBLE);
+            }
+        });
+        binding.routeChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                Object data1 = e.getData();
+                LogUtils.e(data1);
+                float x = e.getX();
+                float y = e.getY();
+                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(x) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(y));
+            }
+
+            @Override
+            public void onNothingSelected() {
+                binding.tvRouteChart.setText(null);
+
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (binding.containerMarker.getVisibility() == View.VISIBLE) {
+            webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
+            binding.tvMarkerName.setText(null);
+            binding.tvMarkerGPS.setText(null);
+            binding.tvMarkerHeight.setText(null);
+            binding.containerMarker.setVisibility(View.GONE);
+            binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
+            return;
+        }
+        super.onBackPressed();
     }
 }

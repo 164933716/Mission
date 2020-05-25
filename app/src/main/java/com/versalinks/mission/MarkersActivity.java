@@ -1,6 +1,7 @@
 package com.versalinks.mission;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -88,6 +89,16 @@ public class MarkersActivity extends BaseActivity<ActivityMarkersBinding> {
                     });
                 }
             };
+            adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position, int viewType) {
+                    Model_Marker model_marker = allList.get(position);
+                    Intent intent = new Intent();
+                    intent.putExtra("model_marker", model_marker);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            });
             binding.recycler.setAdapter(adapter);
         }
         adapter.notifyDataSetChanged();

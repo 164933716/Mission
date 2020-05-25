@@ -319,7 +319,7 @@ function updateUserLocation(location) {
 
 updateUserLocation({longitude: 108.690813, latitude: 27.918094, height: 2416.7601452398626});
 
-recenter(userLocation);
+//recenter(userLocation);
 
 var userTourPostitions = [
     // {
@@ -608,7 +608,7 @@ var pois = [
     {name: "金顶", longitude: 108.6940465145, latitude: 27.9112084171, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
 ];
 
-updatePoiLocation(pois);
+//updatePoiLocation(pois);
 
 var userTour = null;
 
@@ -1025,7 +1025,8 @@ function setKey(event) {
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
     } else if (event.keyCode === 84) {
-        getUserTourHeights(userTourPostitions);
+        //getUserTourHeights(userTourPostitions);
+        updatePoiLocation(pois);
     }
 
     if (event.ctrlKey){
@@ -1107,3 +1108,17 @@ options.enableDistanceLegend = true;
 options.enableCompassOuterRing = true;
 
 CesiumNavigation.umd(viewer, options);
+
+viewer.scene.postRender.addEventListener(function () {
+    var cameraParam = {
+        position : {
+            longitude : Cesium.Math.toDegrees(viewer.camera.positionCartographic.longitude),
+            latitude : Cesium.Math.toDegrees(viewer.camera.positionCartographic.latitude),
+            height : viewer.camera.positionCartographic.height
+        },
+        heading : Cesium.Math.toDegrees(viewer.camera.heading),
+        pitch : viewer.camera.pitch,
+        roll : viewer.camera.roll
+    };
+    //window.Android.putCameraParam(JSON.stringify(cameraParam));
+});

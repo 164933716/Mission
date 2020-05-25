@@ -2,7 +2,9 @@ package com.versalinks.mission;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OptUtils {
@@ -57,8 +59,25 @@ public class OptUtils {
         return "javascript:removeRoadBackgroundLayer(" + "" + ")";
     }
 
-    public static String updateUserTour(String jsonPois) {
-        return "javascript:updateUserTour(" + jsonPois + ")";
+    public static String updateUserTour(List<Model_GPS> gpsList) {
+        return "javascript:updateUserTour(" + getJson(gpsList) + ")";
+    }
+
+    public static String updatePoiLocation(Model_Marker modelMarker) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        //108.6793671948208,27.90580461792431,1651.492238157933
+        map.put("name", modelMarker.name);
+        map.put("latitude", modelMarker.gps.latitude);
+        map.put("longitude", modelMarker.gps.longitude);
+        map.put("thumbnail", "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg");
+        list.add(map);
+        String json = getJson(list);
+        return "javascript:updatePoiLocation(" + json + ")";
+    }
+
+    public static String clearPoiLocation() {
+        return "javascript:updatePoiLocation(" + "[]" + ")";
     }
 
     public static String clearUserTour() {
