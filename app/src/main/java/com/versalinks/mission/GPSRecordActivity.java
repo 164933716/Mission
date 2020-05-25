@@ -113,7 +113,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
             Model_Record model_record = new Model_Record();
             model_record.createTime = DataUtils.getNowMills();
-            model_record.distance = gpsService.getDistance();
+            model_record.distance = DataUtils.randomDistance();
             model_record.goUp = DataUtils.randomUpOrDown();
             model_record.name = DataUtils.getNowString();
             model_record.description = DataUtils.randomDescription();

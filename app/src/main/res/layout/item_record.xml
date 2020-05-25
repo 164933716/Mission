@@ -84,15 +84,6 @@
                     android:textColor="#666666"
                     android:textSize="12sp" />
 
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="match_parent" />
-
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="3dp"
-                    android:background="@drawable/shape_oval_gray" />
-
             </LinearLayout>
 
             <Space

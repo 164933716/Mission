@@ -73,9 +73,17 @@ public class MarkersActivity extends BaseActivity<ActivityMarkersBinding> {
                     ivDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            allList.remove(position);
-                            adapter.notifyItemRemoved(position);
-                            adapter.notifyItemRangeChanged(position, adapter.getItemCount());
+                            Model_Marker modelMarker = allList.get(position);
+                            Observable<List<Model_Marker>> listObservable = DataUtils.getInstance().deleteMarker(modelMarker.name);
+                            BaseOb<List<Model_Marker>> baseOb = new BaseOb<List<Model_Marker>>() {
+                                @Override
+                                public void onDataDeal(List<Model_Marker> data, String message) {
+                                    allList.remove(position);
+                                    adapter.notifyItemRemoved(position);
+                                    adapter.notifyItemRangeChanged(position, adapter.getItemCount());
+                                }
+                            };
+                            baseOb.bindObed(listObservable);
                         }
                     });
                 }

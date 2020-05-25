@@ -137,6 +137,28 @@ public class DataUtils {
         return listObservable;
     }
 
+    public Observable<List<Model_Marker>> deleteMarker(String name) {
+        Observable<List<Model_Marker>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Marker>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Model_Marker>> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            RealmResults<Model_Marker> all = realm.where(Model_Marker.class).equalTo("name", name).findAll();
+                            List<Model_Marker> markers = realm.copyFromRealm(all);
+                            all.deleteAllFromRealm();
+                            emitter.onNext(markers);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+
+            }
+        });
+        return listObservable;
+    }
+
     public Observable<List<Model_Route>> deleteRoute(String name) {
         Observable<List<Model_Route>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Route>>() {
             @Override
