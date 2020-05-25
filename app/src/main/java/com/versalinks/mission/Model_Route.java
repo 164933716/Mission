@@ -72,7 +72,7 @@ public class Model_Route extends RealmObject implements Parcelable {
         this.distance = in.readDouble();
         this.goUp = in.readDouble();
         this.goDown = in.readDouble();
-        this.gpsList = new RealmList<Model_GPS>();
+        this.gpsList = new RealmList<>();
         in.readList(this.gpsList, Model_GPS.class.getClassLoader());
     }
 
