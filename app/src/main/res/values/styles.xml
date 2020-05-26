@@ -68,4 +68,33 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
+    <style name="button" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@drawable/button_white</item>
+    </style>
+
+    <style name="buttonSmall">
+        <item name="android:minWidth">50dp</item>
+        <item name="android:minHeight">26dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/button_white</item>
+    </style>
+
+    <style name="buttonStroke">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/button_white</item>
+        <item name="android:minWidth">60dp</item>
+        <item name="android:minHeight">26dp</item>
+    </style>
 </resources>

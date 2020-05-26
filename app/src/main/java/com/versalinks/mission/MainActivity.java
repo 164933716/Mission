@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -428,7 +427,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     binding.ivMarkerShare.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ToastUtils.showShort("分享");
+                            ShareDialog shareDialog = new ShareDialog(context);
+                            shareDialog.show();
                         }
                     });
                     binding.vShareBack.setOnClickListener(new View.OnClickListener() {
