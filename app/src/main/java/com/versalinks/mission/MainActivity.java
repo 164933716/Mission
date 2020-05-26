@@ -326,7 +326,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 binding.ivCompass.post(new Runnable() {
                     @Override
                     public void run() {
-                        binding.ivCompass.setRotation((float) heading);
+                        binding.ivCompass.setRotation(-(float) heading);
                     }
                 });
             } catch (JSONException e) {
