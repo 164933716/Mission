@@ -138,7 +138,7 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
         binding.tvDate.setText(s);
         binding.tvType.setText("默认动物");
         binding.tvType.setTag(new Model_MarkerType("默认动物"));
-        binding.etName.requestFocus();
+//        binding.etName.requestFocus();
         Intent intent = new Intent(this, GPSService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }

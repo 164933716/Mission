@@ -431,7 +431,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                             shareDialog.show();
                         }
                     });
-                    binding.vShareBack.setOnClickListener(new View.OnClickListener() {
+                    binding.vMarkerBack.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);

@@ -422,7 +422,7 @@
                     android:paddingStart="5dp">
 
                     <LinearLayout
-                        android:id="@+id/vShareBack"
+                        android:id="@+id/vMarkerBack"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -432,7 +432,8 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_back" />
+                            android:src="@drawable/ic_back"
+                            android:tint="#ffffff"/>
 
                         <Space
                             android:layout_width="0dp"
@@ -442,7 +443,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="返回"
-                            android:textColor="#333333"
+                            android:textColor="#FFFFFF"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </LinearLayout>
