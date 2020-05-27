@@ -28,16 +28,15 @@ if (!viewer.scene.pickPositionSupported) {
     window.alert("This browser does not support pickPosition.");
 }
 
-var mapboxLayer = new Cesium.MapboxStyleImageryProvider({
-    url : 'https://api.mapbox.com/styles/v1/',
-    username:'wingwuyf',
-    styleId: 'cjajfiz60artm2rnxr8wiecli',
-    accessToken: 'pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg',
-    scaleFactor: true
-});
+// var mapboxLayer = new Cesium.MapboxStyleImageryProvider({
+//     url : 'https://api.mapbox.com/styles/v1/',
+//     username:'wingwuyf',
+//     styleId: 'cjajfiz60artm2rnxr8wiecli',
+//     accessToken: 'pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg',
+//     scaleFactor: true
+// });
 
-//var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/v4/mapbox.mapbox-streets-v8,mapbox.mapbox-terrain-v2/{z}/{x}/{y}.png?sku=1011hS4giuW7i&access_token=pk.eyJ1Ijoid2ViZXJ0YW8iLCJhIjoiY2pibTdmaWc2MTZqaDJybzFzcm93bGE2eiJ9.cwSE9DYCYP0dIeY4Hhp6Kg"});
-//var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://api.mapbox.com/styles/v1/wingwuyf/cjajfiz60artm2rnxr8wiecli/tiles/512/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
+var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/styles/v1/wingwuyf/cjajfiz60artm2rnxr8wiecli/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
 
 var googleLayer = new Cesium.UrlTemplateImageryProvider({url:"http://mt2.google.cn/vt/lyrs=s@167000000&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}&s=Galil"});
 
@@ -657,7 +656,7 @@ function updateUserTour(positions) {
     // for (var i = 0; i < positions.length; i++) {
     //     positionArray.push(Cesium.Cartographic.fromDegrees(positions[i].longitude, positions[i].latitude));
     // }
-    // promise = Cesium.sampleTerrain(terrainProvider, 14, positionArray);
+    // promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positionArray);
     // Cesium.when(promise, function (updatedPositions) {
     //     var positionsVolume = [];
     //     for (var i = 0; i < positions.length; i++) {

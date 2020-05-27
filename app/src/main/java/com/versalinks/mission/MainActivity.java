@@ -20,15 +20,17 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.webkit.JavascriptInterface;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.blankj.utilcode.util.ToastUtils;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -41,6 +43,10 @@ import java.io.File;
 import java.util.List;
 
 import io.realm.RealmList;
+
+import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
+import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
+import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
@@ -117,6 +123,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
     };
     private ValueAnimator valueAnimatorForRecord;
+    private long mLastClickTime;
+    private BottomSheetBehavior bottomSheetBehavior;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -268,6 +276,99 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 webView.evaluateJavascript(OptUtils.pointToNorth(), null);
             }
         });
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.behavior);
+        bottomSheetBehavior.setState(STATE_COLLAPSED);
+        int height = AndroidUtil.dp2Px(120);
+
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float mSlideOffset) {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layoutParams.height = (int) (height * (1 - mSlideOffset));
+                binding.containerRouteInfo.setLayoutParams(layoutParams);
+                binding.containerRouteInfo.setAlpha(1 - mSlideOffset);
+            }
+        });
+
+        binding.vContainerRouteInfoClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setRouteToNULL();
+                binding.containerNormal.setVisibility(View.VISIBLE);
+                webView.evaluateJavascript(OptUtils.recenter(), null);
+            }
+        });
+        binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Object tag = binding.routeChart.getTag();
+                if (tag instanceof Model_Route) {
+                    Model_Route item = (Model_Route) tag;
+                    binding.containerRoute.setVisibility(View.GONE);
+                    binding.containerRouteChart.setVisibility(View.VISIBLE);
+                    binding.routeChart.setPoints(item.gpsList);
+                    binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
+                } else if (tag instanceof Model_Record) {
+                    Model_Record item = (Model_Record) tag;
+                    binding.containerRoute.setVisibility(View.GONE);
+                    binding.containerRouteChart.setVisibility(View.VISIBLE);
+                    binding.routeChart.setPoints(item.gpsList);
+                    binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
+                }
+            }
+        });
+        binding.vRouteChartClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.containerRouteChart.setVisibility(View.GONE);
+                binding.containerRoute.setVisibility(View.VISIBLE);
+            }
+        });
+        binding.vRouteDetailBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    bottomSheetBehavior.setState(STATE_COLLAPSED);
+                    return;
+                }
+            }
+        });
+        binding.routeChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                Object data1 = e.getData();
+                LogUtils.e(data1);
+                float x = e.getX();
+                float y = e.getY();
+                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(x) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(y));
+            }
+
+            @Override
+            public void onNothingSelected() {
+                binding.tvRouteChart.setText(null);
+
+            }
+        });
+        binding.ivMarkerShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareDialog shareDialog = new ShareDialog(context);
+                shareDialog.show();
+            }
+        });
+        binding.vMarkerBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMarkerToNULL();
+                webView.evaluateJavascript(OptUtils.recenter(), null);
+                binding.containerNormal.setVisibility(View.VISIBLE);
+            }
+        });
         webView = new WebView(context.getApplicationContext());
         WebSettings mWebSettings = webView.getSettings();
         mWebSettings.setSupportZoom(true);
@@ -296,13 +397,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             }
         };
         webView.setWebViewClient(webViewClient);
-        FrameLayout container = binding.container;
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        container.addView(webView, 0, layoutParams);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        binding.drawerLayout.addView(webView, 0, layoutParams);
         webView.addJavascriptInterface(new JSInterface(), "Android");
         webView.loadUrl("file:///android_asset/model/map.html");
         Intent intent = new Intent(this, GPSService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+
     }
 
     public class JSInterface {
@@ -408,35 +510,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 //标注选择
                 Parcelable model_markerSer = data.getParcelableExtra("model_marker");
                 if (model_markerSer instanceof Model_Marker) {
-                    webView.evaluateJavascript(OptUtils.clearUserTour(), null);
-                    binding.containerNormalOpt.setVisibility(View.VISIBLE);
-                    binding.vRoutesOpt.setVisibility(View.VISIBLE);
-                    binding.containerRoute.setVisibility(View.GONE);
-                    binding.containerRouteInfo.setVisibility(View.GONE);
-                    binding.containerRouteChart.setVisibility(View.GONE);
-                    binding.tvRouteInfoTitle.setText(null);
-                    binding.tvRouteInfoDescription.setText(null);
-
-                    Model_Marker modelMarker = (Model_Marker) model_markerSer;
-                    webView.evaluateJavascript(OptUtils.updatePoiLocation(modelMarker), null);
-                    binding.containerNormalAndRoute.setVisibility(View.GONE);
-                    binding.containerMarker.setVisibility(View.VISIBLE);
-                    binding.tvMarkerName.setText(modelMarker.name);
-                    binding.tvMarkerGPS.setText(modelMarker.gps.toShow());
-                    binding.tvMarkerHeight.setText(DataUtils.convertToDistance(modelMarker.gps.height));
-                    binding.ivMarkerShare.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ShareDialog shareDialog = new ShareDialog(context);
-                            shareDialog.show();
-                        }
-                    });
-                    binding.vMarkerBack.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            onBackPressed();
-                        }
-                    });
+                    Model_Marker item = (Model_Marker) model_markerSer;
+                    if (webView != null) {
+                        showMarker(item);
+                    }
                 }
             }
         } else {
@@ -444,157 +521,97 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
     }
 
+    private void showMarker(Model_Marker modelMarker) {
+        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+        binding.containerNormal.setVisibility(View.GONE);
+        binding.containerMarker.setVisibility(View.VISIBLE);
+        webView.evaluateJavascript(OptUtils.updatePoiLocation(modelMarker), null);
+        binding.tvMarkerName.setText(modelMarker.name);
+        binding.tvMarkerGPS.setText(modelMarker.gps.toShow());
+        binding.tvMarkerHeight.setText(DataUtils.convertToDistance(modelMarker.gps.height));
+
+    }
+
     private void showRoute(Model_Route item) {
-        webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
-        binding.tvMarkerName.setText(null);
-        binding.tvMarkerGPS.setText(null);
-        binding.tvMarkerHeight.setText(null);
-        binding.containerMarker.setVisibility(View.GONE);
-        binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
-
+        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+        binding.routeChart.setTag(item);
         RealmList<Model_GPS> gpsList = item.gpsList;
-        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
-        //展示线路
-        binding.containerRoute.setVisibility(View.VISIBLE);
-        binding.containerNormalOpt.setVisibility(View.GONE);
-        binding.vRoutesOpt.setVisibility(View.GONE);
 
+        binding.containerNormal.setVisibility(View.GONE);
+        binding.containerRoute.setVisibility(View.VISIBLE);
         binding.containerRouteInfo.setVisibility(View.VISIBLE);
         binding.containerRouteChart.setVisibility(View.GONE);
 
+        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
         binding.tvRouteInfoTitle.setText(item.name);
         binding.tvRouteInfoDescription.setText(item.description);
-        binding.vContainerRouteInfoClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.clearUserTour(), null);
 
-                binding.containerNormalOpt.setVisibility(View.VISIBLE);
-                binding.vRoutesOpt.setVisibility(View.VISIBLE);
-                binding.containerRoute.setVisibility(View.GONE);
-                binding.containerRouteInfo.setVisibility(View.GONE);
-                binding.containerRouteChart.setVisibility(View.GONE);
-                binding.tvRouteInfoTitle.setText(null);
-                binding.tvRouteInfoDescription.setText(null);
-            }
-        });
-        binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.containerRouteChart.setVisibility(View.VISIBLE);
-                binding.containerRouteInfo.setVisibility(View.GONE);
-                binding.routeChart.setPoints(item.gpsList);
-                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
-
-            }
-        });
-        binding.vRouteChartClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.containerRouteChart.setVisibility(View.GONE);
-                binding.containerRouteInfo.setVisibility(View.VISIBLE);
-            }
-        });
-        binding.routeChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                Object data1 = e.getData();
-                LogUtils.e(data1);
-                float x = e.getX();
-                float y = e.getY();
-                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(x) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(y));
-            }
-
-            @Override
-            public void onNothingSelected() {
-                binding.tvRouteChart.setText(null);
-
-            }
-        });
     }
 
     private void showRecord(Model_Record item) {
-        webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
-        binding.tvMarkerName.setText(null);
-        binding.tvMarkerGPS.setText(null);
-        binding.tvMarkerHeight.setText(null);
-        binding.containerMarker.setVisibility(View.GONE);
-        binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
-
-
+        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+        binding.routeChart.setTag(item);
         RealmList<Model_GPS> gpsList = item.gpsList;
-        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
-        //展示线路
-        binding.containerRoute.setVisibility(View.VISIBLE);
-        binding.containerNormalOpt.setVisibility(View.GONE);
-        binding.vRoutesOpt.setVisibility(View.GONE);
 
+        binding.containerNormal.setVisibility(View.GONE);
+        binding.containerRoute.setVisibility(View.VISIBLE);
         binding.containerRouteInfo.setVisibility(View.VISIBLE);
         binding.containerRouteChart.setVisibility(View.GONE);
 
+        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
         binding.tvRouteInfoTitle.setText(item.name);
         binding.tvRouteInfoDescription.setText(item.description);
-        binding.vContainerRouteInfoClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.clearUserTour(), null);
-
-                binding.containerNormalOpt.setVisibility(View.VISIBLE);
-                binding.vRoutesOpt.setVisibility(View.VISIBLE);
-                binding.containerRoute.setVisibility(View.GONE);
-                binding.containerRouteInfo.setVisibility(View.GONE);
-                binding.containerRouteChart.setVisibility(View.GONE);
-                binding.tvRouteInfoTitle.setText(null);
-                binding.tvRouteInfoDescription.setText(null);
-            }
-        });
-        binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.containerRouteChart.setVisibility(View.VISIBLE);
-                binding.containerRouteInfo.setVisibility(View.GONE);
-                binding.routeChart.setPoints(item.gpsList);
-                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
-
-            }
-        });
-        binding.vRouteChartClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.containerRouteChart.setVisibility(View.GONE);
-                binding.containerRouteInfo.setVisibility(View.VISIBLE);
-            }
-        });
-        binding.routeChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, Highlight h) {
-                Object data1 = e.getData();
-                LogUtils.e(data1);
-                float x = e.getX();
-                float y = e.getY();
-                binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(x) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(y));
-            }
-
-            @Override
-            public void onNothingSelected() {
-                binding.tvRouteChart.setText(null);
-
-            }
-        });
     }
 
     @Override
     public void onBackPressed() {
-        if (binding.containerMarker.getVisibility() == View.VISIBLE) {
-            webView.evaluateJavascript(OptUtils.recenter(), null);
-            webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
-            binding.tvMarkerName.setText(null);
-            binding.tvMarkerGPS.setText(null);
-            binding.tvMarkerHeight.setText(null);
-            binding.containerMarker.setVisibility(View.GONE);
-            binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            bottomSheetBehavior.setState(STATE_COLLAPSED);
             return;
         }
-        super.onBackPressed();
+        if (binding.containerMarker.getVisibility() == View.VISIBLE) {
+            setMarkerToNULL();
+            binding.containerNormal.setVisibility(View.VISIBLE);
+            webView.evaluateJavascript(OptUtils.recenter(), null);
+            return;
+        }
+        if (binding.containerRouteChart.getVisibility() == View.VISIBLE) {
+            binding.containerRouteChart.setVisibility(View.GONE);
+            binding.containerRoute.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (binding.containerRoute.getVisibility() == View.VISIBLE) {
+            setRouteToNULL();
+            binding.containerNormal.setVisibility(View.VISIBLE);
+            webView.evaluateJavascript(OptUtils.recenter(), null);
+            return;
+        }
+        final long now = System.currentTimeMillis();
+        if (now - mLastClickTime > 1000) {
+            mLastClickTime = now;
+            ToastUtils.showShort("再按一次退出应用");
+        } else {
+            super.onBackPressed();
+
+        }
+    }
+
+    private void setRouteToNULL() {
+        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED, GravityCompat.START);
+        webView.evaluateJavascript(OptUtils.clearUserTour(), null);
+        binding.containerRoute.setVisibility(View.GONE);
+        binding.containerRouteInfo.setVisibility(View.GONE);
+        binding.containerRouteChart.setVisibility(View.GONE);
+        binding.tvRouteInfoTitle.setText(null);
+        binding.tvRouteInfoDescription.setText(null);
+    }
+
+    private void setMarkerToNULL() {
+        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED, GravityCompat.START);
+        webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
+        binding.containerMarker.setVisibility(View.GONE);
+        binding.tvMarkerName.setText(null);
+        binding.tvMarkerGPS.setText(null);
+        binding.tvMarkerHeight.setText(null);
     }
 }
