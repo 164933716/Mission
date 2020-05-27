@@ -185,6 +185,9 @@ public class DataUtils {
         Observable<Model_Record> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Record>() {
             @Override
             public void subscribe(ObservableEmitter<Model_Record> emitter) throws Exception {
+                for (Model_GPS model_gps : model_record.gpsList) {
+
+                }
                 try (Realm realm = Realm.getDefaultInstance()) {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override

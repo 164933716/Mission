@@ -434,12 +434,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     binding.vMarkerBack.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
-                            binding.tvMarkerName.setText(null);
-                            binding.tvMarkerGPS.setText(null);
-                            binding.tvMarkerHeight.setText(null);
-                            binding.containerMarker.setVisibility(View.GONE);
-                            binding.containerNormalAndRoute.setVisibility(View.VISIBLE);
+                            onBackPressed();
                         }
                     });
                 }
@@ -591,6 +586,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Override
     public void onBackPressed() {
         if (binding.containerMarker.getVisibility() == View.VISIBLE) {
+            webView.evaluateJavascript(OptUtils.recenter(), null);
             webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
             binding.tvMarkerName.setText(null);
             binding.tvMarkerGPS.setText(null);

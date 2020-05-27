@@ -159,6 +159,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                 gpsSrc = list.get(0);
                 gpsTarget = null;
             }
+            //TODO 需要转换GPS
             if (gpsSrc != null) {
                 if (srcMarker == null || srcMarker.isRemoved()) {
                     MarkerOptions markerOptions = new MarkerOptions();
@@ -270,14 +271,19 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
         binding.vStartOrPause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                LogUtils.e("onClick");
                 if (gpsService != null) {
+                    LogUtils.e("gpsService != null");
                     GPSService.RecordState recordState = gpsService.getRecordState();
-                    if (recordState == GPSService.RecordState.Normal) {
+                    if (recordState == GPSService.RecordState.Normal || recordState == GPSService.RecordState.NUll) {
+                        LogUtils.e("gpsService != null  " + recordState);
                         gpsService.startTrack();
                     } else if (recordState == GPSService.RecordState.Ing) {
                         gpsService.pauseTrack();
                     } else if (recordState == GPSService.RecordState.Pause) {
                         gpsService.resumeTrack();
+                    } else {
+                        LogUtils.e("gpsService -------------= null  " + recordState);
                     }
                 }
             }

@@ -78,6 +78,9 @@ public class GPSService extends Service {
                     double longitude = mapLocation.getLongitude();//获取经度
                     String city = mapLocation.getCity();//城市信息
                     double altitude = mapLocation.getAltitude();
+                    double[] doubles = CoordinateTransformUtil.gcj02towgs84(longitude, latitude);
+                    latitude = doubles[1];
+                    longitude = doubles[0];
                     modelGps = new Model_GPS(latitude, longitude, altitude);
                     Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
                     for (GPSListener gpsListener : gpsListeners) {

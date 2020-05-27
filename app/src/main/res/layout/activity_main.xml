@@ -57,7 +57,7 @@
                             android:background="@drawable/shape_oval_white"
                             android:padding="5dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/ic_gps" />
+                            android:src="@drawable/ic_record" />
 
                         <Space
                             android:layout_width="wrap_content"
