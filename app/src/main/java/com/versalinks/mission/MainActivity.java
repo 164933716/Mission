@@ -267,7 +267,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.ivCurrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.recenter(), null);
+                Object tag = binding.ivCurrent.getTag();
+                if (tag instanceof Model_GPS) {
+                    webView.evaluateJavascript(OptUtils.flyTo((Model_GPS) tag), null);
+                }
             }
         });
         binding.ivCompass.setOnClickListener(new View.OnClickListener() {
@@ -300,7 +303,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void onClick(View v) {
                 setRouteToNULL();
                 binding.containerNormal.setVisibility(View.VISIBLE);
-                webView.evaluateJavascript(OptUtils.recenter(), null);
+                Object tag = binding.ivCurrent.getTag();
+                if (tag instanceof Model_GPS) {
+//                    webView.evaluateJavascript(OptUtils.flyTo((Model_GPS) tag), null);
+                }
+            }
+        });
+        binding.vRouteInfoFly.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                webView.evaluateJavascript(OptUtils.flyStart(),null);
+            }
+        });binding.vRouteInfoCurrent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                webView.evaluateJavascript(OptUtils.flyStop(),null);
             }
         });
         binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
@@ -365,7 +382,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             @Override
             public void onClick(View v) {
                 setMarkerToNULL();
-                webView.evaluateJavascript(OptUtils.recenter(), null);
+                Object tag = binding.ivCurrent.getTag();
+                if (tag instanceof Model_GPS) {
+//                    webView.evaluateJavascript(OptUtils.flyTo((Model_GPS) tag), null);
+                }
                 binding.containerNormal.setVisibility(View.VISIBLE);
             }
         });
@@ -572,7 +592,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         if (binding.containerMarker.getVisibility() == View.VISIBLE) {
             setMarkerToNULL();
             binding.containerNormal.setVisibility(View.VISIBLE);
-            webView.evaluateJavascript(OptUtils.recenter(), null);
+            Object tag = binding.ivCurrent.getTag();
+            if (tag instanceof Model_GPS) {
+//                webView.evaluateJavascript(OptUtils.flyTo((Model_GPS) tag), null);
+            }
             return;
         }
         if (binding.containerRouteChart.getVisibility() == View.VISIBLE) {
@@ -583,7 +606,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         if (binding.containerRoute.getVisibility() == View.VISIBLE) {
             setRouteToNULL();
             binding.containerNormal.setVisibility(View.VISIBLE);
-            webView.evaluateJavascript(OptUtils.recenter(), null);
+            Object tag = binding.ivCurrent.getTag();
+            if (tag instanceof Model_GPS) {
+//                webView.evaluateJavascript(OptUtils.flyTo((Model_GPS) tag), null);
+            }
             return;
         }
         final long now = System.currentTimeMillis();

@@ -57,12 +57,13 @@
 
                 <ImageButton
                     android:id="@+id/vCenter"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_gravity="bottom"
                     android:background="@drawable/button_oval"
+                    android:padding="5dp"
                     android:scaleType="centerInside"
-                    android:src="@drawable/icon_map_mylocal" />
+                    android:src="@drawable/ic_location" />
 
                 <Space
                     android:layout_width="0dp"

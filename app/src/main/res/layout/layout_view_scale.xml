@@ -7,10 +7,11 @@
 
     <ImageView
         android:id="@+id/vBig"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:background="@drawable/button_corner"
         android:scaleType="centerCrop"
+        android:padding="5dp"
         android:src="@drawable/icon_c5" />
 
     <View
@@ -19,8 +20,10 @@
 
     <ImageView
         android:id="@+id/vSmall"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="5dp"
+
         android:background="@drawable/button_corner"
         android:scaleType="centerInside"
         android:src="@drawable/icon_c6" />

@@ -1,5 +1,5 @@
 var terrainExaggeration = 1.0;
-var terrainProvider = new Cesium.CesiumTerrainProvider({url:"http://47.110.155.250:8003/Map/Terrain"});
+var terrainProvider = new Cesium.CesiumTerrainProvider({url:"https://sinomaps-mission.oss-accelerate.aliyuncs.com/Terrain",proxy : new Cesium.DefaultProxy('/proxy/')});//({url:"http://47.110.155.250:8003/Map/Terrain"});
 var viewer = new Cesium.Viewer('cesiumContainer', {
     shadows: false,
     animation: false,
@@ -43,7 +43,7 @@ var googleLayer = new Cesium.UrlTemplateImageryProvider({url:"http://mt2.google.
 viewer.imageryLayers.removeAll();
 viewer.imageryLayers.addImageryProvider(mapboxLayer);
 
-viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({url:"http://47.110.155.250:8003/Map/Image/{z}/{x}/{y}.png"}));
+viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({url:"https://sinomaps-mission.oss-accelerate.aliyuncs.com/Image/{z}/{x}/{y}.png",proxy : new Cesium.DefaultProxy('/proxy/')}));//({url:"http://47.110.155.250:8003/Map/Image/{z}/{x}/{y}.png"}));
 
 viewer._cesiumWidget._creditContainer.style.display = "none";
 
@@ -319,122 +319,146 @@ function updateUserLocation(location) {
 updateUserLocation(userLocation);
 
 var userTourPostitions = [
-    // {
-    //     "name": "我的位置",
-    //     "latitude": 27.918094,
-    //     "longitude": 108.690813
-    // },
+
     {
         "latitude": 27.917657686039245,
-        "longitude": 108.69037617890788
+        "longitude": 108.69037617890788,
+        "height" : 3000
     },
     {
         "latitude": 27.91692192666803,
-        "longitude": 108.69131740982795
+        "longitude": 108.69131740982795,
+        "height" : 3000
     },
     {
         "latitude": 27.9165244381843,
-        "longitude": 108.69121086652304
+        "longitude": 108.69121086652304,
+        "height" : 3000
     },
     {
         "latitude": 27.91623926720558,
-        "longitude": 108.69150739963742
+        "longitude": 108.69150739963742,
+        "height" : 3000
     },
     {
         "latitude": 27.91549104263241,
-        "longitude": 108.69217944202228
+        "longitude": 108.69217944202228,
+        "height" : 3000
     },
     {
         "latitude": 27.91520140130523,
-        "longitude": 108.69191774037297
+        "longitude": 108.69191774037297,
+        "height" : 3000
     },
     {
         "latitude": 27.914740210355973,
-        "longitude": 108.69218819645468
+        "longitude": 108.69218819645468,
+        "height" : 3000
     },
     {
         "latitude": 27.914097411500606,
-        "longitude": 108.69209152516927
+        "longitude": 108.69209152516927,
+        "height" : 3000
     },
     {
         "latitude": 27.913517942581727,
-        "longitude": 108.69209618178225
+        "longitude": 108.69209618178225,
+        "height" : 3000
     },
     {
         "latitude": 27.91342779055449,
-        "longitude": 108.69211555329224
+        "longitude": 108.69211555329224,
+        "height" : 3000
     },
     {
         "latitude": 27.91321153744783,
-        "longitude": 108.69242531118748
+        "longitude": 108.69242531118748,
+        "height" : 3000
     },
     {
         "latitude": 27.91312566950453,
-        "longitude": 108.69271197228235
+        "longitude": 108.69271197228235,
+        "height" : 3000
     },
     {
         "latitude": 27.912906063636527,
-        "longitude": 108.69293865620207
+        "longitude": 108.69293865620207,
+        "height" : 3000
     },
     {
         "latitude": 27.91254061265008,
-        "longitude": 108.69355221152794
+        "longitude": 108.69355221152794,
+        "height" : 3000
     },
     {
         "latitude": 27.912522544991727,
-        "longitude": 108.69362243325165
+        "longitude": 108.69362243325165,
+        "height" : 3000
     },
     {
         "latitude": 27.91242028577075,
-        "longitude": 108.6937926790221
+        "longitude": 108.6937926790221,
+        "height" : 3000
     },
     {
         "latitude": 27.912257863110106,
-        "longitude": 108.69368725330429
+        "longitude": 108.69368725330429,
+        "height" : 3000
     },
     {
         "latitude": 27.91209991079792,
-        "longitude": 108.69377386630566
+        "longitude": 108.69377386630566,
+        "height" : 3000
     },
     {
         "latitude": 27.912075137616885,
-        "longitude": 108.69395901323763
+        "longitude": 108.69395901323763,
+        "height" : 3000
     },
     {
         "latitude": 27.912613814606082,
-        "longitude": 108.69401302994817
+        "longitude": 108.69401302994817,
+        "height" : 3000
     },
     {
         "latitude": 27.91262890203213,
-        "longitude": 108.6940923786333
+        "longitude": 108.6940923786333,
+        "height" : 3000
     },
     {
         "latitude": 27.9124597738488,
-        "longitude": 108.6941987356737
+        "longitude": 108.6941987356737,
+        "height" : 3000
     },
     {
         "latitude": 27.91248566461695,
-        "longitude": 108.69426839860384
+        "longitude": 108.69426839860384,
+        "height" : 3000
     },
     {
         "latitude": 27.91223700148397,
-        "longitude": 108.69442374321275
+        "longitude": 108.69442374321275,
+        "height" : 3000
     },
     {
         "latitude": 27.912044031442196,
-        "longitude": 108.69474970612116
+        "longitude": 108.69474970612116,
+        "height" : 3000
     },
     {
         "latitude": 27.91189446103337,
-        "longitude": 108.69485140654858
+        "longitude": 108.69485140654858,
+        "height" : 3000
     },
     {
         "latitude": 27.91179406445758,
-        "longitude": 108.69524498347741
+        "longitude": 108.69524498347741,
+        "height" : 3000
     },
     {
         "latitude": 27.91138689021886,
-        "longitude": 108.69525895331634
+        "longitude": 108.69525895331634,
+        "height" : 3000
     },
     {
         "latitude": 27.911458229529668,
@@ -442,107 +466,133 @@ var userTourPostitions = [
     },
     {
         "latitude": 27.91137441049608,
-        "longitude": 108.69561993395433
+        "longitude": 108.69561993395433,
+        "height" : 3000
     },
     {
         "latitude": 27.911426750825942,
-        "longitude": 108.69568978314898
+        "longitude": 108.69568978314898,
+        "height" : 3000
     },
     {
         "latitude": 27.91138875286405,
-        "longitude": 108.69599115914086
+        "longitude": 108.69599115914086,
+        "height" : 3000
     },
     {
         "latitude": 27.911441093193915,
-        "longitude": 108.69598687505693
+        "longitude": 108.69598687505693,
+        "height" : 3000
     },
     {
         "latitude": 27.911441093193915,
-        "longitude": 108.69622827387366
+        "longitude": 108.69622827387366,
+        "height" : 3000
     },
     {
         "latitude": 27.911512432504722,
-        "longitude": 108.69640932298621
+        "longitude": 108.69640932298621,
+        "height" : 3000
     },
     {
         "latitude": 27.911591222396297,
-        "longitude": 108.6965398944141
+        "longitude": 108.6965398944141,
+        "height" : 3000
     },
     {
         "latitude": 27.91156402777651,
-        "longitude": 108.69675540246267
+        "longitude": 108.69675540246267,
+        "height" : 3000
     },
     {
         "latitude": 27.911575762441213,
-        "longitude": 108.69694464721407
+        "longitude": 108.69694464721407,
+        "height" : 3000
     },
     {
         "latitude": 27.91145580809092,
-        "longitude": 108.69708490439695
+        "longitude": 108.69708490439695,
+        "height" : 3000
     },
     {
         "latitude": 27.91128500352692,
-        "longitude": 108.69691335477486
+        "longitude": 108.69691335477486,
+        "height" : 3000
     },
     {
         "latitude": 27.911240672571378,
-        "longitude": 108.6969722143629
+        "longitude": 108.6969722143629,
+        "height" : 3000
     },
     {
         "latitude": 27.911157784860382,
-        "longitude": 108.69687591560653
+        "longitude": 108.69687591560653,
+        "height" : 3000
     },
     {
         "latitude": 27.91104416350374,
-        "longitude": 108.6969800374727
+        "longitude": 108.6969800374727,
+        "height" : 3000
     },
     {
         "latitude": 27.910768492015492,
-        "longitude": 108.69699195840192
+        "longitude": 108.69699195840192,
+        "height" : 3000
     },
     {
         "latitude": 27.910699201614392,
-        "longitude": 108.69695563682069
+        "longitude": 108.69695563682069,
+        "height" : 3000
     },
     {
         "latitude": 27.910645929961934,
-        "longitude": 108.69688131727759
+        "longitude": 108.69688131727759,
+        "height" : 3000
     },
     {
         "latitude": 27.910596942393415,
-        "longitude": 108.69659093089233
+        "longitude": 108.69659093089233,
+        "height" : 3000
     },
     {
         "latitude": 27.910566581276804,
-        "longitude": 108.69616513020169
+        "longitude": 108.69616513020169,
+        "height" : 3000
     },
     {
         "latitude": 27.910468047346207,
-        "longitude": 108.69596862113406
+        "longitude": 108.69596862113406,
+        "height" : 3000
     },
     {
         "latitude": 27.91025980361387,
-        "longitude": 108.69577173953738
+        "longitude": 108.69577173953738,
+        "height" : 3000
     },
     {
         "latitude": 27.910168161470477,
-        "longitude": 108.69558901404416
+        "longitude": 108.69558901404416,
+        "height" : 3000
     },
     {
         "latitude": 27.91015158392828,
-        "longitude": 108.69533103768522
+        "longitude": 108.69533103768522,
+        "height" : 3000
     },
     {
         "latitude": 27.910294635078937,
-        "longitude": 108.69487450334894
+        "longitude": 108.69487450334894,
+        "height" : 3000
     },
     {
         "latitude": 27.910319221995454,
-        "longitude": 108.69441592010295
+        "longitude": 108.69441592010295,
+        "height" : 3000
     },
     {
         "latitude": 27.910382729286447,
-        "longitude": 108.69391299488315
+        "longitude": 108.69391299488315,
+        "height" : 3000
     },
     // {
     //     "name": "金顶",
@@ -591,9 +641,28 @@ function updatePoiLocation(pois) {
                         var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
                         var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
                         if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
                             htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
                             htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
-
                             htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
                         }
                     }
@@ -628,29 +697,44 @@ function updateUserTour(positions) {
         userTour = null;
     }
 
-    for (var i = 0; i < positions.length; i++) {
-        positionArray.push(positions[i].longitude);
-        positionArray.push(positions[i].latitude);
-        positionArray.push(0.0);
+    userTourPostitions = positions;
+
+    var cartoPositions = [];
+    for (var i = 0; i < userTourPostitions.length; i++) {
+        cartoPositions.push(Cesium.Cartographic.fromDegrees(userTourPostitions[i].longitude, userTourPostitions[i].latitude));
     }
-    userTour = viewer.entities.add({
-        polyline : {
-            positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionArray),
-            clampToGround : true,
-            width : 3,
-            material : new Cesium.PolylineOutlineMaterialProperty({
-                color : Cesium.Color.SPRINGGREEN,
-                outlineWidth : 1,
-                outlineColor : Cesium.Color.SPRINGGREEN
-            }),
-            depthFailMaterial : new Cesium.PolylineOutlineMaterialProperty({
-                color : Cesium.Color.SPRINGGREEN,
-                outlineWidth : 1,
-                outlineColor : Cesium.Color.SPRINGGREEN
-            })
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, cartoPositions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            for (var i = 0; i < updatedPositions.length; i++) {
+                userTourPostitions[i].height = updatedPositions[i].height + 1000;
+            }
         }
+        
+        for (var i = 0; i < positions.length; i++) {
+            positionArray.push(userTourPostitions[i].longitude);
+            positionArray.push(userTourPostitions[i].latitude);
+            positionArray.push(userTourPostitions[i].height);
+        }
+        userTour = viewer.entities.add({
+            polyline : {
+                positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionArray),
+                clampToGround : true,
+                width : 3,
+                material : new Cesium.PolylineOutlineMaterialProperty({
+                    color : Cesium.Color.SPRINGGREEN,
+                    outlineWidth : 1,
+                    outlineColor : Cesium.Color.SPRINGGREEN
+                }),
+                depthFailMaterial : new Cesium.PolylineOutlineMaterialProperty({
+                    color : Cesium.Color.SPRINGGREEN,
+                    outlineWidth : 1,
+                    outlineColor : Cesium.Color.SPRINGGREEN
+                })
+            }
+        });
+        viewer.flyTo(userTour);
     });
-    viewer.flyTo(userTour);
 
 
     // for (var i = 0; i < positions.length; i++) {
@@ -819,8 +903,6 @@ function addAreaBackgroundLayer() {
     );
 }
 
-// addAreaBackgroundLayer();
-
 function addSceneLayer() {
     var dataSource1 = Cesium.GeoJsonDataSource.load(
         "./scene.geojson",
@@ -852,8 +934,6 @@ function addSceneLayer() {
     );
     viewer.dataSources.add(dataSource3);
 }
-
-// addSceneLayer();
 
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
@@ -1006,10 +1086,23 @@ function setKey(event) {
     } 
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
-    } else if (event.keyCode === 84) {
-        //getUserTourHeights(userTourPostitions);
-        updatePoiLocation(pois);
-        //recenter();
+    }
+    else if (event.keyCode === 70) {
+        // 飞行预览启动
+        flyThroughStart(200, 45);
+    }
+    else if (event.keyCode === 32) {
+        // 飞行预览暂停
+        flyThroughPause();
+    }
+    else if (event.keyCode === 83) {
+        // 飞行预览停止
+        flyThroughStop();
+    }
+    else if (event.keyCode === 84) {
+        updateUserTour(userTourPostitions);
+        //updatePoiLocation(pois);
+        //flyTo({"height":12000,"latitude":27.8601391146,"longitude":108.7107853492});
     }
 
     if (event.ctrlKey){
@@ -1109,3 +1202,222 @@ viewer.scene.postRender.addEventListener(function () {
         window.Android.putCameraParam(JSON.stringify(cameraParam));
     }
 });
+
+function flyTo(position) {
+    viewer.camera.flyTo({
+        destination : Cesium.Cartesian3.fromDegrees(position.longitude, position.latitude, position.height)
+    });
+}
+
+// fly through
+
+var planeModelLoaded = false; // 飞行模型加载标记
+var planePrimitive = null; // 飞行模型
+var preUpdateListener = null;
+
+function flyThroughPause() {
+    viewer.clock.stopTime = viewer.clock.startTime;
+    if (planeModelLoaded) {
+        viewer.scene.primitives.remove(planePrimitive);
+        planeModelLoaded = false;
+    }
+    if (preUpdateListener) {
+        viewer.scene.preUpdate.removeEventListener(preUpdateListener);
+        preUpdateListener = null;
+    }
+}
+
+function flyThroughStop() {
+    viewer.clock.stopTime = viewer.clock.startTime;
+    if (planeModelLoaded) {
+        viewer.scene.primitives.remove(planePrimitive);
+        planeModelLoaded = false;
+    }
+    if (preUpdateListener) {
+        viewer.scene.preUpdate.removeEventListener(preUpdateListener);
+        preUpdateListener = null;
+    }
+    if (userTour) {
+        viewer.flyTo(userTour);
+    }
+}
+
+function flyThroughStart(height, angle) {
+    if (!userTour || planeModelLoaded) {
+        return;
+    }
+
+    var simplifiedPositions = simplify(userTourPostitions, 0.001, false);
+
+    var cartoPositions = [];
+    for (var i = 0; i < simplifiedPositions.length; i++) {
+        cartoPositions.push(Cesium.Cartographic.fromDegrees(simplifiedPositions[i].longitude, simplifiedPositions[i].latitude));
+    }
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, cartoPositions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            for (var i = 0; i < updatedPositions.length; i++) {
+                simplifiedPositions[i].height = updatedPositions[i].height + height;
+            }
+        }
+
+        var deltaRadians = Cesium.Math.toRadians(1.0);
+            
+        var scene = viewer.scene;
+        var camera = viewer.camera;
+        var controller = scene.screenSpaceCameraController;
+        var r = 0;
+        var center = new Cesium.Cartesian3();
+
+        function getHeadingPitch(pointA, pointB){
+            const transform = Cesium.Transforms.eastNorthUpToFixedFrame(pointA);
+            const positionvector = Cesium.Cartesian3.subtract(pointB, pointA, new Cesium.Cartesian3());
+            const vector = Cesium.Matrix4.multiplyByPointAsVector(Cesium.Matrix4.inverse(transform, new Cesium.Matrix4()), positionvector, new Cesium.Cartesian3());
+            const direction = Cesium.Cartesian3.normalize(vector, new Cesium.Cartesian3());
+            //heading
+            const heading = Cesium.Math.TWO_PI-Cesium.Math.zeroToTwoPi(Math.atan2(direction.y, direction.x) - Cesium.Math.PI_OVER_TWO);
+            //pitch
+            const pitch = Cesium.Math.PI_OVER_TWO - Cesium.Math.acosClamped(direction.z);
+            //distance
+            const distance = Cesium.Cartesian3.distance(pointA, pointB);
+            return {
+                heading : heading,
+                pitch : pitch,
+                distance : distance
+            };
+        }
+        var roamingPostions = [];
+        for (var i = 0; i < simplifiedPositions.length; i++) {
+            roamingPostions.push(simplifiedPositions[i].longitude);
+            roamingPostions.push(simplifiedPositions[i].latitude);
+            roamingPostions.push(simplifiedPositions[i].height);
+        }
+        var hPitches = [];
+        var distanceSum = 0.0;
+        for (var i = 3; i < roamingPostions.length; i += 3) {
+            var originPosition = new Cesium.Cartographic(roamingPostions[i-3], roamingPostions[i-2]);
+            var originHeight = 0;
+            var targetPosition = new Cesium.Cartographic(roamingPostions[i+0], roamingPostions[i+1]);
+            var targetHeight = 0;
+            var origin = new Cesium.Cartesian3.fromDegrees(roamingPostions[i-3], roamingPostions[i-2], originHeight+roamingPostions[i-1]);
+            var target = new Cesium.Cartesian3.fromDegrees(roamingPostions[i+0], roamingPostions[i+1], targetHeight+roamingPostions[i+2]);
+            var hPitch = getHeadingPitch(origin, target);
+
+            distanceSum += hPitch.distance;
+            hPitch.distance = distanceSum;
+
+            if (hPitches.length === 0) {
+                hPitches.push(hPitch);
+            }
+            else {
+                var heading = hPitch.heading;
+                if (heading > hPitches[hPitches.length - 1].heading) {
+                    for (var h = hPitches[hPitches.length - 1].heading; h < heading; h += deltaRadians) {
+                        hPitches.push({
+                            heading : h,
+                            pitch : hPitch.pitch,
+                            distance : hPitch.distance
+                        });
+                    }
+                }
+                else {
+                    for (var h = hPitches[hPitches.length - 1].heading; h > heading; h -= deltaRadians) {
+                        hPitches.push({
+                            heading : h,
+                            pitch : hPitch.pitch,
+                            distance : hPitch.distance
+                        });
+                    }
+                }
+                hPitches.push(hPitch);
+            }
+        }
+
+        var origin = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        var target = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[1].longitude, simplifiedPositions[1].latitude, simplifiedPositions[1].height);
+        var hPitch = getHeadingPitch(origin, target);
+
+        var hpRoll = new Cesium.HeadingPitchRoll();
+        hpRoll.heading = hPitch.heading;
+        hpRoll.pitch = hPitch.pitch;
+
+        var hpRange = new Cesium.HeadingPitchRange();
+        var speed = 10;
+        
+
+        var position = Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        var speedVector = new Cesium.Cartesian3();
+        var fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west');
+
+        planePrimitive = scene.primitives.add(Cesium.Model.fromGltf({
+            url : './Cesium_Air.glb',
+            modelMatrix : Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform),
+            show : false,
+            minimumPixelSize : 128
+        }));
+
+        planePrimitive.readyPromise.then(function(model) {
+            // Play and loop all animations at half-speed
+            model.activeAnimations.addAll({
+                removeOnStop : true,
+                multiplier : 0.5,
+                loop : Cesium.ModelAnimationLoop.REPEAT
+            });
+
+            // Zoom to model
+            r = 2.0 * Math.max(model.boundingSphere.radius, camera.frustum.near);
+            controller.minimumZoomDistance = r * 0.5;
+            Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, center);
+            var heading = Cesium.Math.toRadians(230.0);
+            var pitch = Cesium.Math.toRadians(-20.0);
+            hpRange.heading = heading;
+            hpRange.pitch = pitch;
+            hpRange.range = r * 25.0;
+            camera.lookAt(center, hpRange);
+
+            planeModelLoaded = true;
+        });
+
+        var distance = 0.0;
+        var currentIndex = 0;
+        var currentPosition = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        
+        preUpdateListener = function (scene, time) {
+            if (!planeModelLoaded) {
+                return;
+            }
+            
+            speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 10, speedVector);
+            position = Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, speedVector, position);
+
+            distance += Cesium.Cartesian3.distance(currentPosition, position);
+            currentPosition = position.clone();
+
+            Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform, planePrimitive.modelMatrix);
+
+            var i = 0;
+            for (; i < hPitches.length; i++) {
+                if (distance < hPitches[i].distance) {
+                    break;
+                }
+            }
+            if (i > currentIndex && i < hPitches.length) {
+                hpRoll.heading = hPitches[i].heading;
+                hpRoll.pitch = hPitches[i].pitch;
+                currentIndex = i;
+            }
+            
+            // Zoom to model
+            Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, planePrimitive.boundingSphere.center, center);
+            hpRange.heading = hpRoll.heading;
+            hpRange.pitch = Cesium.Math.toRadians(-angle);//hpRoll.pitch;
+            camera.lookAt(center, hpRange);
+
+            if (i >= hPitches.length) {
+                flyThroughStop();
+            }
+        }
+
+        viewer.scene.preUpdate.addEventListener(preUpdateListener);
+    });
+}

@@ -1,5 +1,6 @@
 package com.versalinks.mission;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -44,6 +45,18 @@ public class OptUtils {
         return "javascript:updateUserLocation(" + getJson(modelGps) + ")";
     }
 
+    public static String flyTo(Model_GPS modelGps) {
+        return "javascript:flyTo(" + getJson(modelGps) + ")";
+    }
+
+    public static String flyStart() {
+        return "javascript:flyThroughStart(" + "200,45" + ")";
+    }
+
+    public static String flyStop() {
+        return "javascript:flyThroughStop(" + "" + ")";
+    }
+
     public static String getUserTourHeights(String jsonPois) {
         return "javascript:getUserTourHeights(" + jsonPois + ")";
     }
@@ -85,7 +98,9 @@ public class OptUtils {
 
     public static String getJson(Object model) {
         Gson gson = new Gson();
-        return gson.toJson(model);
+        String json = gson.toJson(model);
+        LogUtils.e(json);
+        return json;
     }
 
     public static String getJson(String action, Object data) {

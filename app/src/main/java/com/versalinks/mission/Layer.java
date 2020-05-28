@@ -35,10 +35,10 @@ public class Layer {
         Layer layer = new Layer();
         layer.label = "生态体验点";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("自然科普", R.drawable.src_img_fmicnlineterrainaspect));
-        layer.items.add(new Item("观光旅游", R.drawable.src_img_fmicnlineterrainavalanche));
-        layer.items.add(new Item("户外体验", R.drawable.src_img_fmicnlineterrainelevation));
-        layer.items.add(new Item("专项旅游", R.drawable.src_img_fmicnlineterrainflat));
+        layer.items.add(new Item("自然科普", R.drawable.ic_location));
+        layer.items.add(new Item("观光旅游", R.drawable.ic_location));
+        layer.items.add(new Item("户外体验", R.drawable.ic_location));
+        layer.items.add(new Item("专项旅游", R.drawable.ic_location));
         return layer;
     }
 
@@ -46,8 +46,8 @@ public class Layer {
         Layer layer = new Layer();
         layer.label = "珍稀动植物";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("动物", R.drawable.src_img_fm_icn_line_poi_park));
-        layer.items.add(new Item("植物", R.drawable.src_img_fm_icn_line_poi_peak));
+        layer.items.add(new Item("动物", R.drawable.ic_location));
+        layer.items.add(new Item("植物", R.drawable.ic_location));
         return layer;
     }
 
@@ -55,10 +55,10 @@ public class Layer {
         Layer layer = new Layer();
         layer.label = "基础图层";
         layer.items = new ArrayList<>();
-        layer.items.add(new Item("水系", R.drawable.src_img_flags_flagar));
-        layer.items.add(new Item("村庄", R.drawable.src_img_flags_flagau));
-        layer.items.add(new Item("山峰", R.drawable.src_img_flags_flagcn));
-        layer.items.add(new Item("道路", R.drawable.src_img_flags_flagca));
+        layer.items.add(new Item("水系", R.drawable.ic_location));
+        layer.items.add(new Item("村庄", R.drawable.ic_location));
+        layer.items.add(new Item("山峰", R.drawable.ic_location));
+        layer.items.add(new Item("道路", R.drawable.ic_location));
         return layer;
     }
 }
