@@ -253,7 +253,7 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
             Log.d("Matisse", "Uris: " + Matisse.obtainResult(data));
             List<String> strings = Matisse.obtainPathResult(data);
             Log.d("Matisse", "Paths: " + strings);
-            Log.e("Matisse", "Use the selected photos with original: " + String.valueOf(Matisse.obtainOriginalState(data)));
+            Log.e("Matisse", "Use the selected photos with original: " + Matisse.obtainOriginalState(data));
             initAdapter(strings);
         }
     }

@@ -166,9 +166,6 @@ public class CoordinateTransformUtil {
     public static boolean out_of_china(double lng, double lat) {
         if (lng < 72.004 || lng > 137.8347) {
             return true;
-        } else if (lat < 0.8293 || lat > 55.8271) {
-            return true;
-        }
-        return false;
+        } else return lat < 0.8293 || lat > 55.8271;
     }
 }
