@@ -14,7 +14,7 @@ public class LayerView extends FrameLayout {
     private boolean isCheck;
     private ImageView ivCheck;
     private Layer.Item item;
-    private TextView ivLogo;
+    private ImageView ivLogo;
     private TextView tvLabel;
 
     public LayerView(@NonNull Context context) {
@@ -46,7 +46,7 @@ public class LayerView extends FrameLayout {
         this.item = item;
         if (item != null) {
             if (ivLogo != null) {
-//                ivLogo.setImageResource(item.resID);
+                ivLogo.setImageResource(item.resID);
             }
             if (tvLabel != null) {
                 tvLabel.setText(item.label);

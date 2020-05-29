@@ -49,7 +49,7 @@ import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
-
+    private Handler handler = new Handler(Looper.getMainLooper());
     private WebView webView;
     private GPSService gpsService;
     boolean needAnimal = true;
@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             binding.ivCurrent.setTag(model_gps);
             webView.evaluateJavascript(OptUtils.updateLocation(model_gps), null);
             if (needAnimal) {
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         webView.evaluateJavascript(OptUtils.recenter(), null);
@@ -206,26 +206,35 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void itemClick(int index) {
                 if (index == 1) {
                     jump2Activity(RecordsActivity.class, 668);
-                    binding.drawerLayout.closeDrawer(GravityCompat.START, false);
                 } else if (index == 2) {
                     jump2Activity(MarkersActivity.class, 667);
-                    binding.drawerLayout.closeDrawer(GravityCompat.START, false);
                 } else {
 
                 }
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.drawerLayout.closeDrawer(GravityCompat.START, true);
+                    }
+                }, 500);
             }
         });
         binding.vLayerChoose.setItemClickListener(new LayerChoose.ItemClickListener() {
             @Override
             public void itemClick(Layer.Item item, boolean check) {
                 if (TextUtils.equals(item.label, "道路")) {
-                    binding.drawerLayout.closeDrawer(GravityCompat.END, true);
                     if (check) {
                         webView.evaluateJavascript(OptUtils.showRoadLayer(), null);
                     } else {
                         webView.evaluateJavascript(OptUtils.hideRoadLayer(), null);
                     }
                 }
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        binding.drawerLayout.closeDrawer(GravityCompat.END, true);
+                    }
+                }, 500);
             }
         });
         binding.iv1.setOnClickListener(new View.OnClickListener() {
@@ -312,12 +321,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.vRouteInfoFly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.flyStart(),null);
+                webView.evaluateJavascript(OptUtils.flyStart(), null);
             }
-        });binding.vRouteInfoCurrent.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.vRouteInfoCurrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.flyStop(),null);
+                webView.evaluateJavascript(OptUtils.flyStop(), null);
             }
         });
         binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
@@ -464,6 +474,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Override
     protected void onDestroy() {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
         if (gpsService != null) {
             gpsService.removeGPSListener(gpsListener);
             gpsService.stopLocate();
