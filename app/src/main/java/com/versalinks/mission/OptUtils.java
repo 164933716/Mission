@@ -99,7 +99,7 @@ public class OptUtils {
     public static String getJson(Object model) {
         Gson gson = new Gson();
         String json = gson.toJson(model);
-        LogUtils.e(json);
+//        LogUtils.e(json);
         return json;
     }
 
