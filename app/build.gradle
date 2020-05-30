@@ -63,4 +63,5 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.0'
 }

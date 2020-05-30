@@ -11,6 +11,10 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.Geometry;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.Point;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -224,6 +228,83 @@ public class DataUtils {
 
     }
 
+    public Observable<List<Feature>> saveMarker(List<Feature> features) {
+        Observable<List<Feature>> routeObservable = Observable.create(new ObservableOnSubscribe<List<Feature>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Feature>> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            for (Feature feature : features) {
+                                Geometry geometry = feature.geometry();
+                                if (geometry instanceof Point) {
+                                    Point point = (Point) geometry;
+                                    double longitude = point.longitude();
+                                    double latitude = point.latitude();
+                                    double altitude = point.altitude();
+                                    Model_Marker item = new Model_Marker();
+                                    item.createTime = DataUtils.getNowMills();
+                                    item.name = feature.getStringProperty("name");
+                                    item.type = new Model_MarkerType("景点");
+                                    item.gps = new Model_GPS(longitude, latitude, altitude);
+                                    item.photos = new RealmList<>();
+                                    realm.copyToRealmOrUpdate(item);
+                                }
+                            }
+                            emitter.onNext(features);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+            }
+        });
+        return routeObservable;
+    }
+
+    public Observable<List<Feature>> saveRoute(List<Feature> features) {
+        Observable<List<Feature>> routeObservable = Observable.create(new ObservableOnSubscribe<List<Feature>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Feature>> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            for (Feature feature : features) {
+                                Geometry geometry = feature.geometry();
+                                if (geometry instanceof LineString) {
+                                    LineString lineString = (LineString) geometry;
+                                    Model_Route item = new Model_Route();
+                                    item.name = feature.getStringProperty("name");
+                                    item.description = DataUtils.randomDescription();
+                                    item.distance = feature.getNumberProperty("distance").doubleValue();
+                                    item.createTime = DataUtils.getNowMills();
+                                    item.goDuration = DataUtils.randomDuration();
+                                    item.goMode = DataUtils.randomGoMode();
+                                    item.goDifficult = DataUtils.randomGoDiffclut();
+                                    item.goUp = DataUtils.randomUpOrDown();
+                                    item.goDown = DataUtils.randomUpOrDown();
+                                    item.gpsList = new RealmList<>();
+                                    List<Point> coordinates = lineString.coordinates();
+                                    for (Point point : coordinates) {
+                                        double longitude = point.longitude();
+                                        double latitude = point.latitude();
+                                        double altitude = point.altitude();
+                                        item.gpsList.add(new Model_GPS(longitude, latitude, altitude));
+                                    }
+                                    realm.copyToRealmOrUpdate(item);
+                                }
+                            }
+                            emitter.onNext(features);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+            }
+        });
+        return routeObservable;
+    }
+
     public Observable<Model_Marker> saveMarker(Model_Marker modelMarker) {
         Observable<Model_Marker> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Marker>() {
             @Override
@@ -425,57 +506,6 @@ public class DataUtils {
         baseOb.bindObed(routeObservable);
     }
 
-    public void createMarker静心池() {
-        Model_Marker item = new Model_Marker();
-        item.createTime = getNowMills();
-        item.name = "静心池";
-        item.type = new Model_MarkerType("景点");
-        item.gps = new Model_GPS(27.91111937344167, 108.6853329610836, 1829.925377177459);
-        item.photos = new RealmList<>();
-        Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
-        BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
-            @Override
-            public void onDataDeal(Model_Marker data, String message) {
-
-            }
-        };
-        baseOb.bindObed(o);
-    }
-
-    public void createMarker九龙池() {
-        Model_Marker item = new Model_Marker();
-        item.createTime = getNowMills();
-        item.name = "九龙池";
-        item.type = new Model_MarkerType("景点");
-        item.gps = new Model_GPS(27.90580461792431, 108.6793671948208, 1651.492238157933);
-        item.photos = new RealmList<>();
-        Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
-        BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
-            @Override
-            public void onDataDeal(Model_Marker data, String message) {
-
-            }
-        };
-        baseOb.bindObed(o);
-    }
-
-    public void createMarker鱼坳() {
-        Model_Marker item = new Model_Marker();
-        item.createTime = getNowMills();
-        item.name = "鱼坳";
-        item.type = new Model_MarkerType("景点");
-        item.gps = new Model_GPS(27.9011899072281, 108.7111769767164, 1348.817705876677);
-        item.photos = new RealmList<>();
-        Observable<Model_Marker> o = DataUtils.getInstance().saveMarker(item);
-        BaseOb<Model_Marker> baseOb = new BaseOb<Model_Marker>() {
-            @Override
-            public void onDataDeal(Model_Marker data, String message) {
-
-            }
-        };
-        baseOb.bindObed(o);
-    }
-
     public void createRoute(Context context) {
         BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
             @Override
@@ -503,13 +533,13 @@ public class DataUtils {
         item.distance = DataUtils.randomDistance();
         item.goUp = DataUtils.randomUpOrDown();
         item.goDown = DataUtils.randomUpOrDown();
-        String json = DataUtils.getJson(context, "route_gps_list.json");
+        /*String json = DataUtils.getJson(context, "route_gps_list.json");
         List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
         }.getType());
         if (o != null) {
             item.gpsList = new RealmList<>();
             item.gpsList.addAll(o);
-        }
+        }*/
         Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(item);
         baseOb.bindObed(routeObservable);
     }
@@ -539,13 +569,13 @@ public class DataUtils {
         item.distance = DataUtils.randomDistance();
         item.goUp = DataUtils.randomUpOrDown();
         item.goDown = DataUtils.randomUpOrDown();
-        String json = DataUtils.getJson(context, "route_gps_list.json");
-        List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
-        }.getType());
-        if (o != null) {
-            item.gpsList = new RealmList<>();
-            item.gpsList.addAll(o);
-        }
+//        String json = DataUtils.getJson(context, "route_gps_list.json");
+//        List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
+//        }.getType());
+//        if (o != null) {
+//            item.gpsList = new RealmList<>();
+//            item.gpsList.addAll(o);
+//        }
         Observable<Model_Record> routeObservable = DataUtils.getInstance().saveRecord(item);
         baseOb.bindObed(routeObservable);
     }

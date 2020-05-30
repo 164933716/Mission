@@ -44,7 +44,6 @@ import java.util.List;
 
 import io.realm.RealmList;
 
-import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED;
 import static androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
 import static com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED;
 
@@ -228,13 +227,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     } else {
                         webView.evaluateJavascript(OptUtils.hideRoadLayer(), null);
                     }
+                } else if (TextUtils.equals(item.label, "动物")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "动物.geojson");
+                        webView.evaluateJavascript(OptUtils.showAnimalLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removeAnimalLayer(), null);
+                    }
+                } else if (TextUtils.equals(item.label, "植物")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "植物.geojson");
+                        webView.evaluateJavascript(OptUtils.showPlantLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removePlantLayer(), null);
+                    }
                 }
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         binding.drawerLayout.closeDrawer(GravityCompat.END, true);
                     }
-                }, 500);
+                }, 300);
             }
         });
         binding.iv1.setOnClickListener(new View.OnClickListener() {
@@ -321,13 +334,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.vRouteInfoFly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.flyStart(), null);
+                Object tag = binding.vRouteInfoFly.getTag();
+                if (tag != null) {
+                    webView.evaluateJavascript(OptUtils.flyPause(), null);
+                    binding.vRouteInfoFly.setTag(null);
+                    binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
+                } else {
+                    webView.evaluateJavascript(OptUtils.flyStart(), null);
+                    binding.vRouteInfoFly.setTag("flying");
+                    binding.vRouteInfoFly.setImageResource(R.drawable.ic_media_pause);
+                }
             }
         });
         binding.vRouteInfoCurrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                webView.evaluateJavascript(OptUtils.flyStop(), null);
+//                webView.evaluateJavascript(OptUtils.flyStop(), null);
             }
         });
         binding.vRouteInfoHeight.setOnClickListener(new View.OnClickListener() {
@@ -433,8 +455,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         webView.loadUrl("file:///android_asset/model/map.html");
         Intent intent = new Intent(this, GPSService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
-
-
     }
 
     public class JSInterface {
@@ -444,7 +464,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         @JavascriptInterface
         public void putUserTourHeights(String json) {
-
+            LogUtils.e("json    " + json);
         }
 
         @JavascriptInterface
@@ -463,6 +483,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+
+        @JavascriptInterface
+        public void poiClick(String json) {
+            LogUtils.e("json    " + json);
+            Intent intent = new Intent(context, PoiDetailActivity.class);
+            intent.putExtra("geoJson", json);
+            jump2Activity(intent);
         }
     }
 
@@ -523,6 +551,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     Model_Route item = (Model_Route) model_routeSer;
                     if (webView != null) {
                         showRoute(item);
+//                        String userTourHeights = OptUtils.getUserTourHeights(new Gson().toJson(item.gpsList));
+//                        webView.evaluateJavascript(userTourHeights, null);
                     }
                 }
 
@@ -555,7 +585,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void showMarker(Model_Marker modelMarker) {
-        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+        setRouteToNULL();
+//        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
         binding.containerNormal.setVisibility(View.GONE);
         binding.containerMarker.setVisibility(View.VISIBLE);
         webView.evaluateJavascript(OptUtils.updatePoiLocation(modelMarker), null);
@@ -566,7 +597,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void showRoute(Model_Route item) {
-        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+        setMarkerToNULL();
+//        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
         binding.routeChart.setTag(item);
         RealmList<Model_GPS> gpsList = item.gpsList;
 
@@ -582,7 +614,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void showRecord(Model_Record item) {
-        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+        setMarkerToNULL();
+//        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
         binding.routeChart.setTag(item);
         RealmList<Model_GPS> gpsList = item.gpsList;
 
@@ -636,6 +669,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void setRouteToNULL() {
+        binding.vRouteInfoFly.setTag(null);
+        binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
+        webView.evaluateJavascript(OptUtils.flyStop(), null);
+
         binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED, GravityCompat.START);
         webView.evaluateJavascript(OptUtils.clearUserTour(), null);
         binding.containerRoute.setVisibility(View.GONE);

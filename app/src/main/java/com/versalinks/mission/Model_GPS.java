@@ -16,7 +16,7 @@ public class Model_GPS extends RealmObject implements Parcelable {
     public double longitude;
     public double height;
 
-    public Model_GPS(double latitude, double longitude, double height) {
+    public Model_GPS(double longitude,double latitude,  double height) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.height = height;

@@ -6,14 +6,12 @@ import android.content.Context;
 import androidx.multidex.MultiDex;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.tencent.smtt.sdk.QbSdk;
-
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 
 public class App extends Application {
-
+    public String toolToken = "sk.eyJ1Ijoibm9haHh1IiwiYSI6ImNqcW0xOGRmOTBzbDk0MnMxdmgxNWE0cjIifQ.muFTyK3xueum0V4iaKfEPQ";
     private static Context context;
 
     @Override
@@ -28,9 +26,10 @@ public class App extends Application {
 
             @Override
             public void onViewInitFinished(boolean bool) {
-                LogUtils.e("onViewInitFinished  "+bool);
+                LogUtils.e("onViewInitFinished  " + bool);
             }
         });
+        Mapbox.getInstance(context, toolToken);
     }
 
     @Override

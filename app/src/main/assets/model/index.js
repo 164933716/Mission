@@ -603,8 +603,6 @@ var userTourPostitions = [
 
 function clickPoi() {
     viewer.clock.stopTime = viewer.clock.startTime;
-
-    updateUserTour(userTourPostitions);
 }
 
 function updatePoiLocation(pois) {
@@ -903,36 +901,166 @@ function addAreaBackgroundLayer() {
     );
 }
 
-function addSceneLayer() {
-    var dataSource1 = Cesium.GeoJsonDataSource.load(
-        "./scene.geojson",
-        {
-            clampToGround: true
-        }
-    );
-    dataSource1.then(function (dataSource) {
-        viewer.dataSources.add(dataSource);
-        for (var i = 0; i < dataSource.entities.values.length; i++) {
-            var entity = dataSource.entities.values[i];
-            var name = entity.name;
+function clickEntity() {
+    if (window.Android) {
+        window.Android.poiClick(JSON.stringify(this.data));
+    }
+}
+
+function addAnimalLayer(geojson) {
+    removeAnimalLayer();
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'Animal' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '动物';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'animalContent';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_dongwu_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('Animal' + i); 
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight + 10;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight + 10;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 10 + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
         }
     });
+}
 
-    var dataSource2 = Cesium.GeoJsonDataSource.load(
-        "./animal.geojson",
-        {
-            clampToGround: true
+function removeAnimalLayer() {
+    var elements = document.getElementsByClassName('animalContent');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
         }
-    );
-    viewer.dataSources.add(dataSource2);
+    }
+}
 
-    var dataSource3 = Cesium.GeoJsonDataSource.load(
-        "./plant.geojson",
-        {
-            clampToGround: true
+var plantGeoJSON = {};
+
+function addPlantLayer(geojson) {
+    removePlantLayer();
+
+    plantGeoJSON = geojson;
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'Plant' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '植物';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'plantContent';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhiwu_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('Plant' + i);
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
         }
-    );
-    viewer.dataSources.add(dataSource3);
+    });
+}
+
+function removePlantLayer() {
+    var elements = document.getElementsByClassName('plantContent');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
+        }
+    }
 }
 
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -1083,9 +1211,33 @@ function setKey(event) {
     }
     else if (event.keyCode === 65) {
         addRoadBackgroundLayer({ "sroad" : "./sroad.geojson", "ssroad" : "./ssroad.geojson"});
+        
+        var request1 = new XMLHttpRequest();
+        request1.open("get", "./动物.geojson");
+        request1.send(null);
+        request1.onload = function () {
+            if (request1.status == 200) {
+                var geojson = JSON.parse(request1.responseText);
+                addAnimalLayer(geojson);
+            }
+        }
+
+        var request2 = new XMLHttpRequest();
+        request2.open("get", "./植物.geojson");
+        request2.send(null);
+        request2.onload = function () {
+            if (request2.status == 200) {
+                var geojson = JSON.parse(request2.responseText);
+                addPlantLayer(geojson);
+            }
+        }
     } 
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
+
+        removeAnimalLayer();
+
+        removePlantLayer();
     }
     else if (event.keyCode === 70) {
         // 飞行预览启动

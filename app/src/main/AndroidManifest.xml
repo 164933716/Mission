@@ -95,6 +95,7 @@
             android:name=".RecordsActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
+        <activity android:name=".PoiDetailActivity" />
     </application>
 
 </manifest>

@@ -109,10 +109,10 @@ public class LayerChoose extends LinearLayout {
                 @Override
                 public void onItemClick(View view, int position, int viewType) {
                     Layer.Item item = layer.items.get(position);
-                    if (!TextUtils.equals(item.label, "道路")) {
-                        ToastUtils.showShort("数据暂未开放");
-                        return;
-                    }
+//                    if (!TextUtils.equals(item.label, "道路")) {
+//                        ToastUtils.showShort("数据暂未开放");
+//                        return;
+//                    }
                     boolean check;
                     if (choose.contains(item)) {
                         check = false;
