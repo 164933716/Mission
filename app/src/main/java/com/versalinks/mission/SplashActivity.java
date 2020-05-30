@@ -58,6 +58,15 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
                 }
             };
             routeObBase.bindObed(routeOb);
+
+            Observable<List<Feature>> recordOb = DataUtils.getInstance().saveRecord(routes);
+            BaseOb<List<Feature>> recordBaseOb = new BaseOb<List<Feature>>() {
+                @Override
+                public void onDataDeal(List<Feature> data, String message) {
+                    LogUtils.e(data.size());
+                }
+            };
+            recordBaseOb.bindObed(recordOb);
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

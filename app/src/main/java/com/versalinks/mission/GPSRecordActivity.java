@@ -120,7 +120,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             model_record.distance = DataUtils.randomDistance();
             model_record.goUp = DataUtils.randomUpOrDown();
             model_record.name = DataUtils.getNowString();
-            model_record.description = DataUtils.randomDescription();
+            model_record.description = DataUtils.randomDescription1();
             model_record.gpsList = new RealmList<>();
             model_record.gpsList.addAll(gpsList);
             Observable<Model_Record> o = DataUtils.getInstance().saveRecord(model_record);

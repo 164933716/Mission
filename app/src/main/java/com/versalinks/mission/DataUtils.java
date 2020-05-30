@@ -7,10 +7,7 @@ import android.content.res.AssetManager;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Geometry;
 import com.mapbox.geojson.LineString;
@@ -270,13 +267,70 @@ public class DataUtils {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(@NonNull Realm realm) {
-                            for (Feature feature : features) {
+                            for (int i = 0; i < features.size(); i++) {
+                                Feature feature = features.get(i);
                                 Geometry geometry = feature.geometry();
                                 if (geometry instanceof LineString) {
                                     LineString lineString = (LineString) geometry;
                                     Model_Route item = new Model_Route();
                                     item.name = feature.getStringProperty("name");
-                                    item.description = DataUtils.randomDescription();
+                                    if (i == 0) {
+
+                                        item.description = DataUtils.randomDescription1();
+                                    } else {
+                                        item.description = DataUtils.randomDescription2();
+
+                                    }
+                                    item.distance = feature.getNumberProperty("distance").doubleValue();
+                                    item.createTime = DataUtils.getNowMills();
+                                    item.goDuration = DataUtils.randomDuration();
+                                    item.goMode = DataUtils.randomGoMode();
+                                    item.goDifficult = DataUtils.randomGoDiffclut();
+                                    item.goUp = DataUtils.randomUpOrDown();
+                                    item.goDown = DataUtils.randomUpOrDown();
+                                    item.gpsList = new RealmList<>();
+                                    List<Point> coordinates = lineString.coordinates();
+                                    for (Point point : coordinates) {
+                                        double longitude = point.longitude();
+                                        double latitude = point.latitude();
+                                        double altitude = point.altitude();
+                                        item.gpsList.add(new Model_GPS(longitude, latitude, altitude));
+                                    }
+                                    realm.copyToRealmOrUpdate(item);
+                                }
+                            }
+                            emitter.onNext(features);
+                            emitter.onComplete();
+                        }
+                    });
+                }
+            }
+        });
+        return routeObservable;
+    }
+
+    public Observable<List<Feature>> saveRecord(List<Feature> features) {
+        Observable<List<Feature>> routeObservable = Observable.create(new ObservableOnSubscribe<List<Feature>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<Feature>> emitter) throws Exception {
+                try (Realm realm = Realm.getDefaultInstance()) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(@NonNull Realm realm) {
+                            for (int i = 0; i < features.size(); i++) {
+                                Feature feature = features.get(i);
+                                Geometry geometry = feature.geometry();
+                                if (geometry instanceof LineString) {
+                                    LineString lineString = (LineString) geometry;
+                                    Model_Record item = new Model_Record();
+                                    item.name = feature.getStringProperty("name");
+                                    if (i == 0) {
+
+                                        item.description = DataUtils.randomDescription1();
+                                    } else {
+                                        item.description = DataUtils.randomDescription2();
+
+                                    }
                                     item.distance = feature.getNumberProperty("distance").doubleValue();
                                     item.createTime = DataUtils.getNowMills();
                                     item.goDuration = DataUtils.randomDuration();
@@ -369,8 +423,12 @@ public class DataUtils {
         return "easy";
     }
 
-    public static String randomDescription() {
-        return "从金顶出发步行到九龙池，沿路经过护国寺、棉絮岭、薄刀岭、静心池等，全长大约3公里";
+    public static String randomDescription2() {
+        return "从护国寺出发步行到万千台，沿路经过棉絮岭、薄刀岭、静心池等，全长大约7公里";
+    }
+
+    public static String randomDescription1() {
+        return "从张家坝出发步行到苏家坡，沿路经过护国寺、棉絮岭、薄刀岭、静心池等，全长大约8公里";
     }
 
     public static String convertToDistance(double distance) {
@@ -480,103 +538,5 @@ public class DataUtils {
                 .imageEngine(new GlideEngine())
                 .showPreview(true) // Default is `true`
                 .forResult(code);
-    }
-
-    public void createRouteByJson(Context context) {
-        BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onDataDeal(Model_Route route, String message) {
-                if (route != null) {
-                    String json = new Gson().toJson(route);
-                    AndroidUtil.saveText(AndroidUtil.getTempTxtFile(context, "route.txt"), json);
-                } else {
-                    LogUtils.e("null");
-                }
-            }
-        };
-        String json = DataUtils.getJson(context, "route.json");
-        Model_Route o = new Gson().fromJson(json, new TypeToken<Model_Route>() {
-        }.getType());
-        Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(o);
-        baseOb.bindObed(routeObservable);
-    }
-
-    public void createRoute(Context context) {
-        BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onDataDeal(Model_Route route, String message) {
-                if (route != null) {
-                    String json = new Gson().toJson(route);
-                    AndroidUtil.saveText(AndroidUtil.getTempTxtFile(context, "route.txt"), json);
-                } else {
-                    LogUtils.e("null");
-                }
-            }
-        };
-        Model_Route item = new Model_Route();
-        item.createTime = DataUtils.getNowMills();
-        item.goDuration = DataUtils.randomDuration();
-        item.name = DataUtils.randomTitle();
-        item.description = DataUtils.randomDescription();
-        item.goMode = DataUtils.randomGoMode();
-        item.goDifficult = DataUtils.randomGoDiffclut();
-        item.distance = DataUtils.randomDistance();
-        item.goUp = DataUtils.randomUpOrDown();
-        item.goDown = DataUtils.randomUpOrDown();
-        /*String json = DataUtils.getJson(context, "route_gps_list.json");
-        List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
-        }.getType());
-        if (o != null) {
-            item.gpsList = new RealmList<>();
-            item.gpsList.addAll(o);
-        }*/
-        Observable<Model_Route> routeObservable = DataUtils.getInstance().saveRoute(item);
-        baseOb.bindObed(routeObservable);
-    }
-
-    public void createRecord(Context context) {
-        BaseOb<Model_Record> baseOb = new BaseOb<Model_Record>() {
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onDataDeal(Model_Record route, String message) {
-                if (route != null) {
-                } else {
-                    LogUtils.e("null");
-                }
-            }
-        };
-        Model_Record item = new Model_Record();
-        item.createTime = DataUtils.getNowMills();
-        item.goDuration = DataUtils.randomDuration();
-        item.name = DataUtils.randomTitle();
-        item.description = DataUtils.randomDescription();
-        item.goMode = DataUtils.randomGoMode();
-        item.goDifficult = DataUtils.randomGoDiffclut();
-        item.distance = DataUtils.randomDistance();
-        item.goUp = DataUtils.randomUpOrDown();
-        item.goDown = DataUtils.randomUpOrDown();
-//        String json = DataUtils.getJson(context, "route_gps_list.json");
-//        List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
-//        }.getType());
-//        if (o != null) {
-//            item.gpsList = new RealmList<>();
-//            item.gpsList.addAll(o);
-//        }
-        Observable<Model_Record> routeObservable = DataUtils.getInstance().saveRecord(item);
-        baseOb.bindObed(routeObservable);
     }
 }

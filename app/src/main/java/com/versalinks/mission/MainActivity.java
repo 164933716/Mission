@@ -488,9 +488,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         @JavascriptInterface
         public void poiClick(String json) {
             LogUtils.e("json    " + json);
-            Intent intent = new Intent(context, PoiDetailActivity.class);
-            intent.putExtra("geoJson", json);
-            jump2Activity(intent);
+//            Intent intent = new Intent(context, PoiDetailActivity.class);
+//            intent.putExtra("geoJson", json);
+//            jump2Activity(intent);
         }
     }
 
