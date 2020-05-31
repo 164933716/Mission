@@ -1,0 +1,622 @@
+{
+  "type": "FeatureCollection",
+  "name": "D:\\versalinks\\0中图社\\生态旅游数据\\观光旅游.geojson",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759451",
+        "NAME": "东线索道上站",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.693206029934132,
+          27.912577938160414
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759452",
+        "NAME": "老山门",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.767434986342522,
+          27.851552370646964
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759453",
+        "NAME": "梵净山山门",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.771088748882661,
+          27.846093971872055
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759454",
+        "NAME": "剪刀峡",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.675068549691147,
+          27.916491329385618
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759455",
+        "NAME": "黑湾河游客中心",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.771366347094855,
+          27.847110799251965
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759445",
+        "NAME": "薄刀岭",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.660868998372507,
+          27.91214332345946
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759446",
+        "NAME": "十月怀胎树",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.672894546728074,
+          27.915982110165139
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759447",
+        "NAME": "鱼坳零步",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.722384762193244,
+          27.897018186583988
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759448",
+        "NAME": "回香坪",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.703652645512037,
+          27.901735745130125
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759457",
+        "NAME": "护林站",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.7702563879933,
+          27.847897554720742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759458",
+        "NAME": "法印桥",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.752865448656678,
+          27.866166739204782
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759459",
+        "NAME": "四谛桥",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.749812859744821,
+          27.868016299257366
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759460",
+        "NAME": "正道桥",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.745048673373972,
+          27.87120948422805
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759461",
+        "NAME": "因缘桥",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.739868306558463,
+          27.878147828471683
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759463",
+        "NAME": "铜矿厂",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.729091547392471,
+          27.883882214397726
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759464",
+        "NAME": "东线索道下站",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.721552370321959,
+          27.892855824462231
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759465",
+        "NAME": "鱼坳停车场",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.721922356689134,
+          27.894613368143141
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759466",
+        "NAME": "万步云梯",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.712156848153256,
+          27.898320543553581
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759467",
+        "NAME": "僧塔",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.692413078076683,
+          27.911911702451167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759468",
+        "NAME": "万千台",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.684642713745063,
+          27.919587726765357
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759469",
+        "NAME": "生态展示长廊",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.68024891650667,
+          27.91732412402218
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759470",
+        "NAME": "天街",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.69551722094225,
+          27.910214387668077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759471",
+        "NAME": "流云亭",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.689175681872882,
+          27.917647699438263
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759472",
+        "NAME": "黑巷子",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.671460764354919,
+          27.91510333832468
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759473",
+        "NAME": "叫花洞",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.686909104863133,
+          27.919080118605926
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759475",
+        "NAME": "太平河",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.771777415518883,
+          27.844866219421991
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759476",
+        "NAME": "黑湾河",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.76453210218078,
+          27.857044044028999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "观音瀑布",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "introducti": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.745139430246709,
+          27.870921823097671
+        ]
+      }
+    }
+  ]
+}

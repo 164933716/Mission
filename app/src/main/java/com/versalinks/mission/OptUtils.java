@@ -88,13 +88,40 @@ public class OptUtils {
         return "javascript:addRoadBackgroundLayer(" + getJson(map) + ")";
     }
 
-    public static String hideRoadLayer() {
+    public static String removeRoadLayer() {
         return "javascript:removeRoadBackgroundLayer(" + "" + ")";
     }
 
     public static String updateUserTour(List<Model_GPS> gpsList) {
         return "javascript:updateUserTour(" + getJson(gpsList) + ")";
     }
+
+    public static String showNaturalScienceLayer(String json) {
+        return "javascript:addNaturalScienceLayer(" + json + ")";
+    }
+
+    public static String removeNaturalScienceLayer() {
+        return "javascript:removeNaturalScienceLayer(" + "" + ")";
+    }
+
+
+    public static String showSightseeingLayer(String json) {
+        return "javascript:addSightseeingLayer(" + json + ")";
+    }
+
+    public static String removeSightseeingLayer() {
+        return "javascript:removeSightseeingLayer(" + "" + ")";
+    }
+
+
+    public static String showSpecialTourismLayer(String json) {
+        return "javascript:addSpecialTourismLayer(" + json + ")";
+    }
+
+    public static String removeSpecialTourismLayer() {
+        return "javascript:removeSpecialTourismLayer(" + "" + ")";
+    }
+
 
     public static String updatePoiLocation(Model_Marker modelMarker) {
         List<Map<String, Object>> list = new ArrayList<>();

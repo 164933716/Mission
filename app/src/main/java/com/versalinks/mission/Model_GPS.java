@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.amap.api.maps.model.LatLng;
 
-import java.io.Serializable;
-
 import io.realm.RealmObject;
 
 public class Model_GPS extends RealmObject implements Parcelable {
@@ -16,7 +14,7 @@ public class Model_GPS extends RealmObject implements Parcelable {
     public double longitude;
     public double height;
 
-    public Model_GPS(double longitude,double latitude,  double height) {
+    public Model_GPS(double longitude, double latitude, double height) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.height = height;
@@ -27,6 +25,11 @@ public class Model_GPS extends RealmObject implements Parcelable {
 
     public LatLng getLatLng() {
         return new LatLng(latitude, longitude);
+    }
+
+    public LatLng getAmapLatLng() {
+        double[] doubles = CoordinateTransformUtil.wgs84togcj02(longitude, latitude);
+        return new LatLng(doubles[1], doubles[0]);
     }
 
     @NonNull
@@ -41,7 +44,7 @@ public class Model_GPS extends RealmObject implements Parcelable {
 
     @NonNull
     public String toShow() {
-        return "{" + latitude + ", " + longitude+ '}';
+        return "{" + latitude + ", " + longitude + '}';
     }
 
     @Override

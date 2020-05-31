@@ -66,10 +66,10 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                     BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_location);
                     markerOptions.icon(bitmapDescriptor);
                     markerOptions.anchor(0.5f, 0.5f);
-                    markerOptions.position(modelGps.getLatLng());
+                    markerOptions.position(modelGps.getAmapLatLng());
                     userMarker = map.addMarker(markerOptions);
                 } else {
-                    userMarker.setPosition(modelGps.getLatLng());
+                    userMarker.setPosition(modelGps.getAmapLatLng());
                 }
                 if (needAnimal) {
                     needAnimal = false;
@@ -148,7 +148,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             binding.tvDuration.setText(DataUtils.convertToTime(duration));
             List<LatLng> latLngs = new ArrayList<>();
             for (Model_GPS model_gps : list) {
-                latLngs.add(model_gps.getLatLng());
+                latLngs.add(model_gps.getAmapLatLng());
             }
             Model_GPS gpsSrc = null;
             Model_GPS gpsTarget = null;
@@ -166,10 +166,10 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                     BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_src);
                     markerOptions.icon(bitmapDescriptor);
                     markerOptions.anchor(0.5f, 0.5f);
-                    markerOptions.position(gpsSrc.getLatLng());
+                    markerOptions.position(gpsSrc.getAmapLatLng());
                     srcMarker = map.addMarker(markerOptions);
                 } else {
-                    srcMarker.setPosition(gpsSrc.getLatLng());
+                    srcMarker.setPosition(gpsSrc.getAmapLatLng());
                 }
             } else {
                 if (srcMarker != null) {
@@ -182,10 +182,10 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                     BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.map_marker_target);
                     markerOptions.icon(bitmapDescriptor);
                     markerOptions.anchor(0.5f, 0.5f);
-                    markerOptions.position(gpsTarget.getLatLng());
+                    markerOptions.position(gpsTarget.getAmapLatLng());
                     targetMarker = map.addMarker(markerOptions);
                 } else {
-                    targetMarker.setPosition(gpsTarget.getLatLng());
+                    targetMarker.setPosition(gpsTarget.getAmapLatLng());
                 }
             } else {
                 if (targetMarker != null) {
@@ -424,14 +424,14 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
     }
 
     public void animate(Model_GPS modelGps, boolean needScale) {
-        if (modelGps == null || modelGps.getLatLng() == null) {
+        if (modelGps == null || modelGps.getAmapLatLng() == null) {
             return;
         }
         CameraUpdate cameraUpdate;
         if (needScale) {
-            cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(modelGps.getLatLng(), map.getMaxZoomLevel(), 45, 0));
+            cameraUpdate = CameraUpdateFactory.newCameraPosition(new CameraPosition(modelGps.getAmapLatLng(), map.getMaxZoomLevel(), 45, 0));
         } else {
-            cameraUpdate = CameraUpdateFactory.newLatLng(modelGps.getLatLng());
+            cameraUpdate = CameraUpdateFactory.newLatLng(modelGps.getAmapLatLng());
         }
         map.animateCamera(cameraUpdate);
     }

@@ -1063,6 +1063,246 @@ function removePlantLayer() {
     }
 }
 
+var naturalScienceGeoJSON = {};
+
+function addNaturalScienceLayer(geojson) {
+    removeNaturalScienceLayer();
+
+    naturalScienceGeoJSON = geojson;
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'NaturalScience' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '自然科普';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'naturalScience';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zirankepu_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('NaturalScience' + i);
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function removeNaturalScienceLayer() {
+    var elements = document.getElementsByClassName('naturalScience');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
+        }
+    }
+}
+
+var sightseeingGeoJSON = {};
+
+function addSightseeingLayer(geojson) {
+    removeSightseeingLayer();
+
+    sightseeingGeoJSON = geojson;
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'Sightseeing' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '观光旅游';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'sightseeing';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_guanguanglvyou_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('Sightseeing' + i);
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function removeSightseeingLayer() {
+    var elements = document.getElementsByClassName('sightseeing');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
+        }
+    }
+}
+
+var specialTourismGeoJSON = {};
+
+function addSpecialTourismLayer(geojson) {
+    removeSpecialTourismLayer();
+
+    specialTourismGeoJSON = geojson;
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'SpecialTourism' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '专项旅游';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'specialTourism';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhuanxianglvyou_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('SpecialTourism' + i);
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function removeSpecialTourismLayer() {
+    var elements = document.getElementsByClassName('specialTourism');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
+        }
+    }
+}
+
 var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 
 handler.setInputAction(function(click) { // 点击事件
@@ -1073,6 +1313,30 @@ handler.setInputAction(function(click) { // 点击事件
 
     }
 }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+
+
+viewer.camera.moveEnd.addEventListener(function() { 
+    // the camera stopped moving
+    var elements = [];
+    var animalElements = document.getElementsByClassName('animalContent');
+    for (var i = 0; i < animalElements.length; i++) {
+        elements.push(animalElements[i]);
+    }
+    var plantElements = document.getElementsByClassName('plantContent');
+    for (var i = 0; i < plantElements.length; i++) {
+        elements.push(plantElements[i]);
+    }
+
+    for (var i = 0; i < elements.length; i++) {
+        for (var j = 0; j < elements.length; j++) {
+            if (j === i)
+                continue;
+            
+            
+        }
+    }
+});
 
 //position_A绕position_B逆时针旋转angle度（角度）得到新点
 function rotatedPointByAngle(position_A, position_B, angle) {
@@ -1231,6 +1495,36 @@ function setKey(event) {
                 addPlantLayer(geojson);
             }
         }
+
+        var request3 = new XMLHttpRequest();
+        request3.open("get", "./自然科普.geojson");
+        request3.send(null);
+        request3.onload = function () {
+            if (request3.status == 200) {
+                var geojson = JSON.parse(request3.responseText);
+                addNaturalScienceLayer(geojson);
+            }
+        }
+
+        var request4 = new XMLHttpRequest();
+        request4.open("get", "./观光旅游.geojson");
+        request4.send(null);
+        request4.onload = function () {
+            if (request4.status == 200) {
+                var geojson = JSON.parse(request4.responseText);
+                addSightseeingLayer(geojson);
+            }
+        }
+
+        var request5 = new XMLHttpRequest();
+        request5.open("get", "./专项旅游.geojson");
+        request5.send(null);
+        request5.onload = function () {
+            if (request5.status == 200) {
+                var geojson = JSON.parse(request5.responseText);
+                addSpecialTourismLayer(geojson);
+            }
+        }
     } 
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
@@ -1238,6 +1532,12 @@ function setKey(event) {
         removeAnimalLayer();
 
         removePlantLayer();
+
+        removeNaturalScienceLayer();
+
+        removeSightseeingLayer();
+
+        removeSpecialTourismLayer();
     }
     else if (event.keyCode === 70) {
         // 飞行预览启动
@@ -1391,6 +1691,9 @@ function flyThroughStop() {
     }
     if (userTour) {
         viewer.flyTo(userTour);
+    }
+    if (window.Android) {
+        window.Android.flyThroughStoped();
     }
 }
 

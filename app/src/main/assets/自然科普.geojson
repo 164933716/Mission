@@ -1,0 +1,94 @@
+{
+  "type": "FeatureCollection",
+  "name": "D:\\versalinks\\0中图社\\生态旅游数据\\自然科普.geojson",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759522",
+        "NAME": "生态科普长廊",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.668817818697676,
+          27.914952642152354
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759523",
+        "NAME": "微笑小屋",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": "梵净山景区微笑小屋是铜仁地区第一个微笑小屋，于2010年9月12日正式揭牌，坐落在梵净山景区入口处，是游客进入景区的必经之地，小屋的建成将为游客免费提供亲情电话、景区咨询、饮水、充电器、药品、雨伞、紧急救助"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.771765146669324,
+          27.846163805172303
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "棉絮岭科普教育中心",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.655309135229288,
+          27.90957354826693
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "铜矿厂科普教育中心",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.729111109584096,
+          27.883848082062453
+        ]
+      }
+    }
+  ]
+}

@@ -62,7 +62,12 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
         if (thumbFileSer instanceof File) {
             if (((File) thumbFileSer).exists() && ((File) thumbFileSer).length() > 0) {
                 Glide.with(context).load(thumbFileSer).centerCrop().into(binding.ivLogo);
+                binding.ivLogo.setVisibility(View.VISIBLE);
+            } else {
+                binding.ivLogo.setVisibility(View.GONE);
             }
+        } else {
+            binding.ivLogo.setVisibility(View.GONE);
         }
         loadData();
     }

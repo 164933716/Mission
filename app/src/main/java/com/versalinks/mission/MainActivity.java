@@ -191,12 +191,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.vRoutesOpt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = captureWebViewX(webView);
-                if (file != null) {
-                    LogUtils.e(file.getAbsolutePath());
-                }
+//                File file = captureWebViewX(webView);
+//                if (file != null) {
+//                    LogUtils.e(file.getAbsolutePath());
+//                }
                 Intent intent = new Intent(context, RoutesActivity.class);
-                intent.putExtra("thumbFile", file);
+//                intent.putExtra("thumbFile", file);
                 jump2Activity(intent, 669);
             }
         });
@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     if (check) {
                         webView.evaluateJavascript(OptUtils.showRoadLayer(), null);
                     } else {
-                        webView.evaluateJavascript(OptUtils.hideRoadLayer(), null);
+                        webView.evaluateJavascript(OptUtils.removeRoadLayer(), null);
                     }
                 } else if (TextUtils.equals(item.label, "动物")) {
                     if (check) {
@@ -240,6 +240,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                         webView.evaluateJavascript(OptUtils.showPlantLayer(json), null);
                     } else {
                         webView.evaluateJavascript(OptUtils.removePlantLayer(), null);
+                    }
+                } else if (TextUtils.equals(item.label, "自然科普")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "自然科普.geojson");
+                        webView.evaluateJavascript(OptUtils.showNaturalScienceLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removeNaturalScienceLayer(), null);
+                    }
+                } else if (TextUtils.equals(item.label, "观光旅游")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "观光旅游.geojson");
+                        webView.evaluateJavascript(OptUtils.showSightseeingLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removeSightseeingLayer(), null);
+                    }
+                } else if (TextUtils.equals(item.label, "专项旅游")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "专项旅游.geojson");
+                        webView.evaluateJavascript(OptUtils.showSpecialTourismLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removeSpecialTourismLayer(), null);
                     }
                 }
                 handler.postDelayed(new Runnable() {
@@ -492,6 +513,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 //            intent.putExtra("geoJson", json);
 //            jump2Activity(intent);
         }
+
+        @JavascriptInterface
+        public void flyThroughStoped() {
+            binding.vRouteInfoFly.setTag(null);
+            binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
+        }
     }
 
     @NonNull
@@ -669,8 +696,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void setRouteToNULL() {
-        binding.vRouteInfoFly.setTag(null);
-        binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
         webView.evaluateJavascript(OptUtils.flyStop(), null);
 
         binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED, GravityCompat.START);

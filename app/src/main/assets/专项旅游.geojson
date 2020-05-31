@@ -1,0 +1,270 @@
+{
+  "type": "FeatureCollection",
+  "name": "D:\\versalinks\\0中图社\\生态旅游数据\\专项旅游点.geojson",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759544",
+        "NAME": "团龙民俗文化村",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.599984584592832,
+          27.917046525809994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759545",
+        "NAME": "静心池",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.694213098001882,
+          27.910506299538081
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "31759546",
+        "NAME": "老金顶(月镜山)",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.69213566575614,
+          27.918293301173257
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "拜佛台茶室",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.692115724047284,
+          27.913427841985094
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "茶体验园",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.594036903260459,
+          27.917361827137565
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "万米睡佛",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.656009097256884,
+          27.911821628873444
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "护国寺",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.640295516602563,
+          27.915275176564478
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "释迦殿",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.691687545181637,
+          27.910158324197358
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "弥勒殿",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.691659721213583,
+          27.910009247958453
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "承恩寺",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.692920946937448,
+          27.910760927707443
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "龙泉寺",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.765549490204549,
+          27.853160781929517
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ID": "",
+        "NAME": "老金顶",
+        "EngName": "",
+        "Code": "",
+        "Population": "",
+        "Area": "0",
+        "Sheng": "",
+        "Di": "",
+        "Xian": "",
+        "intro": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          108.693689422902182,
+          27.912739795260983
+        ]
+      }
+    }
+  ]
+}
