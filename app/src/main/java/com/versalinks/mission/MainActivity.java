@@ -31,6 +31,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -60,16 +61,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             model_gps.longitude = 108.7107853492d;
             model_gps.height = 1446.697d;
             binding.ivCurrent.setTag(model_gps);
-            webView.evaluateJavascript(OptUtils.updateLocation(model_gps), null);
-            if (needAnimal) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        webView.evaluateJavascript(OptUtils.recenter(), null);
-                    }
-                }, 500);
-                needAnimal = false;
+            if (initOk) {
+                webView.evaluateJavascript(OptUtils.updateLocation(model_gps), null);
+                if (needAnimal) {
+//                    webView.evaluateJavascript(OptUtils.recenter(), null);
+                    needAnimal = false;
+                }
             }
+
         }
     };
     GPSService.TrackListener trackListener = new GPSService.TrackListener() {
@@ -124,6 +123,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private ValueAnimator valueAnimatorForRecord;
     private long mLastClickTime;
     private BottomSheetBehavior bottomSheetBehavior;
+    private boolean initOk = false;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -470,6 +470,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             }
         };
         webView.setWebViewClient(webViewClient);
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView webView, int i) {
+                super.onProgressChanged(webView, i);
+                if (i >= 100) {
+                    webView.evaluateJavascript(OptUtils.init(), null);
+                }
+            }
+        });
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         binding.drawerLayout.addView(webView, 0, layoutParams);
         webView.addJavascriptInterface(new JSInterface(), "Android");
@@ -490,20 +499,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         @JavascriptInterface
         public void putCameraParam(String json) {
-
-            try {
-                JSONObject jsonObject = new JSONObject(json);
-                double heading = jsonObject.optDouble("heading");
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        double heading = jsonObject.optDouble("heading");
 //                LogUtils.e("heading     " + heading);
-                binding.ivCompass.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        binding.ivCompass.setRotation(-(float) heading);
+                        binding.ivCompass.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                binding.ivCompass.setRotation(-(float) heading);
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                }
+            });
         }
 
         @JavascriptInterface
@@ -516,8 +529,29 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         @JavascriptInterface
         public void flyThroughStoped() {
-            binding.vRouteInfoFly.setTag(null);
-            binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    binding.vRouteInfoFly.setTag(null);
+                    binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
+                }
+            });
+
+        }
+
+        @JavascriptInterface
+        public void initOk() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+//                    String json1 = DataUtils.getJson(context, "自然科普.geojson");
+//                    webView.evaluateJavascript(OptUtils.showNaturalScienceLayer(json1), null);
+                    String json2 = DataUtils.getJson(context, "植物.geojson");
+                    webView.evaluateJavascript(OptUtils.showPlantLayer(json2), null);
+                    initOk = true;
+                }
+            });
+
         }
     }
 

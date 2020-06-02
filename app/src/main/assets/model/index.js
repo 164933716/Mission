@@ -49,11 +49,11 @@ viewer._cesiumWidget._creditContainer.style.display = "none";
 
 viewer.scene.globe.depthTestAgainstTerrain = true;
 
-//viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10; //相机的高度的最小值
-//viewer.scene.screenSpaceCameraController.maximumZoomDistance = 80000; //22000000; //相机高度的最大值
-//viewer.scene.screenSpaceCameraController._minimumZoomRate = 1000; //30000; //相机缩小时的速率
-//viewer.scene.screenSpaceCameraController._maximumZoomRate = 1000000; //5906376272000; //相机放大时的速率
-//viewer.scene.screenSpaceCameraController.maximumMovementRatio = 0.01;
+// viewer.scene.screenSpaceCameraController.minimumZoomDistance = 10; //相机的高度的最小值
+// viewer.scene.screenSpaceCameraController.maximumZoomDistance = 80000; //22000000; //相机高度的最大值
+// viewer.scene.screenSpaceCameraController._minimumZoomRate = 1000; //30000; //相机缩小时的速率
+// viewer.scene.screenSpaceCameraController._maximumZoomRate = 1000000; //5906376272000; //相机放大时的速率
+// viewer.scene.screenSpaceCameraController.maximumMovementRatio = 0.01;
 
 // viewer.scene.skyBox.show = false;
 // viewer.scene.backgroundColor = new Cesium.Color(48/255, 57/255, 28/255);
@@ -67,79 +67,32 @@ var east = 108.8606161775;
 var north = 28.0951804387;
 var center = {x : (west + east) / 2, y : (south + north) / 2};
 
-// var position = Cesium.Cartographic.toCartesian(new Cesium.Cartographic.fromDegrees(108.690813, 27.918094, 0));
-// var distance = 7500;
-// var clippingPlanes = new Cesium.ClippingPlaneCollection({
-//    modelMatrix : Cesium.Transforms.eastNorthUpToFixedFrame(position),
-//    planes : [
-//        new Cesium.ClippingPlane(new Cesium.Cartesian3( 1.0,  0.0, 0.0), distance),
-//        new Cesium.ClippingPlane(new Cesium.Cartesian3(-1.0,  0.0, 0.0), distance),
-//        new Cesium.ClippingPlane(new Cesium.Cartesian3( 0.0,  1.0, 0.0), distance),
-//        new Cesium.ClippingPlane(new Cesium.Cartesian3( 0.0, -1.0, 0.0), distance)
-//    ],
-//    unionClippingRegions: true
-// });
-// viewer.scene.globe.clippingPlanes = clippingPlanes;
-// viewer.scene.globe.backFaceCulling = false;
-// viewer.scene.globe.showSkirts = false;
+var userLocation = {longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697};
 
-// var request = new XMLHttpRequest();
-// request.open("get", "./test.geojson");
-// request.send(null);
-// request.onload = function () {
-//     if (request.status == 200) {
-//         var geojson = JSON.parse(request.responseText);
+function init() {
+    viewer.camera.flyTo({
+        destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 18000000),
+        complete : function() {
+            viewer.camera.flyTo({
+                destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 12000),
+                complete : function() {
+                    rotateUpDown(75.0);
+                        if (window.Android) {
+                            window.Android.initOk();
+                        }
+                }
+            });
+        }
+    });
 
-//         var positions = [];
-//         for (var j = 0; j < geojson.features[0].geometry.coordinates.length; j++) {
-//             var coordinates = geojson.features[0].geometry.coordinates[j];
-//             for (var k = 0; k < coordinates.length - 1; k++) {
-//                 var coordinate = coordinates[k];
-
-//                 positions.push(coordinate[0]);
-//                 positions.push(coordinate[1]);
-//             }
-//         }
-
-//         var points = Cesium.Cartesian3.fromDegreesArray(positions);
-//         var pointsLength = points.length;
-        
-//         var clippingPlanes = [];
-//         for (var i = 0; i < pointsLength; ++i) {
-//             var nextIndex = (i + 1) % pointsLength;
-//             var midPoint = Cesium.Cartesian3.add(points[i], points[nextIndex], new Cesium.Cartesian3());
-//             midPoint = Cesium.Cartesian3.multiplyByScalar(midPoint, 0.5, midPoint);
-            
-//             var up = Cesium.Cartesian3.normalize(midPoint, new Cesium.Cartesian3());
-//             var right = Cesium.Cartesian3.subtract(points[nextIndex], midPoint, new Cesium.Cartesian3());
-//             right = Cesium.Cartesian3.normalize(right, right);
-            
-//             var normal = Cesium.Cartesian3.cross(right, up, new Cesium.Cartesian3());
-//             normal = Cesium.Cartesian3.normalize(normal, normal);
-            
-//             var originCenteredPlane = new Cesium.Plane(normal, 0.0);
-//             var distance = Cesium.Plane.getPointDistance(originCenteredPlane, midPoint);
-            
-//             clippingPlanes.push(new Cesium.ClippingPlane(normal, distance));
-//         }
-
-//         viewer.scene.globe.clippingPlanes = new Cesium.ClippingPlaneCollection({
-//             planes : clippingPlanes,
-//             edgeWidth: 1.0,
-//             edgeColor: Cesium.Color.YELLOW,
-//             // unionClippingRegions: true
-//         });
-//         viewer.scene.globe.backFaceCulling = false;
-//         viewer.scene.globe.showSkirts = false;
-//     }
-// }
+}
 
 
 function recenter() {
 
     var position = Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, userLocation.height);
 
-    var pitch = Cesium.Math.toRadians(-30);
+    var pitch = Cesium.Math.toRadians(-15);
     var angle = 360 / 10;
     var distance = 12000;
     var startTime = Cesium.JulianDate.fromDate(new Date());
@@ -237,9 +190,7 @@ function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-viewer.camera.setView({
-    destination : Cesium.Rectangle.fromDegrees(west, south, east, north)
-});
+init();
 
 viewer.scene.camera.moveStart.addEventListener(function(){
 
@@ -281,8 +232,6 @@ viewer.camera.changed.addEventListener(function() {
     var heading = Math.round(Cesium.Math.toDegrees(viewer.camera.heading));
     var pitch = Math.round(Cesium.Math.toDegrees(viewer.camera.pitch));
 });
-
-var userLocation = {longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697};
 
 var userEntity = viewer.entities.add({
     position : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, userLocation.height),
@@ -1552,7 +1501,24 @@ function setKey(event) {
         flyThroughStop();
     }
     else if (event.keyCode === 84) {
-        updateUserTour(userTourPostitions);
+        var positions = [];
+        var request1 = new XMLHttpRequest();
+        request1.open("get", "./route.geojson");
+        request1.send(null);
+        request1.onload = function () {
+            if (request1.status == 200) {
+                var geojson = JSON.parse(request1.responseText);
+                for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
+                    var coordinate = geojson.features[0].geometry.coordinates[i];
+                    var item = {};
+                    item.longitude = coordinate[0];
+                    item.latitude = coordinate[1];
+                    item.height = coordinate[2];
+                    positions.push(item);
+                }
+                updateUserTour(positions);
+            }
+        }
         //updatePoiLocation(pois);
         //flyTo({"height":12000,"latitude":27.8601391146,"longitude":108.7107853492});
     }
@@ -1677,6 +1643,7 @@ function flyThroughPause() {
         viewer.scene.preUpdate.removeEventListener(preUpdateListener);
         preUpdateListener = null;
     }
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
 }
 
 function flyThroughStop() {
@@ -1689,6 +1656,8 @@ function flyThroughStop() {
         viewer.scene.preUpdate.removeEventListener(preUpdateListener);
         preUpdateListener = null;
     }
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+
     if (userTour) {
         viewer.flyTo(userTour);
     }

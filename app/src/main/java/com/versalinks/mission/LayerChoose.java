@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -20,16 +19,15 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ToastUtils;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class LayerChoose extends LinearLayout {
     private ItemClickListener itemClickListener;
-    private Set<Layer.Item> choose = new HashSet<>();
+    private Set<String> choose = new HashSet<>();
 
     public LayerChoose(@NonNull Context context) {
         this(context, null);
@@ -41,6 +39,8 @@ public class LayerChoose extends LinearLayout {
 
     public LayerChoose(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+//        choose.add("自然科普");
+        choose.add("植物");
         setPadding(AndroidUtil.dp2Px(15), AndroidUtil.dp2Px(15), AndroidUtil.dp2Px(15), AndroidUtil.dp2Px(15));
         setOrientation(VERTICAL);
         setBackgroundColor(Color.parseColor("#ffffff"));
@@ -97,7 +97,7 @@ public class LayerChoose extends LinearLayout {
                 protected void convert(View helper, int position, int viewType) {
                     LayerView layerView = (LayerView) helper;
                     Layer.Item item = layer.items.get(position);
-                    if (choose.contains(item)) {
+                    if (choose.contains(item.label)) {
                         layerView.check(true);
                     } else {
                         layerView.check(false);
@@ -114,13 +114,13 @@ public class LayerChoose extends LinearLayout {
 //                        return;
 //                    }
                     boolean check;
-                    if (choose.contains(item)) {
+                    if (choose.contains(item.label)) {
                         check = false;
-                        choose.remove(item);
+                        choose.remove(item.label);
                         baseAdapter.notifyItemChanged(position);
                     } else {
                         check = true;
-                        choose.add(item);
+                        choose.add(item.label);
                         baseAdapter.notifyItemChanged(position);
                     }
                     if (itemClickListener != null) {

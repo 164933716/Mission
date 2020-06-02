@@ -39,6 +39,9 @@ public class OptUtils {
     public static String recenter() {
         return "javascript:recenter()";
     }
+    public static String init() {
+        return "javascript:init()";
+    }
 
     public static String updateLocation(Model_GPS modelGps) {
         return "javascript:updateUserLocation(" + getJson(modelGps) + ")";
