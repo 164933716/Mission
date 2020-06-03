@@ -555,12 +555,9 @@ var poiPreRenderListener = null;
 function clickPoi() {
     viewer.clock.stopTime = viewer.clock.startTime;
 
-    if (poiPreRenderListener) {
-        viewer.scene.preRender.removeEventListener(poiPreRenderListener);
-        poiPreRenderListener = null;
-    }
+    clearPoiDetail();
+
     var htmlOverlay = document.getElementById('infoOverlay');
-    htmlOverlay.style.display = 'none';
     htmlOverlay.data = this.data;
 
     promise = Cesium.sampleTerrainMostDetailed(terrainProvider, [Cesium.Cartographic.fromDegrees(this.data.geometry.coordinates[0], this.data.geometry.coordinates[1])]);
@@ -570,8 +567,17 @@ function clickPoi() {
                 for (var i = 0; i < updatedPositions.length; i++) {
                     var htmlOverlay = document.getElementById('infoOverlay');
                     if (htmlOverlay) {
-                        htmlOverlay.children[0].src = 'img/' + htmlOverlay.data.properties.图片;
-                        htmlOverlay.children[1].innerHTML = htmlOverlay.data.properties.名称;
+                        var offsetHeight = 0;
+                        if (htmlOverlay.data.properties.class === 'POI') {
+                            htmlOverlay.children[0].src = htmlOverlay.data.properties.thumbnail;
+                            htmlOverlay.children[1].innerHTML = htmlOverlay.data.properties.名称;
+                            offsetHeight = 46 + 10;
+                        }
+                        else {
+                            htmlOverlay.children[0].src = 'img/' + htmlOverlay.data.properties.图片;
+                            htmlOverlay.children[1].innerHTML = htmlOverlay.data.properties.名称;
+                            offsetHeight = 32 + 5;
+                        }
                         htmlOverlay.style.display = 'block';
 
                         var scratch = new Cesium.Cartesian2();
@@ -579,7 +585,7 @@ function clickPoi() {
                         var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[0].longitude), Cesium.Math.toDegrees(updatedPositions[0].latitude), updatedPositions[0].height * terrainExaggeration);
                         var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
                         if (Cesium.defined(canvasPosition)) {
-                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight - 32 - 5 + 'px';
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight - offsetHeight + 'px';
                             htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
                             htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
                         }
@@ -591,25 +597,35 @@ function clickPoi() {
     });
 }
 
-function updatePoiLocation(pois) {
+function clearPoiDetail() {
+    if (poiPreRenderListener) {
+        viewer.scene.preRender.removeEventListener(poiPreRenderListener);
+        poiPreRenderListener = null;
+    }
+    var htmlOverlay = document.getElementById('infoOverlay');
+    htmlOverlay.style.display = 'none';
+}
+
+function updatePoiLocation(geojson) {
     clearPoiLocation();
 
     var positions = [];
-    for (var i = 0; i < pois.length; i++) {
+    for (var i = 0; i < geojson.features.length; i++) {
         var htmlOverlay = document.createElement('div');
         htmlOverlay.id = 'htmlOverlay' + i;
         htmlOverlay.onclick = clickPoi;
         htmlOverlay.style = 'cursor: pointer;';
         htmlOverlay.value = i;
         htmlOverlay.className = 'imgContent';
-        htmlOverlay.data = pois[i];
-        htmlOverlay.innerHTML = '<img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>';
+        geojson.features[i].properties.class = 'POI';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.innerHTML = '<img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ geojson.features[i].properties.thumbnail +'"/>';
         // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
         // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
         // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
-        positions.push(Cesium.Cartographic.fromDegrees(pois[i].longitude, pois[i].latitude));
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
     }
 
     promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
@@ -620,8 +636,6 @@ function updatePoiLocation(pois) {
                     var htmlOverlay = document.getElementById('htmlOverlay' + i);
                     if (htmlOverlay) {
                         var scratch = new Cesium.Cartesian2();
-
-                        pois[htmlOverlay.value].height = updatedPositions[htmlOverlay.value].height;
 
                         var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
                         var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
@@ -666,10 +680,6 @@ function clearPoiLocation() {
         elements[i].parentNode.removeChild(elements[i]);
     }
 }
-
-var pois = [
-    {name: "金顶", longitude: 108.6940465145, latitude: 27.9112084171, thumbnail : "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg"},
-];
 
 var userTour = null;
 
@@ -929,9 +939,6 @@ function addAnimalLayer(geojson) {
         htmlOverlay.className = 'animalContent';
         htmlOverlay.innerHTML = //'<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
         '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_dongwu_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1009,9 +1016,6 @@ function addPlantLayer(geojson) {
         htmlOverlay.className = 'plantContent';
         htmlOverlay.innerHTML = //'<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
         '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhiwu_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1089,9 +1093,6 @@ function addNaturalScienceLayer(geojson) {
         htmlOverlay.className = 'naturalScience';
         htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zirankepu_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1169,9 +1170,6 @@ function addSightseeingLayer(geojson) {
         htmlOverlay.className = 'sightseeing';
         htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_guanguanglvyou_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1249,9 +1247,6 @@ function addSpecialTourismLayer(geojson) {
         htmlOverlay.className = 'specialTourism';
         htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhuanxianglvyou_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1329,9 +1324,6 @@ function addMountainPeakLayer(geojson) {
         htmlOverlay.className = 'mountainPeak';
         htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_shanfeng_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1409,9 +1401,6 @@ function addVillageLayer(geojson) {
         htmlOverlay.className = 'village';
         htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.标准地名 + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_cunzhuang_layer.png"/>';
-        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
-        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
-        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1491,12 +1480,7 @@ handler.setInputAction(function(click) {
 
 handler.setInputAction(function(click) {
     if (mouseOperation !== 2) {
-        if (poiPreRenderListener) {
-            viewer.scene.preRender.removeEventListener(poiPreRenderListener);
-            poiPreRenderListener = null;
-        }
-        var htmlOverlay = document.getElementById('infoOverlay');
-        htmlOverlay.style.display = 'none';
+        clearPoiDetail();
     }
     mouseOperation = 0;
 }, Cesium.ScreenSpaceEventType.LEFT_UP);
@@ -1761,25 +1745,25 @@ function setKey(event) {
         flyThroughStop();
     }
     else if (event.keyCode === 84) {
-        var positions = [];
-        var request1 = new XMLHttpRequest();
-        request1.open("get", "./route.geojson");
-        request1.send(null);
-        request1.onload = function () {
-            if (request1.status == 200) {
-                var geojson = JSON.parse(request1.responseText);
-                for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
-                    var coordinate = geojson.features[0].geometry.coordinates[i];
-                    var item = {};
-                    item.longitude = coordinate[0];
-                    item.latitude = coordinate[1];
-                    item.height = coordinate[2];
-                    positions.push(item);
-                }
-                updateUserTour(positions);
-            }
-        }
-        //updatePoiLocation(pois);
+        // var positions = [];
+        // var request1 = new XMLHttpRequest();
+        // request1.open("get", "./route.geojson");
+        // request1.send(null);
+        // request1.onload = function () {
+        //     if (request1.status == 200) {
+        //         var geojson = JSON.parse(request1.responseText);
+        //         for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
+        //             var coordinate = geojson.features[0].geometry.coordinates[i];
+        //             var item = {};
+        //             item.longitude = coordinate[0];
+        //             item.latitude = coordinate[1];
+        //             item.height = coordinate[2];
+        //             positions.push(item);
+        //         }
+        //         updateUserTour(positions);
+        //     }
+        // }
+        updatePoiLocation({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[108.6566137,27.9127753,1932.822074053631]},"properties":{"名称":"万米睡佛","thumbnail":"http://tiles.pano.vizen.cn/32C820DA834943B095E52C3F0D402ADE/sphere/thumb.jpg"}}]});
         //flyTo({"height":12000,"latitude":27.8601391146,"longitude":108.7107853492});
     }
 
@@ -1821,14 +1805,8 @@ function setKey(event) {
 handler.setInputAction(function(click) { // 点击事件
     viewer.clock.stopTime = viewer.clock.startTime; //viewer.clock.stopTime 赋值为 viewer.clock.startTime 即可停止旋转
 
-    if (poiPreRenderListener) {
-        viewer.scene.preRender.removeEventListener(poiPreRenderListener);
-        poiPreRenderListener = null;
-    }
-    var htmlOverlay = document.getElementById('infoOverlay');
-    htmlOverlay.style.display = 'none';
+    clearPoiDetail();
 
-    
 }, Cesium.ScreenSpaceEventType.RIGHT_DOWN);
 
 handler.setInputAction(function(wheelment) { // 滚轮事件

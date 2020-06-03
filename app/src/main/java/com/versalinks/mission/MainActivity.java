@@ -756,6 +756,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void setMarkerToNULL() {
         binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED, GravityCompat.START);
         webView.evaluateJavascript(OptUtils.clearPoiLocation(), null);
+        webView.evaluateJavascript(OptUtils.clearPoiDetail(), null);
         binding.containerMarker.setVisibility(View.GONE);
         binding.tvMarkerName.setText(null);
         binding.tvMarkerGPS.setText(null);

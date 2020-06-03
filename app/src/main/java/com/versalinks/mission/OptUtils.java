@@ -1,5 +1,6 @@
 package com.versalinks.mission;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
@@ -151,13 +152,21 @@ public class OptUtils {
         Point point = Point.fromLngLat(modelMarker.gps.longitude, modelMarker.gps.latitude, modelMarker.gps.height);
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("名称", modelMarker.name);
+        jsonObject.addProperty("type", "POI");
         if (modelMarker.photos.size() > 0) {
+            jsonObject.addProperty("thumbnail", modelMarker.photos.get(0));
             jsonObject.addProperty("图片", modelMarker.photos.get(0));
         } else {
+            jsonObject.addProperty("thumbnail", "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg");
             jsonObject.addProperty("图片", "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg");
         }
         String json = FeatureCollection.fromFeature(Feature.fromGeometry(point, jsonObject)).toJson();
+        LogUtils.e(json);
         return "javascript:updatePoiLocation(" + json + ")";
+    }
+
+    public static String clearPoiDetail() {
+        return "javascript:clearPoiDetail()";
     }
 
     public static String clearPoiLocation() {
