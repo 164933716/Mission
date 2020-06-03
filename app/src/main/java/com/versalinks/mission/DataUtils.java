@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.blankj.utilcode.util.FileIOUtils;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Geometry;
@@ -18,9 +22,14 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -241,11 +250,15 @@ public class DataUtils {
                                     double latitude = point.latitude();
                                     double altitude = point.altitude();
                                     Model_Marker item = new Model_Marker();
-                                    item.createTime = DataUtils.getNowMills();
-                                    item.name = feature.getStringProperty("name");
+                                    item.createTime = DataUtils.getAimMills();
+                                    item.name = feature.getStringProperty("名称");
                                     item.type = new Model_MarkerType("景点");
                                     item.gps = new Model_GPS(longitude, latitude, altitude);
                                     item.photos = new RealmList<>();
+                                    String image = feature.getStringProperty("图片");
+                                    if (!TextUtils.isEmpty(image)) {
+                                        item.photos.add(image);
+                                    }
                                     realm.copyToRealmOrUpdate(item);
                                 }
                             }
@@ -282,7 +295,7 @@ public class DataUtils {
 
                                     }
                                     item.distance = feature.getNumberProperty("distance").doubleValue();
-                                    item.createTime = DataUtils.getNowMills();
+                                    item.createTime = DataUtils.getAimMills();
                                     item.goDuration = DataUtils.randomDuration();
                                     item.goMode = DataUtils.randomGoMode();
                                     item.goDifficult = DataUtils.randomGoDiffclut();
@@ -332,7 +345,7 @@ public class DataUtils {
 
                                     }
                                     item.distance = feature.getNumberProperty("distance").doubleValue();
-                                    item.createTime = DataUtils.getNowMills();
+                                    item.createTime = DataUtils.getAimMills();
                                     item.goDuration = DataUtils.randomDuration();
                                     item.goMode = DataUtils.randomGoMode();
                                     item.goDifficult = DataUtils.randomGoDiffclut();
@@ -503,8 +516,26 @@ public class DataUtils {
         return System.currentTimeMillis();
     }
 
+    public static long getAimMills() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date parse = simpleDateFormat.parse("2020-05-01 09:00:00");
+            if (parse != null) {
+                return parse.getTime();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new Date().getTime();
+    }
+
     public static String getNowString() {
         return TimeUtils.getNowString();
+    }
+
+    public static String getJsonV2(Context context, String fileName) {
+        String json = FileIOUtils.readFile2String(new File(AndroidUtil.getFolder(context), "model/data/" + fileName));
+        return json;
     }
 
     public static String getJson(Context context, String fileName) {
@@ -512,7 +543,7 @@ public class DataUtils {
         try {
             AssetManager assetManager = context.getAssets();
             BufferedReader bf = new BufferedReader(new InputStreamReader(
-                    assetManager.open(fileName)));
+                    assetManager.open("model/data/" + fileName)));
             String line;
             while ((line = bf.readLine()) != null) {
                 stringBuilder.append(line);
@@ -529,7 +560,7 @@ public class DataUtils {
                 .countable(true)
                 .capture(true)
                 .captureStrategy(new CaptureStrategy(true, BuildConfig.APPLICATION_ID + ".provider", AndroidUtil.getFolder(context).getAbsolutePath()))
-                .originalEnable(true)
+                .originalEnable(false)
                 .showSingleMediaType(true)
                 .theme(R.style.Matisse_Dracula)
                 .maxSelectable(size)
@@ -538,5 +569,62 @@ public class DataUtils {
                 .imageEngine(new GlideEngine())
                 .showPreview(true) // Default is `true`
                 .forResult(code);
+    }
+
+    public static boolean copyFileOrDir(Context context, String folder, String path) {
+        AssetManager assetManager = context.getAssets();
+        String[] files = null;
+        try {
+            files = assetManager.list(path);
+            LogUtils.e(files);
+            if (files != null) {
+                if (files.length == 0) {
+                    boolean copyFile = copyFile(context, folder, path);
+                    if (!copyFile) {
+                        return false;
+                    }
+                } else {
+                    File dir = new File(folder, path);
+                    if (!dir.exists()) {
+                        dir.mkdir();
+                    }
+                    for (String file : files) {
+                        copyFileOrDir(context, folder, path + "/" + file);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            Log.e("tag", "I/O Exception", ex);
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean copyFile(Context context, String folder, String filename) {
+        AssetManager assetManager = context.getAssets();
+
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = assetManager.open(filename);
+            File file = new File(folder, filename);
+            String newFileName = file.getAbsolutePath();
+            out = new FileOutputStream(newFileName);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
+            return false;
+        }
+        return true;
     }
 }

@@ -6,8 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,6 +18,10 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -31,16 +33,11 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.tencent.smtt.sdk.WebChromeClient;
-import com.tencent.smtt.sdk.WebSettings;
-import com.tencent.smtt.sdk.WebView;
-import com.tencent.smtt.sdk.WebViewClient;
 import com.versalinks.mission.databinding.ActivityMainBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -262,6 +259,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     } else {
                         webView.evaluateJavascript(OptUtils.removeSpecialTourismLayer(), null);
                     }
+                } else if (TextUtils.equals(item.label, "山峰")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "山峰.geojson");
+                        webView.evaluateJavascript(OptUtils.showMountainPeakLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removeMountainPeakLayer(), null);
+                    }
+                } else if (TextUtils.equals(item.label, "村庄")) {
+                    if (check) {
+                        String json = DataUtils.getJson(context, "村庄.geojson");
+                        webView.evaluateJavascript(OptUtils.showVillageLayer(json), null);
+                    } else {
+                        webView.evaluateJavascript(OptUtils.removeVillageLayer(), null);
+                    }
                 }
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -310,10 +321,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.ivCurrent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object tag = binding.ivCurrent.getTag();
-                if (tag instanceof Model_GPS) {
-                    webView.evaluateJavascript(OptUtils.flyTo((Model_GPS) tag), null);
-                }
+//                Object tag = binding.ivCurrent.getTag();
+//                if (tag instanceof Model_GPS) {
+                webView.evaluateJavascript(OptUtils.recenter(), null);
+//                }
             }
         });
         binding.ivCompass.setOnClickListener(new View.OnClickListener() {
@@ -572,6 +583,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             unbindService(connection);
         }
         if (webView != null) {
+            webView.removeJavascriptInterface("Android");
             webView.loadUrl("about:blank");
             webView.stopLoading();
             ViewParent parent = webView.getParent();
@@ -586,20 +598,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         super.onDestroy();
     }
 
-    private File captureWebViewX(WebView webView) {
-        int wholeWidth = webView.computeHorizontalScrollRange();
-        int wholeHeight = webView.computeVerticalScrollRange();
-        Bitmap bitmap = Bitmap.createBitmap(wholeWidth, wholeHeight, Bitmap.Config.ARGB_8888);
-        Canvas x5canvas = new Canvas(bitmap);
-        x5canvas.scale((float) wholeWidth / (float) webView.getContentWidth(), (float) wholeHeight / (float) webView.getContentHeight());
-        if (webView.getX5WebViewExtension() == null) {
-            return null;
-        }
-        webView.getX5WebViewExtension().snapshotWholePage(x5canvas, false, false);
-        File tempImageFile = AndroidUtil.getTempImageFile(context);
-        AndroidUtil.bitmap2File(bitmap, tempImageFile);
-        return tempImageFile;
-    }
+//    private File captureWebViewX(WebView webView) {
+//        int wholeWidth = webView.computeHorizontalScrollRange();
+//        int wholeHeight = webView.computeVerticalScrollRange();
+//        Bitmap bitmap = Bitmap.createBitmap(wholeWidth, wholeHeight, Bitmap.Config.ARGB_8888);
+//        Canvas x5canvas = new Canvas(bitmap);
+//        x5canvas.scale((float) wholeWidth / (float) webView.getContentWidth(), (float) wholeHeight / (float) webView.getContentHeight());
+//        if (webView.getX5WebViewExtension() == null) {
+//            return null;
+//        }
+//        webView.getX5WebViewExtension().snapshotWholePage(x5canvas, false, false);
+//        File tempImageFile = AndroidUtil.getTempImageFile(context);
+//        AndroidUtil.bitmap2File(bitmap, tempImageFile);
+//        return tempImageFile;
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

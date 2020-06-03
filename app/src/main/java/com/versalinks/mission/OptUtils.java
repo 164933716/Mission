@@ -1,8 +1,11 @@
 package com.versalinks.mission;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,7 @@ public class OptUtils {
     public static String recenter() {
         return "javascript:recenter()";
     }
+
     public static String init() {
         return "javascript:init()";
     }
@@ -76,6 +80,22 @@ public class OptUtils {
         return "javascript:removePlantLayer(" + "" + ")";
     }
 
+    public static String showMountainPeakLayer(String json) {
+        return "javascript:addMountainPeakLayer(" + json + ")";
+    }
+
+    public static String removeMountainPeakLayer() {
+        return "javascript:removeMountainPeakLayer(" + "" + ")";
+    }
+
+    public static String showVillageLayer(String json) {
+        return "javascript:addVillageLayer(" + json + ")";
+    }
+
+    public static String removeVillageLayer() {
+        return "javascript:removeVillageLayer(" + "" + ")";
+    }
+
     public static String showAnimalLayer(String json) {
         return "javascript:addAnimalLayer(" + json + ")";
     }
@@ -86,8 +106,9 @@ public class OptUtils {
 
     public static String showRoadLayer() {
         Map<String, Object> map = new HashMap<>();
-        map.put("sroad", "./sroad.geojson");
-        map.put("ssroad", "./ssroad.geojson");
+        map.put("sroad", "./data/sroad.geojson");
+        map.put("ssroad", "./data/ssroad.geojson");
+        map.put("road", "./data/道路.geojson");
         return "javascript:addRoadBackgroundLayer(" + getJson(map) + ")";
     }
 
@@ -127,14 +148,15 @@ public class OptUtils {
 
 
     public static String updatePoiLocation(Model_Marker modelMarker) {
-        List<Map<String, Object>> list = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", modelMarker.name);
-        map.put("latitude", modelMarker.gps.latitude);
-        map.put("longitude", modelMarker.gps.longitude);
-        map.put("thumbnail", "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg");
-        list.add(map);
-        String json = getJson(list);
+        Point point = Point.fromLngLat(modelMarker.gps.longitude, modelMarker.gps.latitude, modelMarker.gps.height);
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("名称", modelMarker.name);
+        if (modelMarker.photos.size() > 0) {
+            jsonObject.addProperty("图片", modelMarker.photos.get(0));
+        } else {
+            jsonObject.addProperty("图片", "http://tiles.pano.vizen.cn/6A96E59B1701491990DB44C603664DFB/sphere/thumb.jpg");
+        }
+        String json = FeatureCollection.fromFeature(Feature.fromGeometry(point, jsonObject)).toJson();
         return "javascript:updatePoiLocation(" + json + ")";
     }
 

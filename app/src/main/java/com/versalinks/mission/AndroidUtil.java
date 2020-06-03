@@ -97,6 +97,18 @@ public class AndroidUtil {
         return file;
     }
 
+    public static File getTempImageFile(Context context, String name) {
+        File dir = new File(getStorageDir(context), folder);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, name);
+        if (file.exists()) {
+            file.delete();
+        }
+        return file;
+    }
+
     public static File getTempTxtFile(Context context, String txtName) {
         File dir = new File(getStorageDir(context), folder);
         if (!dir.exists()) {

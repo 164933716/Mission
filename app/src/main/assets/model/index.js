@@ -76,10 +76,10 @@ function init() {
             viewer.camera.flyTo({
                 destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 12000),
                 complete : function() {
-                    rotateUpDown(75.0);
-                        if (window.Android) {
-                            window.Android.initOk();
-                        }
+                    rotateUpDown(60.0);
+                                            if (window.Android) {
+                                                window.Android.initOk();
+                                            }
                 }
             });
         }
@@ -92,7 +92,7 @@ function recenter() {
 
     var position = Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, userLocation.height);
 
-    var pitch = Cesium.Math.toRadians(-15);
+    var pitch = Cesium.Math.toRadians(-30);
     var angle = 360 / 10;
     var distance = 12000;
     var startTime = Cesium.JulianDate.fromDate(new Date());
@@ -550,8 +550,45 @@ var userTourPostitions = [
     // }
 ];
 
+var poiPreRenderListener = null;
+
 function clickPoi() {
     viewer.clock.stopTime = viewer.clock.startTime;
+
+    if (poiPreRenderListener) {
+        viewer.scene.preRender.removeEventListener(poiPreRenderListener);
+        poiPreRenderListener = null;
+    }
+    var htmlOverlay = document.getElementById('infoOverlay');
+    htmlOverlay.style.display = 'none';
+    htmlOverlay.data = this.data;
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, [Cesium.Cartographic.fromDegrees(this.data.geometry.coordinates[0], this.data.geometry.coordinates[1])]);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            poiPreRenderListener = function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('infoOverlay');
+                    if (htmlOverlay) {
+                        htmlOverlay.children[0].src = 'img/' + htmlOverlay.data.properties.图片;
+                        htmlOverlay.children[1].innerHTML = htmlOverlay.data.properties.名称;
+                        htmlOverlay.style.display = 'block';
+
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[0].longitude), Cesium.Math.toDegrees(updatedPositions[0].latitude), updatedPositions[0].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight - 32 - 5 + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            };
+            viewer.scene.preRender.addEventListener(poiPreRenderListener);
+        }
+    });
 }
 
 function updatePoiLocation(pois) {
@@ -565,6 +602,7 @@ function updatePoiLocation(pois) {
         htmlOverlay.style = 'cursor: pointer;';
         htmlOverlay.value = i;
         htmlOverlay.className = 'imgContent';
+        htmlOverlay.data = pois[i];
         htmlOverlay.innerHTML = '<img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>';
         // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
         // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
@@ -775,6 +813,23 @@ function addRoadBackgroundLayer(road) {
             });
         }
     });
+
+    var promiseRoad = Cesium.GeoJsonDataSource.load(
+        road.road, { clampToGround: true } 
+    );
+    promiseRoad.then(function (dataSource) {
+        dataSource.name = "road";
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            
+            // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+            entity.polyline.width = 3;
+            entity.polyline.material = new Cesium.ImageMaterialProperty({
+                color: Cesium.Color.GRAY.withAlpha(0.5)
+            });
+        }
+    });
 }
 
 function removeRoadBackgroundLayer(road) {
@@ -783,6 +838,9 @@ function removeRoadBackgroundLayer(road) {
 
     let dataSourceSRoad = viewer.dataSources.getByName("sroad");
     viewer.dataSources.remove(dataSourceSRoad[0]);
+
+    let dataSourceRoad = viewer.dataSources.getByName("road");
+    viewer.dataSources.remove(dataSourceRoad[0]);
 }
 
 function addAreaBackgroundLayer() {
@@ -863,14 +921,14 @@ function addAnimalLayer(geojson) {
     for (var i = 0; i < geojson.features.length; i++) {
         var htmlOverlay = document.createElement('div');
         htmlOverlay.id = 'Animal' + i;
-        htmlOverlay.onclick = clickEntity;
         htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.onclick = clickPoi;
         htmlOverlay.value = i;
         geojson.features[i].properties.class = '动物';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'animalContent';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
-        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_dongwu_layer.png"/>';
+        htmlOverlay.innerHTML = //'<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
+        '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_dongwu_layer.png"/>';
         // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
         // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
         // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
@@ -943,14 +1001,14 @@ function addPlantLayer(geojson) {
     for (var i = 0; i < geojson.features.length; i++) {
         var htmlOverlay = document.createElement('div');
         htmlOverlay.id = 'Plant' + i;
-        htmlOverlay.onclick = clickEntity;
         htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.onclick = clickPoi;
         htmlOverlay.value = i;
         geojson.features[i].properties.class = '植物';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'plantContent';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
-        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhiwu_layer.png"/>';
+        htmlOverlay.innerHTML = //'<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
+        '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhiwu_layer.png"/>';
         // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
         // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
         // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
@@ -1252,8 +1310,168 @@ function removeSpecialTourismLayer() {
     }
 }
 
-var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+var mountainPeakGeoJSON = {};
 
+function addMountainPeakLayer(geojson) {
+    removeMountainPeakLayer();
+
+    mountainPeakGeoJSON = geojson;
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'MountainPeak' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '山峰';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'mountainPeak';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_shanfeng_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('MountainPeak' + i);
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 5 + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function removeMountainPeakLayer() {
+    var elements = document.getElementsByClassName('mountainPeak');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
+        }
+    }
+}
+
+var villageGeoJSON = {};
+
+function addVillageLayer(geojson) {
+    removeVillageLayer();
+
+    villageGeoJSON = geojson;
+
+    var positions = [];
+    for (var i = 0; i < geojson.features.length; i++) {
+        var htmlOverlay = document.createElement('div');
+        htmlOverlay.id = 'Village' + i;
+        htmlOverlay.onclick = clickEntity;
+        htmlOverlay.style = 'cursor: pointer;';
+        htmlOverlay.value = i;
+        geojson.features[i].properties.class = '村庄';
+        htmlOverlay.data = geojson.features[i];
+        htmlOverlay.className = 'village';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.标准地名 + '</div>\
+        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_cunzhuang_layer.png"/>';
+        // htmlOverlay.innerHTML = '<div style="color: #fff; text-align: center;">' + pois[i].name + '</div>\
+        // <img style="position: relative; left: 50%; transform: translate(-23px, 4px); border:3px solid #fff; border-radius: 2px; height: 40px; width: 40px" src="'+ pois[i].thumbnail +'"/>\
+        // <div style="position: relative; width: 100%; height: 13px"><img style="transform: translate(13px, -3px);" src="tri-white.png" alt=""></div>';
+        document.body.appendChild(htmlOverlay);
+
+        positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
+    }
+
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, positions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            viewer.scene.preRender.addEventListener(function(l, t) {
+                for (var i = 0; i < updatedPositions.length; i++) {
+                    var htmlOverlay = document.getElementById('Village' + i);
+                    if (htmlOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var position = Cesium.Cartesian3.fromDegrees(Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].longitude), Cesium.Math.toDegrees(updatedPositions[htmlOverlay.value].latitude), updatedPositions[htmlOverlay.value].height * terrainExaggeration);
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(position, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            var x = canvasPosition.x;
+                            var y = canvasPosition.y;
+                            if (htmlOverlay.style.display === 'none') {
+                                htmlOverlay.style.display = 'block';
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                                htmlOverlay.style.display = 'none';
+                            }
+                            else {
+                                x -= htmlOverlay.offsetWidth / 2;
+                                y -= htmlOverlay.offsetHeight;
+                            }
+
+                            if (y > 0 && x > 0) {
+                                htmlOverlay.style.display = 'block';
+                            }
+                            else {
+                                htmlOverlay.style.display = 'none';
+                            }
+
+                            htmlOverlay.style.top = canvasPosition.y - htmlOverlay.offsetHeight + 5 + 'px';
+                            htmlOverlay.style.left = canvasPosition.x - htmlOverlay.offsetWidth / 2 + 'px';
+                            htmlOverlay.style.zIndex = Math.ceil(canvasPosition.y);
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+function removeVillageLayer() {
+    var elements = document.getElementsByClassName('village');
+    if (elements.length > 0) {
+        var parentNode = elements[0].parentNode;
+        while(elements.length > 0) {
+            parentNode.removeChild(elements[0]);
+        }
+    }
+}
+
+var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+var mouseOperation = 0;
 handler.setInputAction(function(click) { // 点击事件
     viewer.clock.stopTime = viewer.clock.startTime; //viewer.clock.stopTime 赋值为 viewer.clock.startTime 即可停止旋转
 
@@ -1261,9 +1479,27 @@ handler.setInputAction(function(click) { // 点击事件
     if (pickElement && pickElement.id){
 
     }
+
+    mouseOperation = 1;
 }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
+handler.setInputAction(function(click) {
+    if (mouseOperation === 1) {
+        mouseOperation = 2;
+    }
+}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
+handler.setInputAction(function(click) {
+    if (mouseOperation !== 2) {
+        if (poiPreRenderListener) {
+            viewer.scene.preRender.removeEventListener(poiPreRenderListener);
+            poiPreRenderListener = null;
+        }
+        var htmlOverlay = document.getElementById('infoOverlay');
+        htmlOverlay.style.display = 'none';
+    }
+    mouseOperation = 0;
+}, Cesium.ScreenSpaceEventType.LEFT_UP);
 
 viewer.camera.moveEnd.addEventListener(function() { 
     // the camera stopped moving
@@ -1423,7 +1659,7 @@ function setKey(event) {
         viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
     }
     else if (event.keyCode === 65) {
-        addRoadBackgroundLayer({ "sroad" : "./sroad.geojson", "ssroad" : "./ssroad.geojson"});
+        addRoadBackgroundLayer({ "sroad" : "./sroad.geojson", "ssroad" : "./ssroad.geojson", "road" : "./道路.geojson"});
         
         var request1 = new XMLHttpRequest();
         request1.open("get", "./动物.geojson");
@@ -1474,6 +1710,26 @@ function setKey(event) {
                 addSpecialTourismLayer(geojson);
             }
         }
+
+        var request6 = new XMLHttpRequest();
+        request6.open("get", "./山峰.geojson");
+        request6.send(null);
+        request6.onload = function () {
+            if (request6.status == 200) {
+                var geojson = JSON.parse(request6.responseText);
+                addMountainPeakLayer(geojson);
+            }
+        }
+
+        var request7 = new XMLHttpRequest();
+        request7.open("get", "./村庄.geojson");
+        request7.send(null);
+        request7.onload = function () {
+            if (request7.status == 200) {
+                var geojson = JSON.parse(request7.responseText);
+                addVillageLayer(geojson);
+            }
+        }
     } 
     else if (event.keyCode === 68) {
         removeRoadBackgroundLayer();
@@ -1487,6 +1743,10 @@ function setKey(event) {
         removeSightseeingLayer();
 
         removeSpecialTourismLayer();
+
+        removeMountainPeakLayer();
+
+        removeVillageLayer();
     }
     else if (event.keyCode === 70) {
         // 飞行预览启动
@@ -1560,6 +1820,13 @@ function setKey(event) {
 
 handler.setInputAction(function(click) { // 点击事件
     viewer.clock.stopTime = viewer.clock.startTime; //viewer.clock.stopTime 赋值为 viewer.clock.startTime 即可停止旋转
+
+    if (poiPreRenderListener) {
+        viewer.scene.preRender.removeEventListener(poiPreRenderListener);
+        poiPreRenderListener = null;
+    }
+    var htmlOverlay = document.getElementById('infoOverlay');
+    htmlOverlay.style.display = 'none';
 
     
 }, Cesium.ScreenSpaceEventType.RIGHT_DOWN);

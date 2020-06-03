@@ -18,17 +18,17 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         context = this;
-        QbSdk.initX5Environment(context, new QbSdk.PreInitCallback() {
-            @Override
-            public void onCoreInitFinished() {
-                LogUtils.e("onCoreInitFinished");
-            }
-
-            @Override
-            public void onViewInitFinished(boolean bool) {
-                LogUtils.e("onViewInitFinished  " + bool);
-            }
-        });
+//        QbSdk.initX5Environment(context, new QbSdk.PreInitCallback() {
+//            @Override
+//            public void onCoreInitFinished() {
+//                LogUtils.e("onCoreInitFinished");
+//            }
+//
+//            @Override
+//            public void onViewInitFinished(boolean bool) {
+//                LogUtils.e("onViewInitFinished  " + bool);
+//            }
+//        });
         Mapbox.getInstance(context, toolToken);
     }
 

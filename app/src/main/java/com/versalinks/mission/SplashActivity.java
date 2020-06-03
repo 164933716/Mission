@@ -9,17 +9,14 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.versalinks.mission.databinding.ActivitySplashBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.functions.Function3;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -35,45 +32,39 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
             Realm.init(App.getContext());
             RealmConfiguration config = new RealmConfiguration.Builder().directory(AndroidUtil.getFolder(context)).deleteRealmIfMigrationNeeded().schemaVersion(1).build();
             Realm.setDefaultConfiguration(config);
-            String jsonPoi = DataUtils.getJson(context, "poi.geojson");
-            FeatureCollection featureCollectionPoi = FeatureCollection.fromJson(jsonPoi);
-            List<Feature> pois = featureCollectionPoi.features();
-            Observable<List<Feature>> poiOb = DataUtils.getInstance().saveMarker(pois);
-            BaseOb<List<Feature>> poiObBase = new BaseOb<List<Feature>>() {
-                @Override
-                public void onDataDeal(List<Feature> data, String message) {
-                    LogUtils.e(data.size());
-                }
-            };
-            poiObBase.bindObed(poiOb);
+
             String jsonRoute = DataUtils.getJson(context, "route.geojson");
             FeatureCollection featureCollectionRoute = FeatureCollection.fromJson(jsonRoute);
             List<Feature> routes = featureCollectionRoute.features();
-
             Observable<List<Feature>> routeOb = DataUtils.getInstance().saveRoute(routes);
-            BaseOb<List<Feature>> routeObBase = new BaseOb<List<Feature>>() {
-                @Override
-                public void onDataDeal(List<Feature> data, String message) {
-                    LogUtils.e(data.size());
-                }
-            };
-            routeObBase.bindObed(routeOb);
-
             Observable<List<Feature>> recordOb = DataUtils.getInstance().saveRecord(routes);
-            BaseOb<List<Feature>> recordBaseOb = new BaseOb<List<Feature>>() {
+
+
+            String jsonMarker = DataUtils.getJson(context, "poi.geojson");
+            FeatureCollection featureCollectionMarker = FeatureCollection.fromJson(jsonMarker);
+            List<Feature> markers = featureCollectionMarker.features();
+            Observable<List<Feature>> markerOb = DataUtils.getInstance().saveMarker(markers);
+            Observable<Boolean> zip = Observable.zip(routeOb, recordOb, markerOb, new Function3<List<Feature>, List<Feature>, List<Feature>, Boolean>() {
                 @Override
-                public void onDataDeal(List<Feature> data, String message) {
-                    LogUtils.e(data.size());
+                public Boolean apply(List<Feature> features, List<Feature> features2, List<Feature> features3) throws Exception {
+                    return true;
+                }
+            });
+
+            BaseOb<Boolean> baseOb = new BaseOb<Boolean>() {
+                @Override
+                public void onDataDeal(Boolean data, String message) {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            jump2Activity(MainActivity.class);
+                            finish();
+                        }
+                    }, 50);
                 }
             };
-            recordBaseOb.bindObed(recordOb);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    jump2Activity(MainActivity.class);
-                    finish();
-                }
-            }, 300);
+            baseOb.bindObed(zip);
+
         }
     };
 
@@ -85,48 +76,6 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         } else {
             requestPermissions(permission, 9999, runnable);
         }
-//        test();
-    }
-
-    private void test() {
-        binding.ivJson.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                jump2Activity(MainActivity.class);
-            }
-        });
-        binding.ivAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String jsonRoute = DataUtils.getJson(context, "张家坝.json");
-                List<Model_GPS> o = new Gson().fromJson(jsonRoute, new TypeToken<List<Model_GPS>>() {
-                }.getType());
-                List<double[]> arrays = new ArrayList<>();
-                for (Model_GPS model_gps : o) {
-                    arrays.add(new double[]{model_gps.longitude, model_gps.latitude, model_gps.height});
-                }
-                String s = new Gson().toJson(arrays);
-                LogUtils.e("s   " + s);
-            }
-        });
-        binding.ivQuery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        binding.ivDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        binding.ivUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
     }
 
 

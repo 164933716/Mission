@@ -20,7 +20,26 @@
             margin: 0px;
             overflow: hidden;
         }
-        .imgContent,.animalContent,.plantContent,.naturalScience,.sightseeing,.specialTourism{
+        .infoContent{
+            position: absolute;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            width: 150px;
+            background-color: #ddd;
+            display: none;
+        }
+        .infoContent img{
+            max-width:100%;
+        }
+        .triangle{
+            position: absolute;
+            left: 50%;
+            transform: translateX(-10px);
+            border-top: 10px solid #fff;
+            border-right: 10px solid transparent;
+            border-left: 10px solid transparent;
+        }
+        .imgContent,.animalContent,.plantContent{
             position: absolute;
             display: block;
             
@@ -31,11 +50,29 @@
             -ms-user-select: none;
             user-select: none;
         }
+        .naturalScience,.sightseeing,.specialTourism,.mountainPeak,.village{
+            position: absolute;
+            display: block;
+            
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
 <div id="cesiumContainer"></div>
 <img id="imgOverlay" style="position: absolute; top: 177.697px; left: 258.29px; width: 32px; pointer-events: none;" src="img_map_mylocation.png"/>
+<div id="infoOverlay" class="infoContent">
+    <img src="https://tse2-mm.cn.bing.net/th?id=OIP.Ae2beT36yzq16CbqT352PAHaEo&pid=Api&rs=1">
+    <div style="text-align: center;"></div>
+    <div class="triangle"></div>
+</div>
 <script src="simplify.js"></script>
 <script src="index.js"></script>
 </body>

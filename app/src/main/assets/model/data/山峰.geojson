@@ -1,0 +1,17 @@
+{
+"type": "FeatureCollection",
+"name": "D:\\versalinks\\0中图社\\山峰.geojson",
+"features": [
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "25", "ATNLK_ID": "25", "CODE": "563", "GB": "72011", "TN": "410250", "NAME": "大竹坪" }, "geometry": { "type": "Point", "coordinates": [ 108.677838858467155, 27.824542460229715 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "26", "ATNLK_ID": "26", "CODE": "563", "GB": "72011", "TN": "410260", "NAME": "二台坡" }, "geometry": { "type": "Point", "coordinates": [ 108.614280652783776, 27.83216684717933 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "24", "ATNLK_ID": "24", "CODE": "563", "GB": "72011", "TN": "410240", "NAME": "凤凰山" }, "geometry": { "type": "Point", "coordinates": [ 108.681084009686714, 27.880687766520282 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "27", "ATNLK_ID": "27", "CODE": "563", "GB": "72011", "TN": "410270", "NAME": "观音岩" }, "geometry": { "type": "Point", "coordinates": [ 108.609155704601321, 27.888218867864168 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "14", "ATNLK_ID": "14", "CODE": "563", "GB": "72011", "TN": "410140", "NAME": "梵净山" }, "geometry": { "type": "Point", "coordinates": [ 108.692432950317269, 27.917334597043883 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "10", "ATNLK_ID": "10", "CODE": "563", "GB": "72011", "TN": "410100", "NAME": "林尖" }, "geometry": { "type": "Point", "coordinates": [ 108.571103561518242, 27.928764429943762 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "11", "ATNLK_ID": "11", "CODE": "563", "GB": "72011", "TN": "410110", "NAME": "斗棚山" }, "geometry": { "type": "Point", "coordinates": [ 108.661162188972654, 27.955457082668623 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "13", "ATNLK_ID": "13", "CODE": "563", "GB": "72011", "TN": "410130", "NAME": "牛风包" }, "geometry": { "type": "Point", "coordinates": [ 108.742818716633295, 27.957041626459912 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "12", "ATNLK_ID": "12", "CODE": "563", "GB": "72011", "TN": "410120", "NAME": "大尖峰" }, "geometry": { "type": "Point", "coordinates": [ 108.748389845548999, 27.98221143608275 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "128", "ATNLK_ID": "129", "CODE": "563", "GB": "72011", "TN": "411300", "NAME": "石家岭" }, "geometry": { "type": "Point", "coordinates": [ 108.622387377697621, 28.005680751801229 ] } },
+{ "type": "Feature", "properties": { "AREA": "0.00000", "PERIMETER": "0.00000", "ATNLK_": "125", "ATNLK_ID": "126", "CODE": "563", "GB": "72011", "TN": "411270", "NAME": "大洞" }, "geometry": { "type": "Point", "coordinates": [ 108.709162173532349, 28.019169744647307 ] } }
+]
+}

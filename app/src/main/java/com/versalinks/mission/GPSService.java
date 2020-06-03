@@ -82,7 +82,7 @@ public class GPSService extends Service {
                     latitude = doubles[1];
                     longitude = doubles[0];
                     modelGps = new Model_GPS(longitude, latitude, altitude);
-                    Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
+//                    Log.e("GPS", "latitude:" + latitude + "longitude:" + longitude + "altitude:" + altitude + "city:" + city);
                     for (GPSListener gpsListener : gpsListeners) {
                         gpsListener.gps(modelGps);
                     }
