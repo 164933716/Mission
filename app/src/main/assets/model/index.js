@@ -743,7 +743,6 @@ function updateUserTour(positions) {
     //         positionsVolume.push(positions[i].latitude);
     //         positionsVolume.push(updatedPositions[i].height + 10);
     //     }
-
     //     userTour = viewer.entities.add({
     //         polylineVolume: {
     //             positions : Cesium.Cartesian3.fromDegreesArrayHeights(positionsVolume),
@@ -938,7 +937,7 @@ function addAnimalLayer(geojson) {
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'animalContent';
         htmlOverlay.innerHTML = //'<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
-        '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_dongwu_layer.png"/>';
+        '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/' + geojson.features[i].properties.thumbnail + '"/>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1015,7 +1014,7 @@ function addPlantLayer(geojson) {
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'plantContent';
         htmlOverlay.innerHTML = //'<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.名称 + '</div>\
-        '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhiwu_layer.png"/>';
+        '<img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/' + geojson.features[i].properties.thumbnail + '"/>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1472,11 +1471,9 @@ handler.setInputAction(function(click) { // 点击事件
     mouseOperation = 1;
 }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
-handler.setInputAction(function(click) {
-    if (mouseOperation === 1) {
-        mouseOperation = 2;
-    }
-}, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+viewer.scene.camera.moveStart.addEventListener(function(){
+    mouseOperation = 2;
+});
 
 handler.setInputAction(function(click) {
     if (mouseOperation !== 2) {
@@ -1734,36 +1731,36 @@ function setKey(event) {
     }
     else if (event.keyCode === 70) {
         // 飞行预览启动
-        flyThroughStart(200, 45);
+        flyThroughStart2();//flyThroughStart(200, 45);
     }
     else if (event.keyCode === 32) {
         // 飞行预览暂停
-        flyThroughPause();
+        flyThroughPause2();//flyThroughPause();
     }
     else if (event.keyCode === 83) {
         // 飞行预览停止
-        flyThroughStop();
+        flyThroughStop2();//flyThroughStop();
     }
     else if (event.keyCode === 84) {
-        // var positions = [];
-        // var request1 = new XMLHttpRequest();
-        // request1.open("get", "./route.geojson");
-        // request1.send(null);
-        // request1.onload = function () {
-        //     if (request1.status == 200) {
-        //         var geojson = JSON.parse(request1.responseText);
-        //         for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
-        //             var coordinate = geojson.features[0].geometry.coordinates[i];
-        //             var item = {};
-        //             item.longitude = coordinate[0];
-        //             item.latitude = coordinate[1];
-        //             item.height = coordinate[2];
-        //             positions.push(item);
-        //         }
-        //         updateUserTour(positions);
-        //     }
-        // }
-        updatePoiLocation({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[108.6566137,27.9127753,1932.822074053631]},"properties":{"名称":"万米睡佛","thumbnail":"http://tiles.pano.vizen.cn/32C820DA834943B095E52C3F0D402ADE/sphere/thumb.jpg"}}]});
+        var positions = [];
+        var request1 = new XMLHttpRequest();
+        request1.open("get", "./route.geojson");
+        request1.send(null);
+        request1.onload = function () {
+            if (request1.status == 200) {
+                var geojson = JSON.parse(request1.responseText);
+                for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
+                    var coordinate = geojson.features[0].geometry.coordinates[i];
+                    var item = {};
+                    item.longitude = coordinate[0];
+                    item.latitude = coordinate[1];
+                    item.height = coordinate[2];
+                    positions.push(item);
+                }
+                updateUserTour(positions);
+            }
+        }
+        //updatePoiLocation({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[108.6566137,27.9127753,1932.822074053631]},"properties":{"名称":"万米睡佛","thumbnail":"http://tiles.pano.vizen.cn/32C820DA834943B095E52C3F0D402ADE/sphere/thumb.jpg"}}]});
         //flyTo({"height":12000,"latitude":27.8601391146,"longitude":108.7107853492});
     }
 
@@ -2088,5 +2085,233 @@ function flyThroughStart(height, angle) {
         }
 
         viewer.scene.preUpdate.addEventListener(preUpdateListener);
+    });
+}
+
+
+var flyThroughState = 0;
+
+function flyThroughPause2() {
+    flyThroughState = 2;
+
+    viewer.clock.stopTime = viewer.clock.startTime;
+
+    if (preUpdateListener) {
+        viewer.scene.preUpdate.removeEventListener(preUpdateListener);
+    }
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+}
+
+function flyThroughStop2() {
+    if (flyThroughState === 0) {
+        return;
+    }
+
+    flyThroughState = 0;
+
+    viewer.clock.stopTime = viewer.clock.startTime;
+    var element = document.getElementById('flyThrough');
+    if (element) {
+        element.parentNode.removeChild(element);
+    }
+    if (planeModelLoaded) {
+        viewer.scene.primitives.remove(planePrimitive);
+        planeModelLoaded = false;
+    }
+    if (preUpdateListener) {
+        viewer.scene.preUpdate.removeEventListener(preUpdateListener);
+    }
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+
+    if (userTour) {
+        viewer.flyTo(userTour);
+    }
+    if (window.Android) {
+        window.Android.flyThroughStoped();
+    }
+}
+
+function flyThroughStart2() {
+    if (flyThroughState === 2) {
+        viewer.scene.preUpdate.addEventListener(preUpdateListener);
+        return;
+    }
+
+    if (!userTour || flyThroughState === 1) {
+        return;
+    }
+
+    flyThroughState = 1;
+
+    var simplifiedPositions = userTourPostitions;
+
+    var cartoPositions = [];
+    for (var i = 0; i < simplifiedPositions.length; i++) {
+        cartoPositions.push(Cesium.Cartographic.fromDegrees(simplifiedPositions[i].longitude, simplifiedPositions[i].latitude));
+    }
+    promise = Cesium.sampleTerrainMostDetailed(terrainProvider, cartoPositions);
+    Cesium.when(promise, function (updatedPositions) {
+        if (updatedPositions.length > 0) {
+            for (var i = 0; i < updatedPositions.length; i++) {
+                simplifiedPositions[i].height = updatedPositions[i].height;
+            }
+        }
+
+        var deltaRadians = Cesium.Math.toRadians(1.0);
+            
+        var scene = viewer.scene;
+        var camera = viewer.camera;
+        var controller = scene.screenSpaceCameraController;
+        var r = 0;
+        var center = new Cesium.Cartesian3();
+
+        function getHeadingPitch(pointA, pointB){
+            const transform = Cesium.Transforms.eastNorthUpToFixedFrame(pointA);
+            const positionvector = Cesium.Cartesian3.subtract(pointB, pointA, new Cesium.Cartesian3());
+            const vector = Cesium.Matrix4.multiplyByPointAsVector(Cesium.Matrix4.inverse(transform, new Cesium.Matrix4()), positionvector, new Cesium.Cartesian3());
+            const direction = Cesium.Cartesian3.normalize(vector, new Cesium.Cartesian3());
+            //heading
+            const heading = Cesium.Math.TWO_PI-Cesium.Math.zeroToTwoPi(Math.atan2(direction.y, direction.x) - Cesium.Math.PI_OVER_TWO);
+            //pitch
+            const pitch = Cesium.Math.PI_OVER_TWO - Cesium.Math.acosClamped(direction.z);
+            //distance
+            const distance = Cesium.Cartesian3.distance(pointA, pointB);
+            return {
+                heading : heading,
+                pitch : pitch,
+                distance : distance
+            };
+        }
+        var roamingPostions = [];
+        for (var i = 0; i < simplifiedPositions.length; i++) {
+            roamingPostions.push(simplifiedPositions[i].longitude);
+            roamingPostions.push(simplifiedPositions[i].latitude);
+            roamingPostions.push(simplifiedPositions[i].height);
+        }
+        var hPitches = [];
+        var distanceSum = 0.0;
+        for (var i = 3; i < roamingPostions.length; i += 3) {
+            var originPosition = new Cesium.Cartographic(roamingPostions[i-3], roamingPostions[i-2]);
+            var originHeight = 0;
+            var targetPosition = new Cesium.Cartographic(roamingPostions[i+0], roamingPostions[i+1]);
+            var targetHeight = 0;
+            var origin = new Cesium.Cartesian3.fromDegrees(roamingPostions[i-3], roamingPostions[i-2], originHeight+roamingPostions[i-1]);
+            var target = new Cesium.Cartesian3.fromDegrees(roamingPostions[i+0], roamingPostions[i+1], targetHeight+roamingPostions[i+2]);
+            var hPitch = getHeadingPitch(origin, target);
+
+            distanceSum += hPitch.distance;
+            hPitch.distance = distanceSum;
+
+            hPitches.push(hPitch);
+        }
+
+        var origin = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        var target = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[1].longitude, simplifiedPositions[1].latitude, simplifiedPositions[1].height);
+        var hPitch = getHeadingPitch(origin, target);
+
+        var hpRoll = new Cesium.HeadingPitchRoll();
+        hpRoll.heading = hPitch.heading;
+        hpRoll.pitch = hPitch.pitch;
+
+        var hpRange = new Cesium.HeadingPitchRange();
+        var speed = 10;
+        
+        var position = Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        var speedVector = new Cesium.Cartesian3();
+        var fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west');
+
+        planePrimitive = scene.primitives.add(Cesium.Model.fromGltf({
+            url : './Cesium_Air.glb',
+            modelMatrix : Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform),
+            show : false,
+            minimumPixelSize : 128
+        }));
+
+        planePrimitive.readyPromise.then(function(model) {
+            // Play and loop all animations at half-speed
+            model.activeAnimations.addAll({
+                removeOnStop : true,
+                multiplier : 0.5,
+                loop : Cesium.ModelAnimationLoop.REPEAT
+            });
+
+            // Zoom to model
+            r = 2.0 * Math.max(model.boundingSphere.radius, camera.frustum.near);
+            controller.minimumZoomDistance = r * 0.5;
+            Cesium.Matrix4.multiplyByPoint(model.modelMatrix, model.boundingSphere.center, center);
+
+            planeModelLoaded = true;
+        });
+
+        var distance = 0.0;
+        var currentIndex = 0;
+        var currentPosition = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        
+        preUpdateListener = function (scene, time) {
+            if (!planeModelLoaded) {
+                return;
+            }
+            
+            speedVector = Cesium.Cartesian3.multiplyByScalar(Cesium.Cartesian3.UNIT_X, speed / 10, speedVector);
+            position = Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, speedVector, position);
+
+            distance += Cesium.Cartesian3.distance(currentPosition, position);
+            currentPosition = position.clone();
+
+            Cesium.Transforms.headingPitchRollToFixedFrame(position, hpRoll, Cesium.Ellipsoid.WGS84, fixedFrameTransform, planePrimitive.modelMatrix);
+
+            var i = 0;
+            for (; i < hPitches.length; i++) {
+                if (distance < hPitches[i].distance) {
+                    break;
+                }
+            }
+            if (i > currentIndex && i < hPitches.length) {
+                hpRoll.heading = hPitches[i].heading;
+                hpRoll.pitch = hPitches[i].pitch;
+                currentIndex = i;
+            }
+            
+            // Zoom to model
+            Cesium.Matrix4.multiplyByPoint(planePrimitive.modelMatrix, planePrimitive.boundingSphere.center, center);
+
+            if (i >= hPitches.length) {
+                flyThroughStop2();
+            }
+        }
+
+        viewer.scene.preUpdate.addEventListener(preUpdateListener);
+
+        //
+        var element = document.getElementById('flyThrough');
+        if (element) {
+            element.parentNode.removeChild(element);
+        }
+
+        var htmlFlyThroughOverlay = document.createElement('img');
+        htmlFlyThroughOverlay.id = 'flyThrough';
+        htmlFlyThroughOverlay.style = 'position: absolute; top: 177.697px; left: 258.29px; width: 32px; pointer-events: none;';
+        htmlFlyThroughOverlay.src = 'img/mylocation2.png';
+        document.body.appendChild(htmlFlyThroughOverlay);
+
+        promise = Cesium.sampleTerrainMostDetailed(terrainProvider, [currentPosition]);
+        Cesium.when(promise, function (updatedPositions) {
+            if (updatedPositions.length > 0) {
+                viewer.scene.preRender.addEventListener(function() {
+                    var htmlFlyThroughOverlay = document.getElementById('flyThrough');
+                    if (htmlFlyThroughOverlay) {
+                        var scratch = new Cesium.Cartesian2();
+
+                        var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(currentPosition, scratch);
+                        if (Cesium.defined(canvasPosition)) {
+                            htmlFlyThroughOverlay.style.top = canvasPosition.y - htmlFlyThroughOverlay.offsetHeight / 2 + 'px';
+                            htmlFlyThroughOverlay.style.left = canvasPosition.x - htmlFlyThroughOverlay.offsetWidth / 2 + 'px';
+                        }
+                    }
+                });
+            }
+        });
+
+        
     });
 }

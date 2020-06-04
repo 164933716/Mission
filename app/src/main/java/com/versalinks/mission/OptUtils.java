@@ -58,15 +58,15 @@ public class OptUtils {
     }
 
     public static String flyStart() {
-        return "javascript:flyThroughStart(" + "200,45" + ")";
+        return "javascript:flyThroughStart2(" + "" + ")";
     }
 
     public static String flyStop() {
-        return "javascript:flyThroughStop(" + "" + ")";
+        return "javascript:flyThroughStop2(" + "" + ")";
     }
 
     public static String flyPause() {
-        return "javascript:flyThroughPause(" + "" + ")";
+        return "javascript:flyThroughPause2(" + "" + ")";
     }
 
     public static String getUserTourHeights(String jsonPois) {
