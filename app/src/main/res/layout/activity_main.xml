@@ -563,6 +563,7 @@
                         android:src="@drawable/src_img_activitiesicon_ichiking" />
 
                     <TextView
+                        android:id="@+id/tvRouteDetailDescription"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -585,7 +586,7 @@
                         android:layout_marginTop="10dp"
                         android:background="#6fe2c4" />
 
-                    <androidx.legacy.widget.Space
+                    <Space
                         android:layout_width="match_parent"
                         android:layout_height="60dp" />
 
@@ -660,6 +661,7 @@
                                 android:src="@drawable/src_img_fm_icn_line_route_duration" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailDuration"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="3-4"
@@ -667,6 +669,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailDurationUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="hrs"
@@ -686,6 +689,7 @@
                                 android:src="@drawable/src_img_fm_icn_line_terrain_elevation_bottom" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailLower"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="81"
@@ -693,6 +697,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailLowerUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="m"
@@ -712,6 +717,7 @@
                                 android:src="@drawable/src_img_fm_icn_line_terrain_elevation_top" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailHigher"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="673"
@@ -719,6 +725,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailHigherUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="m"
@@ -738,6 +745,7 @@
                                 android:src="@drawable/src_img_fmicnlinerouteruler" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailDistance"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="10.6"
@@ -745,6 +753,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailDistanceUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="km"
@@ -774,6 +783,7 @@
                                 android:src="@drawable/src_img_fmicnlinerouteascent" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailUp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="636"
@@ -781,6 +791,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailUpUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="m"
@@ -800,6 +811,7 @@
                                 android:src="@drawable/src_img_fmicnlineroutedescent" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailDown"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="651"
@@ -807,6 +819,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tvRouteDetailDownUnit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="m"

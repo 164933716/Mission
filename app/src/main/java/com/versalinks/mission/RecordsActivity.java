@@ -24,8 +24,8 @@ import java.util.List;
 import io.reactivex.Observable;
 
 public class RecordsActivity extends BaseActivity<ActivityRecordsBinding> {
-    private List<Model_Record> allList = new ArrayList<>();
-    private BaseAdapter<Model_Record> adapter;
+    private List<Model_Route> allList = new ArrayList<>();
+    private BaseAdapter<Model_Route> adapter;
 
     @Override
     protected void onCreateByBinding(Bundle savedInstanceState) {
@@ -52,16 +52,16 @@ public class RecordsActivity extends BaseActivity<ActivityRecordsBinding> {
         loadData();
     }
 
-    private void initAdapter(List<Model_Record> list) {
+    private void initAdapter(List<Model_Route> list) {
         allList.clear();
         if (list != null) {
             allList.addAll(list);
         }
         if (adapter == null) {
-            adapter = new BaseAdapter<Model_Record>(R.layout.item_record, allList) {
+            adapter = new BaseAdapter<Model_Route>(R.layout.item_record, allList) {
                 @Override
                 protected void convert(View helper, int position, int viewType) {
-                    Model_Record item = allList.get(position);
+                    Model_Route item = allList.get(position);
                     ImageView ivLogo = helper.findViewById(R.id.ivLogo);
                     TextView tvDistance = helper.findViewById(R.id.tvDistance);
                     TextView tvDistanceUp = helper.findViewById(R.id.tvDistanceUp);
@@ -79,7 +79,7 @@ public class RecordsActivity extends BaseActivity<ActivityRecordsBinding> {
             adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position, int viewType) {
-                    Model_Record model_record = allList.get(position);
+                    Model_Route model_record = allList.get(position);
                     Intent intent = new Intent();
                     intent.putExtra("model_record", model_record);
                     setResult(RESULT_OK, intent);
@@ -92,10 +92,10 @@ public class RecordsActivity extends BaseActivity<ActivityRecordsBinding> {
     }
 
     private void loadData() {
-        Observable<List<Model_Record>> listObservable = DataUtils.getInstance().queryRecord();
-        BaseOb<List<Model_Record>> baseOb = new BaseOb<List<Model_Record>>() {
+        Observable<List<Model_Route>> listObservable = DataUtils.getInstance().queryRoute();
+        BaseOb<List<Model_Route>> baseOb = new BaseOb<List<Model_Route>>() {
             @Override
-            public void onDataDeal(List<Model_Record> data, String message) {
+            public void onDataDeal(List<Model_Route> data, String message) {
                 LogUtils.e("onChange    " + data.size());
                 binding.refresh.finishRefresh();
                 initAdapter(data);

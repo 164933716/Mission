@@ -3,25 +3,25 @@ package com.versalinks.mission;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class Model_Route extends RealmObject implements Parcelable {
-    public long createTime;
-    public long goDuration;
+    public long createTime;//创建时间
+    public long goDuration;//耗时
     @PrimaryKey
-    public String name;
-    public String description;
-    public String goMode;
-    public String goDifficult;
-    public double distance;
-    public double goUp;
-    public double goDown;
-    public RealmList<Model_GPS> gpsList;
+    public String name;//名称
+    public String description;//描述
+    public String goMode;//交通方式
+    public String goDifficulty;//难易度
+    public double distance;//路程
+    public double distanceByAltitude;//起始点高度差
+    public double altitudeMin;//最低海拔
+    public double altitudeMax;//最高海拔
+    public double goUp;//上坡
+    public double goDown;//下坡
+    public RealmList<Model_GPS> gpsList;//gps
 
     @Override
     public String toString() {
@@ -31,11 +31,14 @@ public class Model_Route extends RealmObject implements Parcelable {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", goMode='" + goMode + '\'' +
-                ", goDifficult='" + goDifficult + '\'' +
+                ", goDifficult='" + goDifficulty + '\'' +
                 ", distance=" + distance +
+                ", distanceByAltitude=" + distanceByAltitude +
+                ", altitudeMin=" + altitudeMin +
+                ", altitudeMax=" + altitudeMax +
                 ", goUp=" + goUp +
                 ", goDown=" + goDown +
-                ", gpsList=" + (gpsList==null?"null":gpsList.size()) +
+                ", gpsList=" + (gpsList == null ? "null" : gpsList.size()) +
                 '}';
     }
 
@@ -52,8 +55,11 @@ public class Model_Route extends RealmObject implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.description);
         dest.writeString(this.goMode);
-        dest.writeString(this.goDifficult);
+        dest.writeString(this.goDifficulty);
         dest.writeDouble(this.distance);
+        dest.writeDouble(this.distanceByAltitude);
+        dest.writeDouble(this.altitudeMin);
+        dest.writeDouble(this.altitudeMax);
         dest.writeDouble(this.goUp);
         dest.writeDouble(this.goDown);
         dest.writeList(this.gpsList);
@@ -68,8 +74,11 @@ public class Model_Route extends RealmObject implements Parcelable {
         this.name = in.readString();
         this.description = in.readString();
         this.goMode = in.readString();
-        this.goDifficult = in.readString();
+        this.goDifficulty = in.readString();
         this.distance = in.readDouble();
+        this.distanceByAltitude = in.readDouble();
+        this.altitudeMin = in.readDouble();
+        this.altitudeMax = in.readDouble();
         this.goUp = in.readDouble();
         this.goDown = in.readDouble();
         this.gpsList = new RealmList<>();

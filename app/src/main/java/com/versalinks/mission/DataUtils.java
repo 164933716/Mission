@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
@@ -61,10 +62,6 @@ public class DataUtils {
         return dataUtils;
     }
 
-    public static String nowDate() {
-        return new SimpleDateFormat("yyyy-MM-dd_HH-MM-ss").format(new Date());
-    }
-
     public Observable<List<Model_Route>> queryRoute() {
         Observable<List<Model_Route>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Route>>() {
             @Override
@@ -75,26 +72,6 @@ public class DataUtils {
                         public void execute(@NonNull Realm realm) {
                             RealmResults<Model_Route> all = realm.where(Model_Route.class).sort("createTime", Sort.DESCENDING).findAll();
                             List<Model_Route> routes = realm.copyFromRealm(all);
-                            emitter.onNext(routes);
-                            emitter.onComplete();
-                        }
-                    });
-                }
-            }
-        });
-        return listObservable;
-    }
-
-    public Observable<List<Model_Record>> queryRecord() {
-        Observable<List<Model_Record>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Record>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Model_Record>> emitter) throws Exception {
-                try (Realm realm = Realm.getDefaultInstance()) {
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(@NonNull Realm realm) {
-                            RealmResults<Model_Record> all = realm.where(Model_Record.class).sort("createTime", Sort.DESCENDING).findAll();
-                            List<Model_Record> routes = realm.copyFromRealm(all);
                             emitter.onNext(routes);
                             emitter.onComplete();
                         }
@@ -120,28 +97,6 @@ public class DataUtils {
                         }
                     });
                 }
-            }
-        });
-        return listObservable;
-    }
-
-    public Observable<List<Model_Route>> deleteRoute() {
-        Observable<List<Model_Route>> listObservable = Observable.create(new ObservableOnSubscribe<List<Model_Route>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Model_Route>> emitter) throws Exception {
-                try (Realm realm = Realm.getDefaultInstance()) {
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(@NonNull Realm realm) {
-                            RealmResults<Model_Route> all = realm.where(Model_Route.class).findAll();
-                            List<Model_Route> routes = realm.copyFromRealm(all);
-                            all.deleteAllFromRealm();
-                            emitter.onNext(routes);
-                            emitter.onComplete();
-                        }
-                    });
-                }
-
             }
         });
         return listObservable;
@@ -189,29 +144,6 @@ public class DataUtils {
             }
         });
         return listObservable;
-    }
-
-    public Observable<Model_Record> saveRecord(Model_Record model_record) {
-        Observable<Model_Record> routeObservable = Observable.create(new ObservableOnSubscribe<Model_Record>() {
-            @Override
-            public void subscribe(ObservableEmitter<Model_Record> emitter) throws Exception {
-                for (Model_GPS model_gps : model_record.gpsList) {
-
-                }
-                try (Realm realm = Realm.getDefaultInstance()) {
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(@NonNull Realm realm) {
-                            realm.copyToRealmOrUpdate(model_record);
-                            emitter.onNext(model_record);
-                            emitter.onComplete();
-                        }
-                    });
-                }
-            }
-        });
-        return routeObservable;
-
     }
 
     public Observable<Model_Route> saveRoute(Model_Route modelRoute) {
@@ -286,71 +218,18 @@ public class DataUtils {
                                 if (geometry instanceof LineString) {
                                     LineString lineString = (LineString) geometry;
                                     Model_Route item = new Model_Route();
+                                    item.createTime = feature.getNumberProperty("createTime").longValue();
+                                    item.goDuration = feature.getNumberProperty("goDuration").longValue();
                                     item.name = feature.getStringProperty("name");
-                                    if (i == 0) {
-
-                                        item.description = DataUtils.randomDescription1();
-                                    } else {
-                                        item.description = DataUtils.randomDescription2();
-
-                                    }
+                                    item.description = feature.getStringProperty("description");
+                                    item.goMode = feature.getStringProperty("goMode");
+                                    item.goDifficulty = feature.getStringProperty("goDifficulty");
                                     item.distance = feature.getNumberProperty("distance").doubleValue();
-                                    item.createTime = DataUtils.getAimMills();
-                                    item.goDuration = DataUtils.randomDuration();
-                                    item.goMode = DataUtils.randomGoMode();
-                                    item.goDifficult = DataUtils.randomGoDiffclut();
-                                    item.goUp = DataUtils.randomUpOrDown();
-                                    item.goDown = DataUtils.randomUpOrDown();
-                                    item.gpsList = new RealmList<>();
-                                    List<Point> coordinates = lineString.coordinates();
-                                    for (Point point : coordinates) {
-                                        double longitude = point.longitude();
-                                        double latitude = point.latitude();
-                                        double altitude = point.altitude();
-                                        item.gpsList.add(new Model_GPS(longitude, latitude, altitude));
-                                    }
-                                    realm.copyToRealmOrUpdate(item);
-                                }
-                            }
-                            emitter.onNext(features);
-                            emitter.onComplete();
-                        }
-                    });
-                }
-            }
-        });
-        return routeObservable;
-    }
-
-    public Observable<List<Feature>> saveRecord(List<Feature> features) {
-        Observable<List<Feature>> routeObservable = Observable.create(new ObservableOnSubscribe<List<Feature>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<Feature>> emitter) throws Exception {
-                try (Realm realm = Realm.getDefaultInstance()) {
-                    realm.executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(@NonNull Realm realm) {
-                            for (int i = 0; i < features.size(); i++) {
-                                Feature feature = features.get(i);
-                                Geometry geometry = feature.geometry();
-                                if (geometry instanceof LineString) {
-                                    LineString lineString = (LineString) geometry;
-                                    Model_Record item = new Model_Record();
-                                    item.name = feature.getStringProperty("name");
-                                    if (i == 0) {
-
-                                        item.description = DataUtils.randomDescription1();
-                                    } else {
-                                        item.description = DataUtils.randomDescription2();
-
-                                    }
-                                    item.distance = feature.getNumberProperty("distance").doubleValue();
-                                    item.createTime = DataUtils.getAimMills();
-                                    item.goDuration = DataUtils.randomDuration();
-                                    item.goMode = DataUtils.randomGoMode();
-                                    item.goDifficult = DataUtils.randomGoDiffclut();
-                                    item.goUp = DataUtils.randomUpOrDown();
-                                    item.goDown = DataUtils.randomUpOrDown();
+                                    item.distanceByAltitude = feature.getNumberProperty("distanceByAltitude").doubleValue();
+                                    item.altitudeMin = feature.getNumberProperty("altitudeMin").doubleValue();
+                                    item.altitudeMax = feature.getNumberProperty("altitudeMax").doubleValue();
+                                    item.goUp = feature.getNumberProperty("goUp").doubleValue();
+                                    item.goDown = feature.getNumberProperty("goDown").doubleValue();
                                     item.gpsList = new RealmList<>();
                                     List<Point> coordinates = lineString.coordinates();
                                     for (Point point : coordinates) {
@@ -392,10 +271,6 @@ public class DataUtils {
 
     }
 
-    public static int randomDuration() {
-        Random random = new Random();
-        return random.nextInt(1000 * 60 * 300);
-    }
 
     public static double randomDistance() {
         Random random = new Random();
@@ -404,11 +279,6 @@ public class DataUtils {
         return v;
     }
 
-    public static double randomHeight() {
-        Random random = new Random();
-        double random1 = Math.random();
-        return random1 * random.nextInt(500);
-    }
 
     public static double randomUpOrDown() {
         Random random = new Random();
@@ -417,31 +287,22 @@ public class DataUtils {
         return v;
     }
 
-    public static double randomUpOrDown(double max) {
-        Random random = new Random();
-        double random1 = Math.random();
-        double v = max - 10 - random1 * random.nextInt(500);
-        return Math.abs(v);
-    }
-
-    public static String randomTitle() {
-        return "金顶-九龙池";
-    }
-
-    public static String randomGoMode() {
-        return "walk";
-    }
-
-    public static String randomGoDiffclut() {
-        return "easy";
-    }
-
-    public static String randomDescription2() {
-        return "从护国寺出发步行到万千台，沿路经过棉絮岭、薄刀岭、静心池等，全长大约7公里";
-    }
 
     public static String randomDescription1() {
         return "从张家坝出发步行到苏家坡，沿路经过护国寺、棉絮岭、薄刀岭、静心池等，全长大约8公里";
+    }
+
+    public static Pair<String, String> convertToDistanceWithUnit(double distance) {
+        Pair<String, String> pair;
+        String distanceString;
+        if (distance < 1000) {
+            long value = new BigDecimal(distance).setScale(2, BigDecimal.ROUND_HALF_UP).longValue();
+            pair = new Pair<>(String.valueOf(value), "m");
+        } else {
+            double value = new BigDecimal(distance / 1000).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            pair = new Pair<>(String.valueOf(value), "km");
+        }
+        return pair;
     }
 
     public static String convertToDistance(double distance) {
@@ -463,21 +324,27 @@ public class DataUtils {
         return TimeUtils.millis2String(seconds, format);
     }
 
-    public static String convertToDuration(long seconds) {
+    public static Pair<String, String> convertToDurationWithUnit(long ms) {
+        Pair<String, String> pair;
         String durationString;
-        if (seconds < 60 * 1000) {
+        if (ms < 60 * 1000) {
             durationString = "1分钟";
-        } else if (seconds < 60 * 60 * 1000) {
-            int i = new BigDecimal(seconds / (60 * 1000)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            pair = new Pair<>(String.valueOf(1), "小时");
+        } else if (ms < 60 * 60 * 1000) {
+            int i = new BigDecimal(ms / (60 * 1000)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
             durationString = i + "分钟";
+            pair = new Pair<>(String.valueOf(i), "小时");
         } else {
-            int h = new BigDecimal(seconds / (60 * 60 * 1000)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-            int m = new BigDecimal((seconds % (60 * 60 * 1000) / 60)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            int h = new BigDecimal(ms / (60 * 60 * 1000)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+            float m = ((ms % (60 * 60 * 1000)) / (60 * 1000));
             String hString = h + "小时";
             String mString = m + "分钟";
-            durationString = hString + mString;
+            float v = m / 60;
+            float hm = new BigDecimal(h + v).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+            durationString = hm + "小时";
+            pair = new Pair<>(String.valueOf(hm), "小时");
         }
-        return durationString;
+        return pair;
     }
 
     public static String convertToTime(long seconds) {

@@ -115,7 +115,7 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
                 ToastUtils.showShort("轨迹信息不可用，无法保存");
                 return;
             }
-            Model_Record model_record = new Model_Record();
+            Model_Route model_record = new Model_Route();
             model_record.createTime = DataUtils.getNowMills();
             model_record.distance = DataUtils.randomDistance();
             model_record.goUp = DataUtils.randomUpOrDown();
@@ -123,10 +123,10 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             model_record.description = DataUtils.randomDescription1();
             model_record.gpsList = new RealmList<>();
             model_record.gpsList.addAll(gpsList);
-            Observable<Model_Record> o = DataUtils.getInstance().saveRecord(model_record);
-            BaseOb<Model_Record> baseOb = new BaseOb<Model_Record>() {
+            Observable<Model_Route> o = DataUtils.getInstance().saveRoute(model_record);
+            BaseOb<Model_Route> baseOb = new BaseOb<Model_Route>() {
                 @Override
-                public void onDataDeal(Model_Record data, String message) {
+                public void onDataDeal(Model_Route data, String message) {
                     TipDialog tipDialog = new TipDialog(context, "本次轨迹已保存", "可在我的-我的轨迹里进行管理");
                     tipDialog.show();
                     handler.postDelayed(new Runnable() {

@@ -394,12 +394,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     binding.containerRouteChart.setVisibility(View.VISIBLE);
                     binding.routeChart.setPoints(item.gpsList);
                     binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
-                } else if (tag instanceof Model_Record) {
-                    Model_Record item = (Model_Record) tag;
-                    binding.containerRoute.setVisibility(View.GONE);
-                    binding.containerRouteChart.setVisibility(View.VISIBLE);
-                    binding.routeChart.setPoints(item.gpsList);
-                    binding.tvRouteChart.setText("距离：" + DataUtils.convertToDistance(0) + "\u0020" + "|" + "\u0020" + "海拔：" + DataUtils.convertToDistance(item.gpsList.get(0).height));
                 }
             }
         });
@@ -415,7 +409,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void onClick(View v) {
                 if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                     bottomSheetBehavior.setState(STATE_COLLAPSED);
-                    return;
                 }
             }
         });
@@ -634,8 +627,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             if (data != null) {
                 //轨迹选择
                 Parcelable model_recordSer = data.getParcelableExtra("model_record");
-                if (model_recordSer instanceof Model_Record) {
-                    Model_Record item = (Model_Record) model_recordSer;
+                if (model_recordSer instanceof Model_Route) {
+                    Model_Route item = (Model_Route) model_recordSer;
                     if (webView != null) {
                         showRecord(item);
                     }
@@ -683,10 +676,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
         binding.tvRouteInfoTitle.setText(item.name);
         binding.tvRouteInfoDescription.setText(item.description);
-
+        setRouteDetail(item);
     }
 
-    private void showRecord(Model_Record item) {
+    private void showRecord(Model_Route item) {
         setMarkerToNULL();
 //        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
         binding.routeChart.setTag(item);
@@ -700,6 +693,23 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
         binding.tvRouteInfoTitle.setText(item.name);
         binding.tvRouteInfoDescription.setText(item.description);
+        setRouteDetail(item);
+    }
+
+    private void setRouteDetail(Model_Route item) {
+        binding.tvRouteDetailDescription.setText(item.description);
+        binding.tvRouteDetailDuration.setText(DataUtils.convertToDurationWithUnit(item.goDuration).first);
+        binding.tvRouteDetailDurationUnit.setText(DataUtils.convertToDurationWithUnit(item.goDuration).second);
+        binding.tvRouteDetailLower.setText(DataUtils.convertToDistanceWithUnit(item.altitudeMin).first);
+        binding.tvRouteDetailLowerUnit.setText(DataUtils.convertToDistanceWithUnit(item.altitudeMin).second);
+        binding.tvRouteDetailHigher.setText(DataUtils.convertToDistanceWithUnit(item.altitudeMax).first);
+        binding.tvRouteDetailHigherUnit.setText(DataUtils.convertToDistanceWithUnit(item.altitudeMax).second);
+        binding.tvRouteDetailDistance.setText(DataUtils.convertToDistanceWithUnit(item.distance).first);
+        binding.tvRouteDetailDistanceUnit.setText(DataUtils.convertToDistanceWithUnit(item.distance).second);
+        binding.tvRouteDetailUp.setText(DataUtils.convertToDistanceWithUnit(item.goUp).first);
+        binding.tvRouteDetailUpUnit.setText(DataUtils.convertToDistanceWithUnit(item.goUp).second);
+        binding.tvRouteDetailDown.setText(DataUtils.convertToDistanceWithUnit(item.goDown).first);
+        binding.tvRouteDetailDownUnit.setText(DataUtils.convertToDistanceWithUnit(item.goDown).second);
     }
 
     @Override

@@ -16,7 +16,7 @@ import com.versalinks.mission.databinding.ActivitySplashBinding;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function3;
+import io.reactivex.functions.BiFunction;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -37,16 +37,14 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
             FeatureCollection featureCollectionRoute = FeatureCollection.fromJson(jsonRoute);
             List<Feature> routes = featureCollectionRoute.features();
             Observable<List<Feature>> routeOb = DataUtils.getInstance().saveRoute(routes);
-            Observable<List<Feature>> recordOb = DataUtils.getInstance().saveRecord(routes);
-
 
             String jsonMarker = DataUtils.getJson(context, "poi.geojson");
             FeatureCollection featureCollectionMarker = FeatureCollection.fromJson(jsonMarker);
             List<Feature> markers = featureCollectionMarker.features();
             Observable<List<Feature>> markerOb = DataUtils.getInstance().saveMarker(markers);
-            Observable<Boolean> zip = Observable.zip(routeOb, recordOb, markerOb, new Function3<List<Feature>, List<Feature>, List<Feature>, Boolean>() {
+            Observable<Boolean> zip = Observable.zip(routeOb, markerOb, new BiFunction<List<Feature>, List<Feature>, Boolean>() {
                 @Override
-                public Boolean apply(List<Feature> features, List<Feature> features2, List<Feature> features3) throws Exception {
+                public Boolean apply(List<Feature> features, List<Feature> features2) throws Exception {
                     return true;
                 }
             });
