@@ -698,6 +698,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     private void setRouteDetail(Model_Route item) {
         binding.tvRouteDetailDescription.setText(item.description);
+        binding.tvRouteDetailDifficulty.setText(item.goDifficulty);
         binding.tvRouteDetailDuration.setText(DataUtils.convertToDurationWithUnit(item.goDuration).first);
         binding.tvRouteDetailDurationUnit.setText(DataUtils.convertToDurationWithUnit(item.goDuration).second);
         binding.tvRouteDetailLower.setText(DataUtils.convertToDistanceWithUnit(item.altitudeMin).first);

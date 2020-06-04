@@ -14,8 +14,8 @@
         "distanceByAltitude": 360.58,
         "altitudeMin": 756.8838,
         "altitudeMax": 1133.1266,
-        "goUp": 100,
-        "goDown": 100
+        "goUp": 843.7133,
+        "goDown": 483.1321
       },
       "geometry": {
         "type": "LineString",
@@ -751,8 +751,8 @@
         "distanceByAltitude": 697.16,
         "altitudeMin": 1402.2363,
         "altitudeMax": 2159.626,
-        "goUp": 200,
-        "goDown": 200
+        "goUp": 995.9459,
+        "goDown": 298.7764
       },
       "geometry": {
         "type": "LineString",

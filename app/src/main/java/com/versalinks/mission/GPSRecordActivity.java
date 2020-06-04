@@ -117,10 +117,17 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             }
             Model_Route model_record = new Model_Route();
             model_record.createTime = DataUtils.getNowMills();
-            model_record.distance = DataUtils.randomDistance();
-            model_record.goUp = DataUtils.randomUpOrDown();
+            model_record.goDuration = gpsService.getDuration() * 1000;
             model_record.name = DataUtils.getNowString();
             model_record.description = DataUtils.randomDescription1();
+            model_record.goMode = "walk";
+            model_record.goDifficulty = "normal";
+            model_record.distance = DataUtils.randomDistance();
+            model_record.distanceByAltitude = DataUtils.randomUpOrDown();
+            model_record.altitudeMin = DataUtils.randomUpOrDown();
+            model_record.altitudeMax = DataUtils.randomUpOrDown();
+            model_record.goUp = DataUtils.randomUpOrDown();
+            model_record.goDown = DataUtils.randomUpOrDown();
             model_record.gpsList = new RealmList<>();
             model_record.gpsList.addAll(gpsList);
             Observable<Model_Route> o = DataUtils.getInstance().saveRoute(model_record);
