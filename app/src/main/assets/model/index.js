@@ -70,11 +70,13 @@ var center = {x : (west + east) / 2, y : (south + north) / 2};
 var userLocation = {longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697};
 
 function init() {
+    addAreaBackgroundLayer();
+
     viewer.camera.flyTo({
         destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 18000000),
         complete : function() {
             viewer.camera.flyTo({
-                destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 12000),
+                destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 20000),
                 complete : function() {
                     rotateUpDown(60.0);
                                             if (window.Android) {
@@ -873,6 +875,8 @@ function addAreaBackgroundLayer() {
         }
     });
 
+    return;
+
     var carea = Cesium.GeoJsonDataSource.load(
         "./carea.geojson",
         {
@@ -891,8 +895,6 @@ function addAreaBackgroundLayer() {
             });
         }
     });
-    
-    return;
 
     viewer.dataSources.add(
         Cesium.GeoJsonDataSource.load(
@@ -1743,25 +1745,25 @@ function setKey(event) {
         flyThroughStop2();//flyThroughStop();
     }
     else if (event.keyCode === 84) {
-        var positions = [];
-        var request1 = new XMLHttpRequest();
-        request1.open("get", "./route.geojson");
-        request1.send(null);
-        request1.onload = function () {
-            if (request1.status == 200) {
-                var geojson = JSON.parse(request1.responseText);
-                for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
-                    var coordinate = geojson.features[0].geometry.coordinates[i];
-                    var item = {};
-                    item.longitude = coordinate[0];
-                    item.latitude = coordinate[1];
-                    item.height = coordinate[2];
-                    positions.push(item);
-                }
-                updateUserTour(positions);
-            }
-        }
-        //updatePoiLocation({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[108.6566137,27.9127753,1932.822074053631]},"properties":{"名称":"万米睡佛","thumbnail":"http://tiles.pano.vizen.cn/32C820DA834943B095E52C3F0D402ADE/sphere/thumb.jpg"}}]});
+        // var positions = [];
+        // var request1 = new XMLHttpRequest();
+        // request1.open("get", "./route.geojson");
+        // request1.send(null);
+        // request1.onload = function () {
+        //     if (request1.status == 200) {
+        //         var geojson = JSON.parse(request1.responseText);
+        //         for (var i = 0; i < geojson.features[0].geometry.coordinates.length; i++) {
+        //             var coordinate = geojson.features[0].geometry.coordinates[i];
+        //             var item = {};
+        //             item.longitude = coordinate[0];
+        //             item.latitude = coordinate[1];
+        //             item.height = coordinate[2];
+        //             positions.push(item);
+        //         }
+        //         updateUserTour(positions);
+        //     }
+        // }
+        updatePoiLocation({"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[108.6566137,27.9127753,1932.822074053631]},"properties":{"名称":"万米睡佛","thumbnail":"http://tiles.pano.vizen.cn/32C820DA834943B095E52C3F0D402ADE/sphere/thumb.jpg"}}]});
         //flyTo({"height":12000,"latitude":27.8601391146,"longitude":108.7107853492});
     }
 
@@ -2138,6 +2140,7 @@ function flyThroughStop2() {
 
 function flyThroughStart2() {
     if (flyThroughState === 2) {
+        flyThroughState = 1;
         viewer.scene.preUpdate.addEventListener(preUpdateListener);
         return;
     }
@@ -2219,7 +2222,7 @@ function flyThroughStart2() {
         hpRoll.pitch = hPitch.pitch;
 
         var hpRange = new Cesium.HeadingPitchRange();
-        var speed = 10;
+        var speed = 10 * 3;
         
         var position = Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
         var speedVector = new Cesium.Cartesian3();
