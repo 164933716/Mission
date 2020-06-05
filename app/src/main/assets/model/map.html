@@ -7,9 +7,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalabel=no">
-    <title>梵净山三维地图沙盘</title>
+    <title>梵净山景区三维地图</title>
     <script src="./Cesium/Build/Cesium/Cesium.js"></script>
     <script src="CesiumNavigation.umd.js"></script>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css">
     <style>
         @import url(./Cesium/Build/Cesium/Widgets/widgets.css);
         @import url(cesium-navigation.css);
@@ -30,6 +32,13 @@
         }
         .infoContent img{
             max-width:100%;
+        }
+        .infoContent-close{
+            position: absolute;
+            top:5px;
+            right: 5px;
+            color: #fff;
+            cursor: pointer;
         }
         .triangle{
             position: absolute;
@@ -69,8 +78,10 @@
 <div id="cesiumContainer"></div>
 <img id="imgOverlay" style="position: absolute; top: 177.697px; left: 258.29px; width: 32px; pointer-events: none;" src="img_map_mylocation.png"/>
 <div id="infoOverlay" class="infoContent">
+    <div class="fa fa-close infoContent-close cb" onclick="clearPoiDetail()"></div>
     <img src="https://tse2-mm.cn.bing.net/th?id=OIP.Ae2beT36yzq16CbqT352PAHaEo&pid=Api&rs=1">
-    <div style="text-align: center;"></div>
+    <div style="text-align: left; font-weight: bold;"></div>
+    <div style="text-align: left; font-size: small;"></div>
     <div class="triangle"></div>
 </div>
 <script src="simplify.js"></script>

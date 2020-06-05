@@ -569,13 +569,14 @@ function clickPoi() {
                     if (htmlOverlay) {
                         var offsetHeight = 0;
                         if (htmlOverlay.data.properties.class === 'POI') {
-                            htmlOverlay.children[0].src = htmlOverlay.data.properties.thumbnail;
-                            htmlOverlay.children[1].innerHTML = htmlOverlay.data.properties.名称;
+                            htmlOverlay.children[1].src = htmlOverlay.data.properties.thumbnail;
+                            htmlOverlay.children[2].innerHTML = htmlOverlay.data.properties.名称;
                             offsetHeight = 46 + 10;
                         }
                         else {
-                            htmlOverlay.children[0].src = 'img/' + htmlOverlay.data.properties.图片;
-                            htmlOverlay.children[1].innerHTML = htmlOverlay.data.properties.名称;
+                            htmlOverlay.children[1].src = 'img/' + htmlOverlay.data.properties.图片;
+                            htmlOverlay.children[2].innerHTML = htmlOverlay.data.properties.名称;
+                            htmlOverlay.children[3].innerHTML = htmlOverlay.data.properties.简介1;
                             offsetHeight = 32 + 5;
                         }
                         htmlOverlay.style.display = 'block';
@@ -2092,6 +2093,10 @@ function flyThroughStart(height, angle) {
 var flyThroughState = 0;
 
 function flyThroughPause2() {
+    if (flyThroughState !== 1) {
+        return;
+    }
+
     flyThroughState = 2;
 
     viewer.clock.stopTime = viewer.clock.startTime;

@@ -42,6 +42,7 @@ public class ChartView extends LineChart {
 
     public void setPoints(List<Model_GPS> gpsList) {
         List<Entry> entries = new ArrayList<>();
+        List<Float> distances = new ArrayList<>();
         float distance = 0;
         float minY = 0;
         float maxY = 0;
@@ -59,6 +60,7 @@ public class ChartView extends LineChart {
                 minY = height;
                 maxY = height;
                 entries.add(entry);
+                distances.add(distance);
             } else {
                 if (minY > height) {
                     minY = height;
@@ -72,8 +74,10 @@ public class ChartView extends LineChart {
                 }
                 float v = AMapUtils.calculateLineDistance(modelGps.getLatLng(), modelGpsLast.getLatLng());
                 distance += v;
+//                LogUtils.e("distance    "+distance);
                 Entry entry = new Entry(distance, height);
                 entries.add(entry);
+                distances.add(distance);
 
                 if (modelGps.height > modelGpsLast.height) {
                     up += Math.abs(modelGps.height - modelGpsLast.height);
@@ -86,6 +90,8 @@ public class ChartView extends LineChart {
         LogUtils.e("maxY    " + maxY);
         LogUtils.e("up    " + up);
         LogUtils.e("down    " + down);
+        LogUtils.e("distance    "+distance);
+//        LogUtils.e("distance    "+distances);
         int y1 = new BigDecimal(minY).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
         int y2 = new BigDecimal(maxY).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
         initLineChart(0, distance, y1, y2, entries);
