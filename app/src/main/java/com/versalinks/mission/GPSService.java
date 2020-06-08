@@ -28,6 +28,7 @@ public class GPSService extends Service {
     private List<GPSListener> gpsListeners = new ArrayList<>();
     private List<GPSEnableListener> gpsEnableListeners = new ArrayList<>();
     private Handler handler = new Handler(Looper.getMainLooper());
+    private String gpsStatusString;
 
     public List<Model_GPS> getList() {
         return list;
@@ -87,13 +88,14 @@ public class GPSService extends Service {
                         gpsListener.gps(modelGps);
                     }
                     int locationQualityReport = mapLocation.getLocationQualityReport().getGPSStatus();
-                    String gpsStatusString = getGPSStatusString(locationQualityReport);
+                    gpsStatusString = getGPSStatusString(locationQualityReport);
                     for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
                         gpsEnableListener.enable(gpsStatusString);
                     }
 
                 } else {
                     modelGps = null;
+                    gpsStatusString = "无法获取GPS";
                     Log.e("GPS", "location Error, ErrCode:"
                             + mapLocation.getErrorCode() + ", errInfo:"
                             + mapLocation.getErrorInfo());
@@ -101,7 +103,7 @@ public class GPSService extends Service {
                         gpsListener.gps(modelGps);
                     }
                     for (GPSEnableListener gpsEnableListener : gpsEnableListeners) {
-                        gpsEnableListener.enable("无法获取GPS");
+                        gpsEnableListener.enable(gpsStatusString);
                     }
                 }
             }
@@ -130,6 +132,7 @@ public class GPSService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        LogUtils.e("onBind");
         return mBinder;
     }
 
@@ -140,7 +143,7 @@ public class GPSService extends Service {
         mBinder = new GPSBinder();
         mLocationClient = new AMapLocationClient(getApplicationContext());
         mLocationClient.setLocationListener(locationListener);
-        setLocationByGPS(10*1000);
+        setLocationByGPS(10 * 1000);
         startLocate();
     }
 
@@ -186,7 +189,10 @@ public class GPSService extends Service {
     }
 
     public void addGPSListener(GPSListener gpsListener) {
-        this.gpsListeners.add(gpsListener);
+        if (gpsListener != null) {
+            this.gpsListeners.add(gpsListener);
+            gpsListener.gps(modelGps);
+        }
     }
 
     public void removeGPSListener(GPSListener gpsListener) {
@@ -202,7 +208,10 @@ public class GPSService extends Service {
     }
 
     public void addGPSEnableListener(GPSEnableListener gpsEnableListener) {
-        this.gpsEnableListeners.add(gpsEnableListener);
+        if (gpsEnableListener != null) {
+            this.gpsEnableListeners.add(gpsEnableListener);
+            gpsEnableListener.enable(gpsStatusString);
+        }
     }
 
     public void removeGPSEnableListener(GPSEnableListener gpsEnableListener) {
@@ -248,7 +257,7 @@ public class GPSService extends Service {
     }
 
     public void stopTrack() {
-        setLocationByGPS(10*1000);
+        setLocationByGPS(10 * 1000);
         recordState = RecordState.NUll;
         handler.removeCallbacks(runnable);
         List<Model_GPS> gpsList = new ArrayList<>(list.size());

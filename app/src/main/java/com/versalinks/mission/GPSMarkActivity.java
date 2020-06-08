@@ -54,7 +54,7 @@ public class GPSMarkActivity extends BaseActivity<ActivityGpsMarkBinding> {
     ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.e("TAG", "GPSRecordActivity onServiceConnected");
+            Log.e("TAG", "GPSMarkActivity onServiceConnected");
             if (service instanceof GPSService.GPSBinder) {
                 gpsService = ((GPSService.GPSBinder) service).getService();
                 gpsService.addGPSListener(gpsListener);

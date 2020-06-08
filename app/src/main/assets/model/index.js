@@ -69,6 +69,12 @@ var center = {x : (west + east) / 2, y : (south + north) / 2};
 
 var userLocation = {longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697};
 
+var initialized = false;
+
+function getInitialized() {
+    return initialized;
+}
+
 function initOK() {
     if (window.Android) {
         window.Android.initOK();
@@ -77,6 +83,8 @@ function initOK() {
     if (typeof initOKInternal === "function") {
         initOKInternal();
     }
+
+    initialized = true;
 }
 
 function init() {
@@ -700,6 +708,9 @@ function clearPoiLocation() {
 var userTour = null;
 
 function updateUserTour(positions) {
+    if (!initialized) {
+        return;
+    }
 
     var positionArray = [];
 

@@ -108,13 +108,13 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
         @Override
         public void trackEnd(List<Model_GPS> gpsList) {
             LogUtils.e("trackEnd");
-            gpsService.removeTrackListener(trackListener);
             binding.tvStartOrPause.setText("开始");
             binding.ivStartOrPause.setImageResource(R.drawable.ic_media_start);
             if (gpsList.size() < 2) {
                 ToastUtils.showShort("轨迹信息不可用，无法保存");
                 return;
             }
+            gpsService.removeTrackListener(trackListener);
             Model_Route model_record = new Model_Route();
             model_record.createTime = DataUtils.getNowMills();
             model_record.goDuration = gpsService.getDuration() * 1000;

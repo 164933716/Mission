@@ -192,6 +192,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 //                if (file != null) {
 //                    LogUtils.e(file.getAbsolutePath());
 //                }
+                if (!initOk) {
+                    ToastUtils.showShort("正在初始化地图，请稍后");
+                    return;
+                }
                 Intent intent = new Intent(context, RoutesActivity.class);
 //                intent.putExtra("thumbFile", file);
                 jump2Activity(intent, 669);
@@ -200,6 +204,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         binding.vMenuChoose.setItemClickListener(new MenuChoose.ItemClickListener() {
             @Override
             public void itemClick(int index) {
+                if (!initOk) {
+                    ToastUtils.showShort("正在初始化地图，请稍后");
+                    return;
+                }
                 if (index == 1) {
                     jump2Activity(RecordsActivity.class, 668);
                 } else if (index == 2) {
@@ -715,6 +723,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Override
     public void onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START) || binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            binding.drawerLayout.closeDrawers();
+            return;
+        }
         if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             bottomSheetBehavior.setState(STATE_COLLAPSED);
             return;
