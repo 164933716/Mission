@@ -296,7 +296,7 @@ public class DataUtils {
         Pair<String, String> pair;
         String distanceString;
         if (distance < 1000) {
-            long value = new BigDecimal(distance).setScale(2, BigDecimal.ROUND_HALF_UP).longValue();
+            long value = new BigDecimal(distance).setScale(0, BigDecimal.ROUND_HALF_UP).longValue();
             pair = new Pair<>(String.valueOf(value), "m");
         } else {
             double value = new BigDecimal(distance / 1000).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -308,7 +308,7 @@ public class DataUtils {
     public static String convertToDistance(double distance) {
         String distanceString;
         if (distance < 1000) {
-            distanceString = new BigDecimal(distance).setScale(2, BigDecimal.ROUND_HALF_UP).longValue() + "米";
+            distanceString = new BigDecimal(distance).setScale(0, BigDecimal.ROUND_HALF_UP).longValue() + "米";
         } else {
             double f1 = new BigDecimal(distance / 1000).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             distanceString = f1 + "公里";

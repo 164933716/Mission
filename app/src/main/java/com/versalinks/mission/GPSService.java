@@ -140,7 +140,7 @@ public class GPSService extends Service {
         mBinder = new GPSBinder();
         mLocationClient = new AMapLocationClient(getApplicationContext());
         mLocationClient.setLocationListener(locationListener);
-        setLocationByGPS(3000);
+        setLocationByGPS(10*1000);
         startLocate();
     }
 
@@ -248,7 +248,7 @@ public class GPSService extends Service {
     }
 
     public void stopTrack() {
-        setLocationByGPS(3000);
+        setLocationByGPS(10*1000);
         recordState = RecordState.NUll;
         handler.removeCallbacks(runnable);
         List<Model_GPS> gpsList = new ArrayList<>(list.size());

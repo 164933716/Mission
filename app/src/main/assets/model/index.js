@@ -69,6 +69,16 @@ var center = {x : (west + east) / 2, y : (south + north) / 2};
 
 var userLocation = {longitude: 108.7107853492, latitude: 27.8601391146, height: 1446.697};
 
+function initOK() {
+    if (window.Android) {
+        window.Android.initOK();
+    }
+
+    if (typeof initOKInternal === "function") {
+        initOKInternal();
+    }
+}
+
 function init() {
     addAreaBackgroundLayer();
 
@@ -78,10 +88,12 @@ function init() {
             viewer.camera.flyTo({
                 destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 20000),
                 complete : function() {
-                    rotateUpDown(60.0);
-                                            if (window.Android) {
-                                                window.Android.initOk();
-                                            }
+                    if (initOK) {
+                        rotateUpDown(60.0, initOK);
+                    }
+                    else {
+                        rotateUpDown(60.0);
+                    }
                 }
             });
         }
@@ -606,6 +618,7 @@ function clearPoiDetail() {
         poiPreRenderListener = null;
     }
     var htmlOverlay = document.getElementById('infoOverlay');
+    htmlOverlay.children[1].src = '';
     htmlOverlay.style.display = 'none';
 }
 
@@ -868,7 +881,7 @@ function addAreaBackgroundLayer() {
             var entity = dataSource.entities.values[i];
             
             // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
-            entity.polyline.width = 5;
+            entity.polyline.width = 3;
             entity.polyline.material = new Cesium.ImageMaterialProperty({
                 color: Cesium.Color.YELLOW.withAlpha(0.25)
             });
@@ -1324,8 +1337,7 @@ function addMountainPeakLayer(geojson) {
         geojson.features[i].properties.class = '山峰';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'mountainPeak';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
-        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_shanfeng_layer.png"/>';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1401,8 +1413,7 @@ function addVillageLayer(geojson) {
         geojson.features[i].properties.class = '村庄';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'village';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.标准地名 + '</div>\
-        <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_cunzhuang_layer.png"/>';
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.标准地名 + '</div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1567,7 +1578,7 @@ function rotatedPointByAngleYZ(position_A, position_B, angle) {
     return Cesium.Matrix4.multiplyByPoint(localToWorld_Matrix, new Cesium.Cartesian3(new_x, new_y, new_z), new Cesium.Cartesian3());
 }
 
-function rotateUpDown(angle) {
+function rotateUpDown(angle, callback) {
     var canvas = viewer.scene.canvas;
     let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
 
@@ -1584,7 +1595,12 @@ function rotateUpDown(angle) {
             pitch : pitch,
             roll : roll
         },
-        duration: 0.5
+        duration: 0.5,
+        complete: function() {
+            if (callback) {
+                callback();
+            }
+        }
     });
 }
 
@@ -1833,22 +1849,22 @@ function getUserTourHeights(userTour) { // 异步调用
     });
 }
 
-var options = {};
-function resetView() {
-    recenter();
-}
-// 用于在使用重置导航重置地图视图时设置默认视图控制。接受的值是Cesium.Cartographic 和 Cesium.Rectangle。
-options.defaultResetView = resetView;
-// 用于启用或禁用罗盘。true是启用罗盘，false是禁用罗盘。默认值为true。如果将选项设置为false，则罗盘将不会添加到地图中。
-options.enableCompass = true;
-// 用于启用或禁用缩放控件。true是启用，false是禁用。默认值为true。如果将选项设置为false，则缩放控件将不会添加到地图中。
-options.enableZoomControls = true;
-// 用于启用或禁用距离图例。true是启用，false是禁用。默认值为true。如果将选项设置为false，距离图例将不会添加到地图中。
-options.enableDistanceLegend = true;
-// 用于启用或禁用指南针外环。true是启用，false是禁用。默认值为true。如果将选项设置为false，则该环将可见但无效。
-options.enableCompassOuterRing = true;
+// var options = {};
+// function resetView() {
+//     recenter();
+// }
+// // 用于在使用重置导航重置地图视图时设置默认视图控制。接受的值是Cesium.Cartographic 和 Cesium.Rectangle。
+// options.defaultResetView = resetView;
+// // 用于启用或禁用罗盘。true是启用罗盘，false是禁用罗盘。默认值为true。如果将选项设置为false，则罗盘将不会添加到地图中。
+// options.enableCompass = true;
+// // 用于启用或禁用缩放控件。true是启用，false是禁用。默认值为true。如果将选项设置为false，则缩放控件将不会添加到地图中。
+// options.enableZoomControls = true;
+// // 用于启用或禁用距离图例。true是启用，false是禁用。默认值为true。如果将选项设置为false，距离图例将不会添加到地图中。
+// options.enableDistanceLegend = true;
+// // 用于启用或禁用指南针外环。true是启用，false是禁用。默认值为true。如果将选项设置为false，则该环将可见但无效。
+// options.enableCompassOuterRing = true;
 
-CesiumNavigation.umd(viewer, options);
+// CesiumNavigation.umd(viewer, options);
 
 viewer.scene.postRender.addEventListener(function () {
     var cameraParam = {

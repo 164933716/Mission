@@ -56,8 +56,8 @@ public class Layer {
         layer.label = "基础图层";
         layer.items = new ArrayList<>();
         layer.items.add(new Item("水系", R.drawable.icon_shuixi_layer));
-//        layer.items.add(new Item("村庄", R.drawable.icon_cunzhuang_layer));
-//        layer.items.add(new Item("山峰", R.drawable.icon_shanfeng_layer));
+        layer.items.add(new Item("村庄", R.drawable.icon_cunzhuang_layer));
+        layer.items.add(new Item("山峰", R.drawable.icon_shanfeng_layer));
         layer.items.add(new Item("道路", R.drawable.icon_daolu_layer));
         return layer;
     }

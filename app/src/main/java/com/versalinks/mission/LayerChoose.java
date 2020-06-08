@@ -39,7 +39,7 @@ public class LayerChoose extends LinearLayout {
 
     public LayerChoose(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-//        choose.add("自然科普");
+        choose.add("动物");
         choose.add("植物");
         setPadding(AndroidUtil.dp2Px(15), AndroidUtil.dp2Px(15), AndroidUtil.dp2Px(15), AndroidUtil.dp2Px(15));
         setOrientation(VERTICAL);

@@ -544,12 +544,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         }
 
         @JavascriptInterface
-        public void initOk() {
+        public void initOK() {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-//                    String json1 = DataUtils.getJson(context, "自然科普.geojson");
-//                    webView.evaluateJavascript(OptUtils.showNaturalScienceLayer(json1), null);
+                    String json1 = DataUtils.getJson(context, "动物.geojson");
+                    webView.evaluateJavascript(OptUtils.showAnimalLayer(json1), null);
                     String json2 = DataUtils.getJson(context, "植物.geojson");
                     webView.evaluateJavascript(OptUtils.showPlantLayer(json2), null);
                     initOk = true;
