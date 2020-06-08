@@ -627,6 +627,8 @@ function clearPoiDetail() {
     }
     var htmlOverlay = document.getElementById('infoOverlay');
     htmlOverlay.children[1].src = '';
+    htmlOverlay.children[2].innerHTML = '';
+    htmlOverlay.children[3].innerHTML = '';
     htmlOverlay.style.display = 'none';
 }
 
@@ -1885,11 +1887,14 @@ viewer.scene.postRender.addEventListener(function () {
             height : viewer.camera.positionCartographic.height
         },
         heading : Cesium.Math.toDegrees(viewer.camera.heading),
-        pitch : viewer.camera.pitch,
+        pitch : Cesium.Math.toDegrees(viewer.camera.pitch),
         roll : viewer.camera.roll
     };
     if (window.Android) {
         window.Android.putCameraParam(JSON.stringify(cameraParam));
+    }
+    if (typeof compass === 'function') {
+        compass(cameraParam);
     }
 });
 
