@@ -28,6 +28,10 @@ public class OptUtils {
         return "javascript:optMap(" + getJson("rotateByDown", "30") + ")";
     }
 
+    public static String changeMode() {
+        return "javascript:changeMapMode(" + "" + ")";
+    }
+
     public static String pointToNorth() {
         return "javascript:optMap(" + getJson("pointToNorth", null) + ")";
     }

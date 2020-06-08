@@ -340,6 +340,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void onClick(View v) {
                 webView.evaluateJavascript(OptUtils.pointToNorth(), null);
             }
+        });binding.tvD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String trim = binding.tvD.getText().toString().trim();
+                if (TextUtils.equals("3D",trim)) {
+                    binding.tvD.setText("2D");
+                }else {
+                    binding.tvD.setText("3D");
+
+                }
+                webView.evaluateJavascript(OptUtils.changeMode(), null);
+            }
         });
         bottomSheetBehavior = BottomSheetBehavior.from(binding.behavior);
         bottomSheetBehavior.setState(STATE_COLLAPSED);

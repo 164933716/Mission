@@ -245,6 +245,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="5dp" />
 
+                    <TextView
+                        android:id="@+id/tvD"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/shape_oval_white"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="2D"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+
+                    <Space
+                        android:layout_width="wrap_content"
+                        android:layout_height="5dp"
+                        android:visibility="gone" />
+
                     <ImageView
                         android:id="@+id/vLayerOpt"
                         android:layout_width="35dp"
@@ -477,13 +495,13 @@
                             android:padding="5dp"
                             android:scaleType="centerInside"
                             android:src="@drawable/ic_current"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <ImageView
-                            android:layout_marginStart="10dp"
                             android:id="@+id/vRouteInfoHeight"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
+                            android:layout_marginStart="10dp"
                             android:background="@drawable/shape_oval_white"
                             android:padding="5dp"
                             android:scaleType="centerInside"
