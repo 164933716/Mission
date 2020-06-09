@@ -1289,21 +1289,26 @@ function rotateLeftRight(angle) {
     });
 }
 
-function rotatedPointByAngleYZ(position_A, position_B, angle) {
-    //以B点为原点建立局部坐标系（东方向为x轴,北方向为y轴,垂直于地面为z轴），得到一个局部坐标到世界坐标转换的变换矩阵
-    var localToWorld_Matrix = Cesium.Transforms.eastNorthUpToFixedFrame(position_B);
-    //求世界坐标到局部坐标的变换矩阵
-    var worldToLocal_Matrix = Cesium.Matrix4.inverse(localToWorld_Matrix, new Cesium.Matrix4());
-    //B点在局部坐标的位置，其实就是局部坐标原点
-    var localPosition_B = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_B, new Cesium.Cartesian3());
-    //A点在以B点为原点的局部的坐标位置
-    var localPosition_A = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_A, new Cesium.Cartesian3());
-    //根据数学公式A点逆时针旋转angle度后在局部坐标系中的x,y,z位置
-    var new_x = localPosition_A.x;
-    var new_y = localPosition_A.y * Math.cos(Cesium.Math.toRadians(angle)) - localPosition_A.z * Math.sin(Cesium.Math.toRadians(angle));
-    var new_z = localPosition_A.z * Math.cos(Cesium.Math.toRadians(angle)) + localPosition_A.y * Math.sin(Cesium.Math.toRadians(angle));
-    //最后应用局部坐标到世界坐标的转换矩阵求得旋转后的A点世界坐标
-    return Cesium.Matrix4.multiplyByPoint(localToWorld_Matrix, new Cesium.Cartesian3(new_x, new_y, new_z), new Cesium.Cartesian3());
+function rotateByLeft(angle, callback) {
+    var canvas = viewer.scene.canvas;
+    let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
+
+    viewer.camera.lookAtTransform(Cesium.Transforms.eastNorthUpToFixedFrame(center_position));
+
+    viewer.camera.rotateLeft(Cesium.Math.toRadians(angle));
+
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+}
+
+function rotateByRight(angle, callback) {
+    var canvas = viewer.scene.canvas;
+    let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
+
+    viewer.camera.lookAtTransform(Cesium.Transforms.eastNorthUpToFixedFrame(center_position));
+
+    viewer.camera.rotateRight(Cesium.Math.toRadians(angle));
+
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
 }
 
 function rotateByUp(angle, callback) {
@@ -1350,8 +1355,6 @@ function changeMapMode() {
         angle += 90;
         rotateByDown(angle);
     }
-
-    
 }
 
 document.addEventListener('keydown', function (e) {
@@ -1360,10 +1363,10 @@ document.addEventListener('keydown', function (e) {
 
 function optMap(opt) {
     if (opt.action === "rotateByLeft") {
-        rotateLeftRight(opt.data);
+        rotateByLeft(opt.data);
     }
     else if (opt.action === "rotateByRight") {
-        rotateLeftRight(-opt.data);
+        rotateByRight(opt.data);
     }
     else if (opt.action === "rotateByUp") {
         rotateByUp(opt.data);
@@ -1523,9 +1526,9 @@ function setKey(event) {
 
     if (event.ctrlKey){
         if (event.keyCode === 39) {  // right arrow
-            rotateLeftRight(15);
+            rotateByLeft(15);
         } else if (event.keyCode === 37) {  // left arrow
-            rotateLeftRight(-15);
+            rotateByRight(15);
         } else if (event.keyCode === 40) {  // up arrow
             rotateByUp(15);
         } else if (event.keyCode === 38) {  // down arrow
@@ -1893,6 +1896,9 @@ function flyThroughStop2() {
     if (window.Android) {
         window.Android.flyThroughStoped();
     }
+    if (typeof flyThroughStoped === 'function') {
+        flyThroughStoped();
+    }
 }
 
 function flyThroughStart2() {
@@ -1908,19 +1914,19 @@ function flyThroughStart2() {
 
     flyThroughState = 1;
 
-    var simplifiedPositions = userTourPostitions;
-
     var cartoPositions = [];
-    for (var i = 0; i < simplifiedPositions.length; i++) {
-        cartoPositions.push(Cesium.Cartographic.fromDegrees(simplifiedPositions[i].longitude, simplifiedPositions[i].latitude));
+    for (var i = 0; i < userTourPostitions.length; i++) {
+        cartoPositions.push(Cesium.Cartographic.fromDegrees(userTourPostitions[i].longitude, userTourPostitions[i].latitude));
     }
     promise = Cesium.sampleTerrainMostDetailed(terrainProvider, cartoPositions);
     Cesium.when(promise, function (updatedPositions) {
         if (updatedPositions.length > 0) {
             for (var i = 0; i < updatedPositions.length; i++) {
-                simplifiedPositions[i].height = updatedPositions[i].height;
+                userTourPostitions[i].height = updatedPositions[i].height;
             }
         }
+
+        var simplifiedPositions = simplify(userTourPostitions, 0.001, false);
 
         var deltaRadians = Cesium.Math.toRadians(1.0);
             
@@ -1948,30 +1954,36 @@ function flyThroughStart2() {
             };
         }
         var roamingPostions = [];
-        for (var i = 0; i < simplifiedPositions.length; i++) {
-            roamingPostions.push(simplifiedPositions[i].longitude);
-            roamingPostions.push(simplifiedPositions[i].latitude);
-            roamingPostions.push(simplifiedPositions[i].height);
+        for (var i = 0; i < userTourPostitions.length; i++) {
+            roamingPostions.push(userTourPostitions[i].longitude);
+            roamingPostions.push(userTourPostitions[i].latitude);
+            roamingPostions.push(userTourPostitions[i].height);
         }
         var hPitches = [];
         var distanceSum = 0.0;
-        for (var i = 3; i < roamingPostions.length; i += 3) {
-            var originPosition = new Cesium.Cartographic(roamingPostions[i-3], roamingPostions[i-2]);
-            var originHeight = 0;
-            var targetPosition = new Cesium.Cartographic(roamingPostions[i+0], roamingPostions[i+1]);
-            var targetHeight = 0;
-            var origin = new Cesium.Cartesian3.fromDegrees(roamingPostions[i-3], roamingPostions[i-2], originHeight+roamingPostions[i-1]);
-            var target = new Cesium.Cartesian3.fromDegrees(roamingPostions[i+0], roamingPostions[i+1], targetHeight+roamingPostions[i+2]);
+        for (var i = 3, j = 0; i < roamingPostions.length; i += 3) {
+            var origin = new Cesium.Cartesian3.fromDegrees(roamingPostions[i-3], roamingPostions[i-2], roamingPostions[i-1]);
+            var target = new Cesium.Cartesian3.fromDegrees(roamingPostions[i+0], roamingPostions[i+1], roamingPostions[i+2]);
             var hPitch = getHeadingPitch(origin, target);
 
             distanceSum += hPitch.distance;
             hPitch.distance = distanceSum;
 
+            var simplifiedOrigin = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[j].longitude, simplifiedPositions[j].latitude, simplifiedPositions[j].height);
+            var simplifiedTarget = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[j+1].longitude, simplifiedPositions[j+1].latitude, simplifiedPositions[j+1].height);
+            var simplifiedHPitch = getHeadingPitch(simplifiedOrigin, simplifiedTarget);
+
+            hPitch.simplifiedHPitch = simplifiedHPitch;
+
             hPitches.push(hPitch);
+
+            if (simplifiedPositions[j+1].longitude === roamingPostions[i-3] && simplifiedPositions[j+1].latitude === roamingPostions[i-2]) {
+                j++;
+            }
         }
 
-        var origin = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
-        var target = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[1].longitude, simplifiedPositions[1].latitude, simplifiedPositions[1].height);
+        var origin = new Cesium.Cartesian3.fromDegrees(userTourPostitions[0].longitude, userTourPostitions[0].latitude, userTourPostitions[0].height);
+        var target = new Cesium.Cartesian3.fromDegrees(userTourPostitions[1].longitude, userTourPostitions[1].latitude, userTourPostitions[1].height);
         var hPitch = getHeadingPitch(origin, target);
 
         var hpRoll = new Cesium.HeadingPitchRoll();
@@ -1981,7 +1993,7 @@ function flyThroughStart2() {
         var hpRange = new Cesium.HeadingPitchRange();
         var speed = 10 * 3;
         
-        var position = Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        var position = Cesium.Cartesian3.fromDegrees(userTourPostitions[0].longitude, userTourPostitions[0].latitude, userTourPostitions[0].height);
         var speedVector = new Cesium.Cartesian3();
         var fixedFrameTransform = Cesium.Transforms.localFrameToFixedFrameGenerator('north', 'west');
 
@@ -2010,7 +2022,13 @@ function flyThroughStart2() {
 
         var distance = 0.0;
         var currentIndex = 0;
-        var currentPosition = new Cesium.Cartesian3.fromDegrees(simplifiedPositions[0].longitude, simplifiedPositions[0].latitude, simplifiedPositions[0].height);
+        var currentPosition = new Cesium.Cartesian3.fromDegrees(userTourPostitions[0].longitude, userTourPostitions[0].latitude, userTourPostitions[0].height);
+        var lastPosition = new Cesium.Cartesian3.fromDegrees(userTourPostitions[userTourPostitions.length - 1].longitude, userTourPostitions[userTourPostitions.length - 1].latitude, userTourPostitions[userTourPostitions.length - 1].height);
+        var simplifiedHPitch = getHeadingPitch(currentPosition, lastPosition);
+        var heading = simplifiedHPitch.heading;
+        var pitch = Cesium.Math.toRadians(-30.0);
+        var range = 4000.0;
+        viewer.camera.lookAt(currentPosition, new Cesium.HeadingPitchRange(heading, pitch, range));
         
         preUpdateListener = function (scene, time) {
             if (!planeModelLoaded) {
@@ -2034,6 +2052,9 @@ function flyThroughStart2() {
             if (i > currentIndex && i < hPitches.length) {
                 hpRoll.heading = hPitches[i].heading;
                 hpRoll.pitch = hPitches[i].pitch;
+
+                simplifiedHPitch = hPitches[i].simplifiedHPitch;
+
                 currentIndex = i;
             }
             
@@ -2066,6 +2087,8 @@ function flyThroughStart2() {
                     var htmlFlyThroughOverlay = document.getElementById('flyThrough');
                     if (htmlFlyThroughOverlay) {
                         var scratch = new Cesium.Cartesian2();
+
+                        viewer.camera.lookAt(currentPosition, new Cesium.HeadingPitchRange(simplifiedHPitch.heading, pitch, range));
 
                         var canvasPosition = viewer.scene.cartesianToCanvasCoordinates(currentPosition, scratch);
                         if (Cesium.defined(canvasPosition)) {
