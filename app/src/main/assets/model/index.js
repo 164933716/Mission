@@ -97,10 +97,10 @@ function init() {
                 destination : Cesium.Cartesian3.fromDegrees(userLocation.longitude, userLocation.latitude, 20000),
                 complete : function() {
                     if (initOK) {
-                        rotateUpDown(60.0, initOK);
+                        rotateByUp(60.0, initOK);
                     }
                     else {
-                        rotateUpDown(60.0);
+                        rotateByUp(60.0);
                     }
                 }
             });
@@ -289,288 +289,7 @@ function updateUserLocation(location) {
 
 updateUserLocation(userLocation);
 
-var userTourPostitions = [
-
-    {
-        "latitude": 27.917657686039245,
-        "longitude": 108.69037617890788,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91692192666803,
-        "longitude": 108.69131740982795,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.9165244381843,
-        "longitude": 108.69121086652304,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91623926720558,
-        "longitude": 108.69150739963742,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91549104263241,
-        "longitude": 108.69217944202228,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91520140130523,
-        "longitude": 108.69191774037297,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.914740210355973,
-        "longitude": 108.69218819645468,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.914097411500606,
-        "longitude": 108.69209152516927,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.913517942581727,
-        "longitude": 108.69209618178225,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91342779055449,
-        "longitude": 108.69211555329224,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91321153744783,
-        "longitude": 108.69242531118748,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91312566950453,
-        "longitude": 108.69271197228235,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.912906063636527,
-        "longitude": 108.69293865620207,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91254061265008,
-        "longitude": 108.69355221152794,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.912522544991727,
-        "longitude": 108.69362243325165,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91242028577075,
-        "longitude": 108.6937926790221,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.912257863110106,
-        "longitude": 108.69368725330429,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91209991079792,
-        "longitude": 108.69377386630566,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.912075137616885,
-        "longitude": 108.69395901323763,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.912613814606082,
-        "longitude": 108.69401302994817,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91262890203213,
-        "longitude": 108.6940923786333,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.9124597738488,
-        "longitude": 108.6941987356737,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91248566461695,
-        "longitude": 108.69426839860384,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91223700148397,
-        "longitude": 108.69442374321275,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.912044031442196,
-        "longitude": 108.69474970612116,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91189446103337,
-        "longitude": 108.69485140654858,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91179406445758,
-        "longitude": 108.69524498347741,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91138689021886,
-        "longitude": 108.69525895331634,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911458229529668,
-        "longitude": 108.69541522924786
-    },
-    {
-        "latitude": 27.91137441049608,
-        "longitude": 108.69561993395433,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911426750825942,
-        "longitude": 108.69568978314898,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91138875286405,
-        "longitude": 108.69599115914086,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911441093193915,
-        "longitude": 108.69598687505693,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911441093193915,
-        "longitude": 108.69622827387366,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911512432504722,
-        "longitude": 108.69640932298621,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911591222396297,
-        "longitude": 108.6965398944141,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91156402777651,
-        "longitude": 108.69675540246267,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911575762441213,
-        "longitude": 108.69694464721407,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91145580809092,
-        "longitude": 108.69708490439695,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91128500352692,
-        "longitude": 108.69691335477486,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911240672571378,
-        "longitude": 108.6969722143629,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.911157784860382,
-        "longitude": 108.69687591560653,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91104416350374,
-        "longitude": 108.6969800374727,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910768492015492,
-        "longitude": 108.69699195840192,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910699201614392,
-        "longitude": 108.69695563682069,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910645929961934,
-        "longitude": 108.69688131727759,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910596942393415,
-        "longitude": 108.69659093089233,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910566581276804,
-        "longitude": 108.69616513020169,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910468047346207,
-        "longitude": 108.69596862113406,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91025980361387,
-        "longitude": 108.69577173953738,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910168161470477,
-        "longitude": 108.69558901404416,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.91015158392828,
-        "longitude": 108.69533103768522,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910294635078937,
-        "longitude": 108.69487450334894,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910319221995454,
-        "longitude": 108.69441592010295,
-        "height" : 3000
-    },
-    {
-        "latitude": 27.910382729286447,
-        "longitude": 108.69391299488315,
-        "height" : 3000
-    },
-    // {
-    //     "name": "金顶",
-    //     "latitude": 27.9112084171,
-    //     "longitude": 108.6940465145
-    // }
-];
+var userTourPostitions = [];
 
 var poiPreRenderListener = null;
 
@@ -1542,7 +1261,7 @@ function rotatedPointByAngle(position_A, position_B, angle) {
     //A点在以B点为原点的局部的坐标位置
     var localPosition_A = Cesium.Matrix4.multiplyByPoint(worldToLocal_Matrix, position_A, new Cesium.Cartesian3());
     //根据数学公式A点逆时针旋转angle度后在局部坐标系中的x,y,z位置
-    var new_x = localPosition_A.x * Math.cos(Cesium.Math.toRadians(angle)) + localPosition_A.y *   Math.sin(Cesium.Math.toRadians(angle));
+    var new_x = localPosition_A.x * Math.cos(Cesium.Math.toRadians(angle)) + localPosition_A.y * Math.sin(Cesium.Math.toRadians(angle));
     var new_y = localPosition_A.y * Math.cos(Cesium.Math.toRadians(angle)) - localPosition_A.x * Math.sin(Cesium.Math.toRadians(angle));
     var new_z = localPosition_A.z;
     //最后应用局部坐标到世界坐标的转换矩阵求得旋转后的A点世界坐标
@@ -1552,10 +1271,6 @@ function rotatedPointByAngle(position_A, position_B, angle) {
 function rotateLeftRight(angle) {
     var canvas = viewer.scene.canvas;
     let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
-
-    //var cartographic = Cesium.Cartographic.fromCartesian(center_position);
-    
-    //viewer.scene.camera.rotate(center_position, Cesium.Math.toRadians(angle));
 
     let new_position = rotatedPointByAngle(viewer.camera.position, center_position, angle);
 
@@ -1591,42 +1306,52 @@ function rotatedPointByAngleYZ(position_A, position_B, angle) {
     return Cesium.Matrix4.multiplyByPoint(localToWorld_Matrix, new Cesium.Cartesian3(new_x, new_y, new_z), new Cesium.Cartesian3());
 }
 
-function rotateUpDown(angle, callback) {
+function rotateByUp(angle, callback) {
+    let cameraPitchAngle = Cesium.Math.toDegrees(viewer.camera.pitch);
+    if ((cameraPitchAngle + angle) > 0) {
+        return;
+    }
+
     var canvas = viewer.scene.canvas;
     let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
 
-    let new_position = rotatedPointByAngleYZ(viewer.camera.position, center_position, angle);
+    viewer.camera.lookAtTransform(Cesium.Transforms.eastNorthUpToFixedFrame(center_position));
 
-    var heading = viewer.camera.heading;
-    var pitch = viewer.camera.pitch + Cesium.Math.toRadians(angle);
-    var roll = viewer.camera.roll;
+    viewer.camera.rotateUp(Cesium.Math.toRadians(angle));
 
-    viewer.scene.camera.flyTo({
-        destination : new_position,
-        orientation: {
-            heading : heading,
-            pitch : pitch,
-            roll : roll
-        },
-        duration: 0.5,
-        complete: function() {
-            if (callback) {
-                callback();
-            }
-        }
-    });
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+
+    if (callback) {
+        callback();
+    }
+}
+
+function rotateByDown(angle, callback) {
+    var canvas = viewer.scene.canvas;
+    let center_position = viewer.scene.pickPosition(new Cesium.Cartesian2(canvas.width / 2.0, canvas.height / 2.0));
+
+    viewer.camera.lookAtTransform(Cesium.Transforms.eastNorthUpToFixedFrame(center_position));
+
+    viewer.camera.rotateDown(Cesium.Math.toRadians(angle));
+
+    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    
+    if (callback) {
+        callback();
+    }
 }
 
 function changeMapMode() {
     var angle = Cesium.Math.toDegrees(viewer.camera.pitch);
     if (Math.round(Math.abs(angle)) === 90) {
-        angle = 60;
+        rotateByUp(60);
     }
     else {
-        angle = - (angle + 90);
+        angle += 90;
+        rotateByDown(angle);
     }
 
-    rotateUpDown(angle);
+    
 }
 
 document.addEventListener('keydown', function (e) {
@@ -1641,10 +1366,10 @@ function optMap(opt) {
         rotateLeftRight(-opt.data);
     }
     else if (opt.action === "rotateByUp") {
-        rotateUpDown(opt.data);
+        rotateByUp(opt.data);
     }
     else if (opt.action === "rotateByDown") {
-        rotateUpDown(-opt.data);
+        rotateByDown(opt.data);
     }
     else if (opt.action === "zoomIn") {
         viewer.camera.zoomIn(viewer.camera.positionCartographic.height / 2);
@@ -1802,9 +1527,9 @@ function setKey(event) {
         } else if (event.keyCode === 37) {  // left arrow
             rotateLeftRight(-15);
         } else if (event.keyCode === 40) {  // up arrow
-            rotateUpDown(15);
+            rotateByUp(15);
         } else if (event.keyCode === 38) {  // down arrow
-            rotateUpDown(-15);
+            rotateByDown(15);
         }
     }
     else {
