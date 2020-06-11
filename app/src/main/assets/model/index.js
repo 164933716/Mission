@@ -1388,15 +1388,13 @@ var fontColor = '#fff';
 
 function changeMapMode(mode) {
     var angle = Cesium.Math.toDegrees(viewer.camera.pitch);
-    if (Math.round(Math.abs(angle)) === 90) {
-        rotateByUp(60);
-    }
-    else {
-        angle += 90;
-        rotateByDown(angle);
-    }
 
     if (mode === '2D') {
+        if (Math.round(Math.abs(angle)) !== 90) {
+            angle += 90;
+            rotateByDown(angle);
+        }
+
         viewer.imageryLayers.removeAll();
         viewer.imageryLayers.addImageryProvider(mapboxOutdoorsLayer);
 
@@ -1406,6 +1404,10 @@ function changeMapMode(mode) {
         fontColor = '#000';
     }
     else {
+        if (Math.round(Math.abs(angle)) === 90) {
+            rotateByUp(60);
+        }
+
         viewer.imageryLayers.removeAll();
         viewer.imageryLayers.addImageryProvider(mapboxLayer);
         viewer.imageryLayers.addImageryProvider(FJSImageryLayer);
@@ -1685,6 +1687,8 @@ function getUserTourHeights(userTour) { // 异步调用
 
 // CesiumNavigation.umd(viewer, options);
 
+var cameraHeading = viewer.camera.heading;
+
 viewer.scene.postRender.addEventListener(function () {
     var cameraParam = {
         position : {
@@ -1696,11 +1700,14 @@ viewer.scene.postRender.addEventListener(function () {
         pitch : Cesium.Math.toDegrees(viewer.camera.pitch),
         roll : viewer.camera.roll
     };
-    if (window.Android) {
-        window.Android.putCameraParam(JSON.stringify(cameraParam));
-    }
-    if (typeof compass === 'function') {
-        compass(cameraParam);
+    if (Math.abs(cameraHeading - viewer.camera.heading) > Cesium.Math.toRadians(1)) {
+        if (window.Android) {
+            window.Android.putCameraParam(JSON.stringify(cameraParam));
+        }
+        if (typeof compass === 'function') {
+            compass(cameraParam);
+        }
+        cameraHeading = viewer.camera.heading;
     }
 });
 
@@ -2126,14 +2133,6 @@ function flyThroughStart2() {
             var i = 0;
             for (; i < hPitches.length; i++) {
                 if (distance < hPitches[i].distance) {
-                    if (typeof transportationCB === 'function') {
-                        transportationCB(hPitches[i].transportation)
-                    }
-    
-                    if (window.Android) {
-                        window.Android.transportationCB(hPitches[i].transportation )
-                    }
-
                     break;
                 }
             }
@@ -2144,6 +2143,14 @@ function flyThroughStart2() {
                 simplifiedHPitch = hPitches[i].simplifiedHPitch;
 
                 currentIndex = i;
+
+                if (typeof transportationCB === 'function') {
+                    transportationCB(hPitches[i].transportation)
+                }
+
+                if (window.Android) {
+                    window.Android.transportationCB(hPitches[i].transportation)
+                }
             }
             
             // Zoom to model

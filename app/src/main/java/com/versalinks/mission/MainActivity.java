@@ -405,6 +405,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     webView.evaluateJavascript(OptUtils.flyStart(), null);
                     binding.vRouteInfoFly.setTag("flying");
                     binding.vRouteInfoFly.setImageResource(R.drawable.ic_media_pause);
+                    binding.ivMode.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -549,7 +550,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         double heading = jsonObject.optDouble("heading");
-//                LogUtils.e("heading     " + heading);
+                        LogUtils.e("putCameraParam     " + heading);
                         binding.ivCompass.post(new Runnable() {
                             @Override
                             public void run() {
@@ -578,6 +579,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 public void run() {
                     binding.vRouteInfoFly.setTag(null);
                     binding.vRouteInfoFly.setImageResource(R.drawable.ic_fly);
+                    binding.ivMode.setVisibility(View.GONE);
+                    binding.ivMode.setImageResource(android.R.color.transparent);
                 }
             });
 
@@ -608,6 +611,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 @Override
                 public void run() {
                     LogUtils.e(data);
+                    if (TextUtils.equals("步行", data)) {
+                        binding.ivMode.setImageResource(R.drawable.ic_walk);
+                    } else if (TextUtils.equals("缆车", data)) {
+                        binding.ivMode.setImageResource(R.drawable.ic_cable);
+                    } else if (TextUtils.equals("驾车", data)) {
+                        binding.ivMode.setImageResource(R.drawable.ic_driver);
+                    } else {
+
+                    }
                 }
             });
 

@@ -524,17 +524,32 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
 
-
-                            <TextView
-                                android:id="@+id/tvRouteInfoTitle"
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:singleLine="true"
-                                android:text="去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去"
-                                android:textColor="#344956"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+
+                                <TextView
+                                    android:id="@+id/tvRouteInfoTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:singleLine="true"
+                                    android:text="去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去去"
+                                    android:textColor="#344956"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/ivMode"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_marginStart="3dp"
+                                    android:scaleType="centerInside"
+                                    android:visibility="gone"/>
+                            </LinearLayout>
 
                             <Space
                                 android:layout_width="match_parent"
