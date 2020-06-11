@@ -1367,6 +1367,8 @@ function rotateByDown(angle, callback) {
 var fontColor = '#fff';
 
 function changeMapMode(mode) {
+     console.log(mode)
+
     var angle = Cesium.Math.toDegrees(viewer.camera.pitch);
     if (Math.round(Math.abs(angle)) === 90) {
         rotateByUp(60);
@@ -2118,7 +2120,9 @@ function flyThroughStart2() {
                 }
 
                 if (window.Android) {
-                    window.Android.transportationCB(hPitches[i].transportation)
+                console.log(hPitches[i].transportation)
+                console.log({ 'transportation' : hPitches[i].transportation })
+                    window.Android.transportationCB({ 'transportation' : hPitches[i].transportation })
                 }
 
                 simplifiedHPitch = hPitches[i].simplifiedHPitch;
