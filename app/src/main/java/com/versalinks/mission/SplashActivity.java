@@ -5,14 +5,25 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
+import com.blankj.utilcode.util.LogUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Geometry;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.Point;
 import com.versalinks.mission.databinding.ActivitySplashBinding;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -74,6 +85,147 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         } else {
             requestPermissions(permission, 9999, runnable);
         }
+//        binding.ivJson.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                步行();
+////                缆车();
+//            }
+//        });
+    }
+
+    private void 缆车() {
+        String jsonByAssets = DataUtils.getJsonByAssets(context, "map10.geojson");
+//                LogUtils.e("jsonByAssets    " + jsonByAssets);
+        FeatureCollection featureCollectionRoute = FeatureCollection.fromJson(jsonByAssets);
+        List<Feature> routes = featureCollectionRoute.features();
+//                Point.fromLngLat()
+//                LineString lineString=Feature.fromGeometry()
+//                LineString.fromLngLats()
+        List<Point> points = new ArrayList<>();
+        List<String> models = new ArrayList<>();//步行、汽车、缆车
+
+        if (routes != null) {
+            for (int i = 0; i < routes.size(); i++) {
+
+                Feature feature = routes.get(i);
+                String mode = feature.getStringProperty("mode");
+                int stroke = feature.getNumberProperty("stroke-width").intValue();
+                if (i > 0) {
+                    Feature featureLast = routes.get(i - 1);
+                    String modeLast = featureLast.getStringProperty("mode");
+                    if (TextUtils.equals(mode, modeLast)) {
+                        models.add(modeLast);
+                    } else {
+                        models.add("切换");
+                    }
+                }
+                Geometry geometry = feature.geometry();
+                if (geometry instanceof LineString) {
+                    List<String> model = new ArrayList<>();//步行、汽车、缆车
+                    LineString lineString = (LineString) geometry;
+                    List<Point> coordinates = lineString.coordinates();
+                    for (int i1 = 0; i1 < coordinates.size(); i1++) {
+                        if (i1 > 0) {
+                            model.add(mode);
+                        }
+                    }
+                    if (stroke == 2) {
+                        Collections.reverse(coordinates);
+                    }
+                    LogUtils.e("coordinates " + coordinates.size());
+                    LogUtils.e("model " + model.size());
+                    points.addAll(coordinates);
+                    models.addAll(model);
+                }
+            }
+
+        }
+        List<Float> distances = new ArrayList<>();
+        float distance = 0;
+        for (int i = 0; i < points.size(); i++) {
+            Point modelGps = points.get(i);
+            if (i == 0) {
+                distances.add(distance);
+            } else {
+                Point modelGpsLast = points.get(i - 1);
+                if (modelGpsLast == null) {
+                    continue;
+                }
+                float vvv = AMapUtils.calculateLineDistance(new LatLng(modelGpsLast.latitude(), modelGpsLast.longitude()), new LatLng(modelGps.latitude(), modelGps.longitude()));
+                distance += vvv;
+                distances.add(distance);
+            }
+        }
+
+        LineString lineString = LineString.fromLngLats(points);
+        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonElements = new JsonArray();
+        JsonArray jsonElements1 = new JsonArray();
+        for (Float model : distances) {
+            jsonElements1.add(model);
+        }
+        for (String model : models) {
+            jsonElements.add(model);
+        }
+        jsonObject.add("transportation", jsonElements);
+        jsonObject.add("distanceItem", jsonElements1);
+        Feature feature = Feature.fromGeometry(lineString, jsonObject);
+        FeatureCollection featureCollection = FeatureCollection.fromFeature(feature);
+        String s = featureCollection.toJson();
+        AndroidUtil.saveText(AndroidUtil.getTempTxtFile(context, "线路1包含缆车en.geojson"), s);
+        LogUtils.e("coordinates ok" + points.size());
+        LogUtils.e("model ok" + models.size());
+        LogUtils.e("distances ok" + distances.size());
+    }
+
+    private void 步行() {
+        String jsonByAssets = DataUtils.getJsonByAssets(context, "route_east.geojson");
+//                LogUtils.e("jsonByAssets    " + jsonByAssets);
+        FeatureCollection featureCollectionRoute = FeatureCollection.fromJson(jsonByAssets);
+        List<Feature> routes = featureCollectionRoute.features();
+//                Point.fromLngLat()
+//                LineString lineString=Feature.fromGeometry()
+//                LineString.fromLngLats()
+        List<Point> points = new ArrayList<>();
+        List<String> models = new ArrayList<>();//步行、汽车、缆车
+
+        if (routes != null) {
+            List<String> model = new ArrayList<>();//步行、汽车、缆车
+            for (int i = 0; i < routes.size(); i++) {
+                Feature feature = routes.get(i);
+                Geometry geometry = feature.geometry();
+                if (geometry instanceof LineString) {
+                    LineString lineString = (LineString) geometry;
+                    List<Point> coordinates = lineString.coordinates();
+                    for (int i1 = 0; i1 < coordinates.size(); i1++) {
+                        if (i1 > 0) {
+                            models.add("驾车");
+                        }
+                    }
+                    points.addAll(coordinates);
+                }
+                LogUtils.e("model " + model.size());
+                LogUtils.e("points " + points.size());
+            }
+
+        }
+
+
+        LineString lineString = LineString.fromLngLats(points);
+        JsonObject jsonObject = new JsonObject();
+        JsonArray jsonElements = new JsonArray();
+
+        for (String model : models) {
+            jsonElements.add(model);
+        }
+        jsonObject.add("transportation", jsonElements);
+        Feature feature = Feature.fromGeometry(lineString, jsonObject);
+        FeatureCollection featureCollection = FeatureCollection.fromFeature(feature);
+        String s = featureCollection.toJson();
+        AndroidUtil.saveText(AndroidUtil.getTempTxtFile(context, "测试.geojson"), s);
+        LogUtils.e("coordinates ok" + points.size());
+        LogUtils.e("model ok" + models.size());
     }
 
 

@@ -22,6 +22,7 @@ public class Model_Route extends RealmObject implements Parcelable {
     public double goUp;//上坡
     public double goDown;//下坡
     public RealmList<Model_GPS> gpsList;//gps
+    public RealmList<String> modeList;//gps
 
     @Override
     public String toString() {
@@ -39,6 +40,7 @@ public class Model_Route extends RealmObject implements Parcelable {
                 ", goUp=" + goUp +
                 ", goDown=" + goDown +
                 ", gpsList=" + (gpsList == null ? "null" : gpsList.size()) +
+                ", modeList=" + (modeList == null ? "null" : modeList.size()) +
                 '}';
     }
 
@@ -63,6 +65,7 @@ public class Model_Route extends RealmObject implements Parcelable {
         dest.writeDouble(this.goUp);
         dest.writeDouble(this.goDown);
         dest.writeList(this.gpsList);
+        dest.writeList(this.modeList);
     }
 
     public Model_Route() {
@@ -82,7 +85,9 @@ public class Model_Route extends RealmObject implements Parcelable {
         this.goUp = in.readDouble();
         this.goDown = in.readDouble();
         this.gpsList = new RealmList<>();
+        this.modeList = new RealmList<>();
         in.readList(this.gpsList, Model_GPS.class.getClassLoader());
+        in.readList(this.modeList, String.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Model_Route> CREATOR = new Parcelable.Creator<Model_Route>() {

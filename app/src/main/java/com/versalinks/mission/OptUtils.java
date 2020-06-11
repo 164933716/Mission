@@ -28,8 +28,8 @@ public class OptUtils {
         return "javascript:optMap(" + getJson("rotateByDown", "30") + ")";
     }
 
-    public static String changeMode() {
-        return "javascript:changeMapMode(" + "" + ")";
+    public static String changeMode(String d) {
+        return "javascript:changeMapMode(" + "\"" + d + "\"" + ")";
     }
 
     public static String pointToNorth() {
@@ -117,12 +117,25 @@ public class OptUtils {
         return "javascript:addRoadBackgroundLayer(" + getJson(map) + ")";
     }
 
+    public static String showRoadLayerV() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("sroadeast", "./data/sroadeast.geojson");
+        map.put("sroadwest", "./data/sroadwest.geojson");
+        map.put("ssroad", "./data/ssroad.geojson");
+        map.put("cableroad", "./data/cableroad.geojson");
+        return "javascript:addRoadBackgroundLayer(" + getJson(map) + ")";
+    }
+
     public static String removeRoadLayer() {
         return "javascript:removeRoadBackgroundLayer(" + "" + ")";
     }
 
     public static String updateUserTour(List<Model_GPS> gpsList) {
         return "javascript:updateUserTour(" + getJson(gpsList) + ")";
+    }
+
+    public static String updateUserTour(String json) {
+        return "javascript:updateUserTour(" + json + ")";
     }
 
     public static String showNaturalScienceLayer(String json) {

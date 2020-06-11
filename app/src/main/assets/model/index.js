@@ -451,7 +451,7 @@ function updateUserTour(positions) {
     Cesium.when(promise, function (updatedPositions) {
         if (updatedPositions.length > 0) {
             for (var i = 0; i < updatedPositions.length; i++) {
-                userTourPostitions[i].height = updatedPositions[i].height + 1000;
+                userTourPostitions[i].height = updatedPositions[i].height * terrainExaggeration;
             }
         }
         
@@ -589,6 +589,23 @@ function addRoadBackgroundLayer(road) {
         }
     });
 
+    var promiseCableRoad = Cesium.GeoJsonDataSource.load(
+        road.cableroad, { clampToGround: true } 
+    );
+    promiseCableRoad.then(function (dataSource) {
+        dataSource.name = "cableroad";
+        viewer.dataSources.add(dataSource);
+        for (var i = 0; i < dataSource.entities.values.length; i++) {
+            var entity = dataSource.entities.values[i];
+            
+            // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+            entity.polyline.width = 3;
+            entity.polyline.material = new Cesium.ImageMaterialProperty({
+                color: Cesium.Color.BLUE.withAlpha(0.5)
+            });
+        }
+    });
+
     // var promiseRoad = Cesium.GeoJsonDataSource.load(
     //     road.road, { clampToGround: true } 
     // );
@@ -616,6 +633,9 @@ function removeRoadBackgroundLayer(road) {
 
     let dataSourceRoad = viewer.dataSources.getByName("sroadwest");
     viewer.dataSources.remove(dataSourceRoad[0]);
+
+    let dataSourceCableRoad = viewer.dataSources.getByName("cableroad");
+    viewer.dataSources.remove(dataSourceCableRoad[0]);
 }
 
 function addAreaBackgroundLayer() {
@@ -1367,8 +1387,6 @@ function rotateByDown(angle, callback) {
 var fontColor = '#fff';
 
 function changeMapMode(mode) {
-     console.log(mode)
-
     var angle = Cesium.Math.toDegrees(viewer.camera.pitch);
     if (Math.round(Math.abs(angle)) === 90) {
         rotateByUp(60);
@@ -1982,7 +2000,7 @@ function flyThroughStart2() {
     Cesium.when(promise, function (updatedPositions) {
         if (updatedPositions.length > 0) {
             for (var i = 0; i < updatedPositions.length; i++) {
-                userTourPostitions[i].height = updatedPositions[i].height;
+                userTourPostitions[i].height = updatedPositions[i].height * terrainExaggeration;
             }
         }
 
@@ -2108,22 +2126,20 @@ function flyThroughStart2() {
             var i = 0;
             for (; i < hPitches.length; i++) {
                 if (distance < hPitches[i].distance) {
+                    if (typeof transportationCB === 'function') {
+                        transportationCB(hPitches[i].transportation)
+                    }
+    
+                    if (window.Android) {
+                        window.Android.transportationCB(hPitches[i].transportation )
+                    }
+
                     break;
                 }
             }
             if (i > currentIndex && i < hPitches.length) {
                 hpRoll.heading = hPitches[i].heading;
                 hpRoll.pitch = hPitches[i].pitch;
-
-                if (typeof transportationCB === 'function') {
-                    transportationCB(hPitches[i].transportation)
-                }
-
-                if (window.Android) {
-                console.log(hPitches[i].transportation)
-                console.log({ 'transportation' : hPitches[i].transportation })
-                    window.Android.transportationCB({ 'transportation' : hPitches[i].transportation })
-                }
 
                 simplifiedHPitch = hPitches[i].simplifiedHPitch;
 

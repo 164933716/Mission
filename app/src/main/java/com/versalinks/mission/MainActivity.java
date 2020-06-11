@@ -33,11 +33,20 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.Point;
 import com.versalinks.mission.databinding.ActivityMainBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.RealmList;
@@ -228,7 +237,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void itemClick(Layer.Item item, boolean check) {
                 if (TextUtils.equals(item.label, "道路")) {
                     if (check) {
-                        webView.evaluateJavascript(OptUtils.showRoadLayer(), null);
+                        webView.evaluateJavascript(OptUtils.showRoadLayerV(), null);
                     } else {
                         webView.evaluateJavascript(OptUtils.removeRoadLayer(), null);
                     }
@@ -340,17 +349,18 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             public void onClick(View v) {
                 webView.evaluateJavascript(OptUtils.pointToNorth(), null);
             }
-        });binding.tvD.setOnClickListener(new View.OnClickListener() {
+        });
+        binding.tvD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String trim = binding.tvD.getText().toString().trim();
-                if (TextUtils.equals("3D",trim)) {
+                if (TextUtils.equals("3D", trim)) {
                     binding.tvD.setText("2D");
-                }else {
+                    webView.evaluateJavascript(OptUtils.changeMode("3D"), null);
+                } else {
                     binding.tvD.setText("3D");
-
+                    webView.evaluateJavascript(OptUtils.changeMode("2D"), null);
                 }
-                webView.evaluateJavascript(OptUtils.changeMode(), null);
             }
         });
         bottomSheetBehavior = BottomSheetBehavior.from(binding.behavior);
@@ -518,7 +528,17 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
         @JavascriptInterface
         public void putUserTourHeights(String json) {
-            LogUtils.e("json    " + json);
+            List<Model_GPS> o = new Gson().fromJson(json, new TypeToken<List<Model_GPS>>() {
+            }.getType());
+            List<Point> points = new ArrayList<>();
+            for (Model_GPS model_gps : o) {
+                points.add(Point.fromLngLat(model_gps.longitude, model_gps.latitude, model_gps.height));
+            }
+            LineString lineString = LineString.fromLngLats(points);
+            Feature feature = Feature.fromGeometry(lineString);
+            FeatureCollection featureCollection = FeatureCollection.fromFeature(feature);
+            String s = featureCollection.toJson();
+
         }
 
         @JavascriptInterface
@@ -568,11 +588,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    String json = DataUtils.getJson(context, "山峰.geojson");
+                    webView.evaluateJavascript(OptUtils.showMountainPeakLayer(json), null);
+
                     String json1 = DataUtils.getJson(context, "动物.geojson");
                     webView.evaluateJavascript(OptUtils.showAnimalLayer(json1), null);
+
                     String json2 = DataUtils.getJson(context, "植物.geojson");
                     webView.evaluateJavascript(OptUtils.showPlantLayer(json2), null);
                     initOk = true;
+                }
+            });
+
+        }
+
+        @JavascriptInterface
+        public void transportationCB(String data) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    LogUtils.e(data);
                 }
             });
 
@@ -637,7 +672,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     Model_Route item = (Model_Route) model_routeSer;
                     if (webView != null) {
                         showRoute(item);
-//                        String userTourHeights = OptUtils.getUserTourHeights(new Gson().toJson(item.gpsList));
+//                        String jsonRoute = DataUtils.getJsonByAssets(context, "cableroad.geojson");
+//                        FeatureCollection featureCollection = FeatureCollection.fromJson(jsonRoute);
+//                        List<Feature> features = featureCollection.features();
+//                        List<Model_GPS> model_gpsList=new ArrayList<>();
+//                        for (Feature feature : features) {
+//                            Geometry geometry = feature.geometry();
+//                            if (geometry instanceof LineString) {
+//                                LineString  lineString= (LineString) geometry;
+//                                List<Point> coordinates = lineString.coordinates();
+//                                for (Point coordinate : coordinates) {
+//                                    model_gpsList.add(new Model_GPS(coordinate.longitude(),coordinate.latitude(),100));
+//                                }
+//                            }
+//                        }
+//                        String userTourHeights = OptUtils.getUserTourHeights(new Gson().toJson(model_gpsList));
 //                        webView.evaluateJavascript(userTourHeights, null);
                     }
                 }
@@ -650,7 +699,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 if (model_recordSer instanceof Model_Route) {
                     Model_Route item = (Model_Route) model_recordSer;
                     if (webView != null) {
-                        showRecord(item);
+                        showRoute(item);
                     }
                 }
             }
@@ -685,32 +734,39 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void showRoute(Model_Route item) {
         setMarkerToNULL();
 //        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
+
         binding.routeChart.setTag(item);
         RealmList<Model_GPS> gpsList = item.gpsList;
-
+        RealmList<String> modeList = item.modeList;
+        LogUtils.e("modeList    " + modeList.size());
+        JsonArray jsonArray = new JsonArray();
+        for (int i = 0; i < gpsList.size(); i++) {
+            Model_GPS model_gps = gpsList.get(i);
+            if (model_gps == null) {
+                continue;
+            }
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("latitude", model_gps.latitude);
+            jsonObject.addProperty("longitude", model_gps.longitude);
+            jsonObject.addProperty("height", model_gps.height);
+            if (i == 0) {
+                jsonObject.addProperty("transportation", "驾车");
+            } else {
+                if (i >= modeList.size()) {
+                    jsonObject.addProperty("transportation", "步行");
+                } else {
+                    String s = modeList.get(i);
+                    jsonObject.addProperty("transportation", s);
+                }
+            }
+            jsonArray.add(jsonObject);
+        }
         binding.containerNormal.setVisibility(View.GONE);
         binding.containerRoute.setVisibility(View.VISIBLE);
         binding.containerRouteInfo.setVisibility(View.VISIBLE);
         binding.containerRouteChart.setVisibility(View.GONE);
 
-        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
-        binding.tvRouteInfoTitle.setText(item.name);
-        binding.tvRouteInfoDescription.setText(item.description);
-        setRouteDetail(item);
-    }
-
-    private void showRecord(Model_Route item) {
-        setMarkerToNULL();
-//        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
-        binding.routeChart.setTag(item);
-        RealmList<Model_GPS> gpsList = item.gpsList;
-
-        binding.containerNormal.setVisibility(View.GONE);
-        binding.containerRoute.setVisibility(View.VISIBLE);
-        binding.containerRouteInfo.setVisibility(View.VISIBLE);
-        binding.containerRouteChart.setVisibility(View.GONE);
-
-        webView.evaluateJavascript(OptUtils.updateUserTour(gpsList), null);
+        webView.evaluateJavascript(OptUtils.updateUserTour(jsonArray.toString()), null);
         binding.tvRouteInfoTitle.setText(item.name);
         binding.tvRouteInfoDescription.setText(item.description);
         setRouteDetail(item);

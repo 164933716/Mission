@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import com.blankj.utilcode.util.FileIOUtils;
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.TimeUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Geometry;
 import com.mapbox.geojson.LineString;
@@ -230,6 +232,13 @@ public class DataUtils {
                                     item.altitudeMax = feature.getNumberProperty("altitudeMax").doubleValue();
                                     item.goUp = feature.getNumberProperty("goUp").doubleValue();
                                     item.goDown = feature.getNumberProperty("goDown").doubleValue();
+                                    item.modeList = new RealmList<>();
+                                    JsonElement transportation = feature.getProperty("transportation");
+                                    JsonArray asJsonArray = transportation.getAsJsonArray();
+                                    for (JsonElement jsonElement : asJsonArray) {
+                                        String asString = jsonElement.getAsString();
+                                        item.modeList.add(asString);
+                                    }
                                     item.gpsList = new RealmList<>();
                                     List<Point> coordinates = lineString.coordinates();
                                     for (Point point : coordinates) {
@@ -411,6 +420,22 @@ public class DataUtils {
             AssetManager assetManager = context.getAssets();
             BufferedReader bf = new BufferedReader(new InputStreamReader(
                     assetManager.open("model/data/" + fileName)));
+            String line;
+            while ((line = bf.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String getJsonByAssets(Context context, String fileName) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            AssetManager assetManager = context.getAssets();
+            BufferedReader bf = new BufferedReader(new InputStreamReader(
+                    assetManager.open(fileName)));
             String line;
             while ((line = bf.readLine()) != null) {
                 stringBuilder.append(line);
