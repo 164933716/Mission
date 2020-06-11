@@ -548,7 +548,7 @@
                                     android:layout_height="24dp"
                                     android:layout_marginStart="3dp"
                                     android:scaleType="centerInside"
-                                    android:visibility="gone"/>
+                                    android:visibility="gone" />
                             </LinearLayout>
 
                             <Space
@@ -597,10 +597,15 @@
                             android:src="@drawable/ic_close"
                             android:tint="#7c7c7c" />
 
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:src="@drawable/src_img_activitiesicon_ichiking" />
+                        <TextView
+                            android:paddingTop="10dp"
+                            android:paddingBottom="10dp"
+                            android:id="@+id/tvRouteDetailTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#333333"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvRouteDetailDescription"
@@ -609,22 +614,28 @@
                             android:layout_marginTop="5dp"
                             android:lineSpacingMultiplier="1.2"
                             android:text="Xiang Shan(香山)-chalet Wangjing(老望京楼，lao wangjinglou):En boucle par la combe ESE..."
-                            android:textColor="#333333"
-                            android:textSize="20sp"
+                            android:textColor="#666666"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:text="Other"
-                            android:textSize="18sp" />
+                        <!--                        <TextView-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="wrap_content"-->
+                        <!--                            android:layout_marginTop="5dp"-->
+                        <!--                            android:text="Other"-->
+                        <!--                            android:textSize="18sp" />-->
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="5dp"
                             android:layout_marginTop="10dp"
                             android:background="#6fe2c4" />
+
+                        <com.versalinks.mission.ModeView
+                            android:id="@+id/vRouteDetailMode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp" />
 
                         <Space
                             android:layout_width="match_parent"

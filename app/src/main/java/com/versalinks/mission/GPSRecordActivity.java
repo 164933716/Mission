@@ -120,7 +120,8 @@ public class GPSRecordActivity extends BaseActivity<ActivityGpsRecordBinding> {
             model_record.goDuration = gpsService.getDuration() * 1000;
             model_record.name = DataUtils.getNowString();
             model_record.description = DataUtils.randomDescription1();
-            model_record.goMode = "walk";
+            model_record.goMode = new RealmList<>();
+            model_record.goMode.add("步行");
             model_record.goDifficulty = "normal";
             model_record.distance = DataUtils.randomDistance();
             model_record.distanceByAltitude = DataUtils.randomUpOrDown();

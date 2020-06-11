@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -83,19 +84,22 @@ public class RoutesActivity extends BaseActivity<ActivityRoutesBinding> {
                 protected void convert(View helper, int position, int viewType) {
                     Model_Route item = allList.get(position);
                     ImageView ivLogo = helper.findViewById(R.id.ivLogo);
-                    ImageView ivMode = helper.findViewById(R.id.ivMode);
+                    ModeView ivMode = helper.findViewById(R.id.ivMode);
                     TextView tvDuration = helper.findViewById(R.id.tvDuration);
                     TextView tvDifficult = helper.findViewById(R.id.tvDifficult);
                     TextView tvDistance = helper.findViewById(R.id.tvDistance);
                     TextView tvDistanceUp = helper.findViewById(R.id.tvDistanceUp);
                     TextView tvTitle = helper.findViewById(R.id.tvTitle);
                     TextView tvDescription = helper.findViewById(R.id.tvDescription);
-                    tvDuration.setText("大约需要1小时21分钟");
+                    Pair<String, String> durationWithUnit = DataUtils.convertToDurationWithUnit(item.goDuration);
+                    tvDuration.setText("大约需要" + durationWithUnit.first + durationWithUnit.second);
                     tvDifficult.setText(item.goDifficulty);
                     tvDistance.setText(DataUtils.convertToDistance(item.distance));
                     tvDistanceUp.setText(DataUtils.convertToDistance(item.goUp));
                     tvTitle.setText(item.name);
                     tvDescription.setText(item.description);
+                    String[] strings = item.goMode.toArray(new String[0]);
+                    ivMode.setMode(strings);
                 }
             };
             adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {

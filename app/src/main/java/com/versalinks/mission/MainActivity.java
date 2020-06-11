@@ -218,7 +218,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                     return;
                 }
                 if (index == 1) {
-                    jump2Activity(RecordsActivity.class, 668);
+                    jump2Activity(RoutesActivity.class, 669);
                 } else if (index == 2) {
                     jump2Activity(MarkersActivity.class, 667);
                 } else {
@@ -707,7 +707,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         } else if (requestCode == 668) {
             if (data != null) {
                 //轨迹选择
-                Parcelable model_recordSer = data.getParcelableExtra("model_record");
+                Parcelable model_recordSer = data.getParcelableExtra("model_route");
                 if (model_recordSer instanceof Model_Route) {
                     Model_Route item = (Model_Route) model_recordSer;
                     if (webView != null) {
@@ -785,6 +785,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void setRouteDetail(Model_Route item) {
+        String[] strings = item.goMode.toArray(new String[0]);
+        binding.vRouteDetailMode.setMode(strings);
+        binding.tvRouteDetailTitle.setText(item.name);
         binding.tvRouteDetailDescription.setText(item.description);
         binding.tvRouteDetailDifficulty.setText(item.goDifficulty);
         binding.tvRouteDetailDuration.setText(DataUtils.convertToDurationWithUnit(item.goDuration).first);

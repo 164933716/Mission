@@ -13,7 +13,6 @@ public class Model_Route extends RealmObject implements Parcelable {
     @PrimaryKey
     public String name;//名称
     public String description;//描述
-    public String goMode;//交通方式
     public String goDifficulty;//难易度
     public double distance;//路程
     public double distanceByAltitude;//起始点高度差
@@ -23,6 +22,7 @@ public class Model_Route extends RealmObject implements Parcelable {
     public double goDown;//下坡
     public RealmList<Model_GPS> gpsList;//gps
     public RealmList<String> modeList;//gps
+    public RealmList<String> goMode;//gps
 
     @Override
     public String toString() {
@@ -56,7 +56,6 @@ public class Model_Route extends RealmObject implements Parcelable {
         dest.writeLong(this.goDuration);
         dest.writeString(this.name);
         dest.writeString(this.description);
-        dest.writeString(this.goMode);
         dest.writeString(this.goDifficulty);
         dest.writeDouble(this.distance);
         dest.writeDouble(this.distanceByAltitude);
@@ -66,6 +65,7 @@ public class Model_Route extends RealmObject implements Parcelable {
         dest.writeDouble(this.goDown);
         dest.writeList(this.gpsList);
         dest.writeList(this.modeList);
+        dest.writeList(this.goMode);
     }
 
     public Model_Route() {
@@ -76,7 +76,6 @@ public class Model_Route extends RealmObject implements Parcelable {
         this.goDuration = in.readLong();
         this.name = in.readString();
         this.description = in.readString();
-        this.goMode = in.readString();
         this.goDifficulty = in.readString();
         this.distance = in.readDouble();
         this.distanceByAltitude = in.readDouble();
@@ -86,8 +85,10 @@ public class Model_Route extends RealmObject implements Parcelable {
         this.goDown = in.readDouble();
         this.gpsList = new RealmList<>();
         this.modeList = new RealmList<>();
+        this.goMode = new RealmList<>();
         in.readList(this.gpsList, Model_GPS.class.getClassLoader());
         in.readList(this.modeList, String.class.getClassLoader());
+        in.readList(this.goMode, String.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Model_Route> CREATOR = new Parcelable.Creator<Model_Route>() {

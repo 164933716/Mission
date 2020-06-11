@@ -224,7 +224,6 @@ public class DataUtils {
                                     item.goDuration = feature.getNumberProperty("goDuration").longValue();
                                     item.name = feature.getStringProperty("name");
                                     item.description = feature.getStringProperty("description");
-                                    item.goMode = feature.getStringProperty("goMode");
                                     item.goDifficulty = feature.getStringProperty("goDifficulty");
                                     item.distance = feature.getNumberProperty("distance").doubleValue();
                                     item.distanceByAltitude = feature.getNumberProperty("distanceByAltitude").doubleValue();
@@ -239,6 +238,15 @@ public class DataUtils {
                                         String asString = jsonElement.getAsString();
                                         item.modeList.add(asString);
                                     }
+
+                                    item.goMode = new RealmList<>();
+                                    JsonElement jsonElement1 = feature.getProperty("goMode");
+                                    JsonArray jsonArray1 = jsonElement1.getAsJsonArray();
+                                    for (JsonElement element : jsonArray1) {
+                                        String asString = element.getAsString();
+                                        item.goMode.add(asString);
+                                    }
+
                                     item.gpsList = new RealmList<>();
                                     List<Point> coordinates = lineString.coordinates();
                                     for (Point point : coordinates) {
@@ -468,7 +476,6 @@ public class DataUtils {
         String[] files = null;
         try {
             files = assetManager.list(path);
-            LogUtils.e(files);
             if (files != null) {
                 if (files.length == 0) {
                     boolean copyFile = copyFile(context, folder, path);
