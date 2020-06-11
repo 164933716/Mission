@@ -36,14 +36,15 @@ if (!viewer.scene.pickPositionSupported) {
 //     scaleFactor: true
 // });
 
-var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/styles/v1/wingwuyf/cjajfiz60artm2rnxr8wiecli/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
+var FJSImageryLayer = new Cesium.UrlTemplateImageryProvider({url:"https://sinomaps-mission.oss-accelerate.aliyuncs.com/Image/{z}/{x}/{y}.png",proxy : new Cesium.DefaultProxy('/proxy/')});
 
+var mapboxLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/styles/v1/wingwuyf/cjajfiz60artm2rnxr8wiecli/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
+var mapboxOutdoorsLayer = new Cesium.UrlTemplateImageryProvider({url:"https://map-cache.oss-cn-hangzhou.aliyuncs.com/styles/v1/mapbox/outdoors-v11/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2luZ3d1eWYiLCJhIjoiY2s3b282bm90MDJ1dDNtbGlibGowMTRoeSJ9.hDrbU176NROA7KYhmBkmEg"});
 var googleLayer = new Cesium.UrlTemplateImageryProvider({url:"http://mt2.google.cn/vt/lyrs=s@167000000&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}&s=Galil"});
 
 viewer.imageryLayers.removeAll();
 viewer.imageryLayers.addImageryProvider(mapboxLayer);
-
-viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({url:"https://sinomaps-mission.oss-accelerate.aliyuncs.com/Image/{z}/{x}/{y}.png",proxy : new Cesium.DefaultProxy('/proxy/')}));//({url:"http://47.110.155.250:8003/Map/Image/{z}/{x}/{y}.png"}));
+viewer.imageryLayers.addImageryProvider(FJSImageryLayer);
 
 viewer._cesiumWidget._creditContainer.style.display = "none";
 
@@ -554,11 +555,11 @@ function addRoadBackgroundLayer(road) {
         }
     });
 
-    var promiseSRoad = Cesium.GeoJsonDataSource.load(
-        road.sroad, { clampToGround: true } 
+    var promiseSRoadEast = Cesium.GeoJsonDataSource.load(
+        road.sroadeast, { clampToGround: true } 
     );
-    promiseSRoad.then(function (dataSource) {
-        dataSource.name = "sroad";
+    promiseSRoadEast.then(function (dataSource) {
+        dataSource.name = "sroadeast";
         viewer.dataSources.add(dataSource);
         for (var i = 0; i < dataSource.entities.values.length; i++) {
             var entity = dataSource.entities.values[i];
@@ -566,16 +567,16 @@ function addRoadBackgroundLayer(road) {
             // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
             entity.polyline.width = 3;
             entity.polyline.material = new Cesium.ImageMaterialProperty({
-                color: Cesium.Color.GRAY.withAlpha(0.5)
+                color: Cesium.Color.GRAY.withAlpha(0.7)
             });
         }
     });
 
-    var promiseRoad = Cesium.GeoJsonDataSource.load(
-        road.road, { clampToGround: true } 
+    var promiseSRoadWest = Cesium.GeoJsonDataSource.load(
+        road.sroadwest, { clampToGround: true } 
     );
-    promiseRoad.then(function (dataSource) {
-        dataSource.name = "road";
+    promiseSRoadWest.then(function (dataSource) {
+        dataSource.name = "sroadwest";
         viewer.dataSources.add(dataSource);
         for (var i = 0; i < dataSource.entities.values.length; i++) {
             var entity = dataSource.entities.values[i];
@@ -583,20 +584,37 @@ function addRoadBackgroundLayer(road) {
             // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
             entity.polyline.width = 3;
             entity.polyline.material = new Cesium.ImageMaterialProperty({
-                color: Cesium.Color.GRAY.withAlpha(0.5)
+                color: Cesium.Color.GRAY.withAlpha(0.7)
             });
         }
     });
+
+    // var promiseRoad = Cesium.GeoJsonDataSource.load(
+    //     road.road, { clampToGround: true } 
+    // );
+    // promiseRoad.then(function (dataSource) {
+    //     dataSource.name = "road";
+    //     viewer.dataSources.add(dataSource);
+    //     for (var i = 0; i < dataSource.entities.values.length; i++) {
+    //         var entity = dataSource.entities.values[i];
+            
+    //         // entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY; //去掉地形遮挡
+    //         entity.polyline.width = 3;
+    //         entity.polyline.material = new Cesium.ImageMaterialProperty({
+    //             color: Cesium.Color.GRAY.withAlpha(0.5)
+    //         });
+    //     }
+    // });
 }
 
 function removeRoadBackgroundLayer(road) {
     let dataSourceSSRoad = viewer.dataSources.getByName("ssroad");
     viewer.dataSources.remove(dataSourceSSRoad[0]);
 
-    let dataSourceSRoad = viewer.dataSources.getByName("sroad");
+    let dataSourceSRoad = viewer.dataSources.getByName("sroadeast");
     viewer.dataSources.remove(dataSourceSRoad[0]);
 
-    let dataSourceRoad = viewer.dataSources.getByName("road");
+    let dataSourceRoad = viewer.dataSources.getByName("sroadwest");
     viewer.dataSources.remove(dataSourceRoad[0]);
 }
 
@@ -838,7 +856,7 @@ function addNaturalScienceLayer(geojson) {
         geojson.features[i].properties.class = '自然科普';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'naturalScience';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: ' + fontColor + '; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zirankepu_layer.png"/>';
         document.body.appendChild(htmlOverlay);
 
@@ -915,7 +933,7 @@ function addSightseeingLayer(geojson) {
         geojson.features[i].properties.class = '观光旅游';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'sightseeing';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: ' + fontColor + '; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_guanguanglvyou_layer.png"/>';
         document.body.appendChild(htmlOverlay);
 
@@ -992,7 +1010,7 @@ function addSpecialTourismLayer(geojson) {
         geojson.features[i].properties.class = '专项旅游';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'specialTourism';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
+        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: ' + fontColor + '; text-align: center;">' + geojson.features[i].properties.NAME + '</div>\
         <img style="position: relative; left: 50%; transform: translate(-16px, 4px); height: 32px; width: 32px" src="img/icon_zhuanxianglvyou_layer.png"/>';
         document.body.appendChild(htmlOverlay);
 
@@ -1069,7 +1087,7 @@ function addMountainPeakLayer(geojson) {
         geojson.features[i].properties.class = '山峰';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'mountainPeak';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.NAME + '</div>';
+        htmlOverlay.innerHTML = '<div style="font-size: 12px; color: ' + fontColor + '; text-align: center;">' + geojson.features[i].properties.NAME + '</div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1145,7 +1163,7 @@ function addVillageLayer(geojson) {
         geojson.features[i].properties.class = '村庄';
         htmlOverlay.data = geojson.features[i];
         htmlOverlay.className = 'village';
-        htmlOverlay.innerHTML = '<div style="font-size: 5px; color: #fff; text-align: center;">' + geojson.features[i].properties.标准地名 + '</div>';
+        htmlOverlay.innerHTML = '<div style="font-size: 8px; color: ' + fontColor + '; text-align: center;">' + geojson.features[i].properties.标准地名 + '</div>';
         document.body.appendChild(htmlOverlay);
 
         positions.push(Cesium.Cartographic.fromDegrees(geojson.features[i].geometry.coordinates[0], geojson.features[i].geometry.coordinates[1]));
@@ -1346,7 +1364,9 @@ function rotateByDown(angle, callback) {
     }
 }
 
-function changeMapMode() {
+var fontColor = '#fff';
+
+function changeMapMode(mode) {
     var angle = Cesium.Math.toDegrees(viewer.camera.pitch);
     if (Math.round(Math.abs(angle)) === 90) {
         rotateByUp(60);
@@ -1354,6 +1374,39 @@ function changeMapMode() {
     else {
         angle += 90;
         rotateByDown(angle);
+    }
+
+    if (mode === '2D') {
+        viewer.imageryLayers.removeAll();
+        viewer.imageryLayers.addImageryProvider(mapboxOutdoorsLayer);
+
+        viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({});
+        terrainExaggeration = 0.0;
+
+        fontColor = '#000';
+    }
+    else {
+        viewer.imageryLayers.removeAll();
+        viewer.imageryLayers.addImageryProvider(mapboxLayer);
+        viewer.imageryLayers.addImageryProvider(FJSImageryLayer);
+
+        viewer.terrainProvider = terrainProvider;
+        terrainExaggeration = 1.0;
+
+        fontColor = '#fff';
+    }
+
+    let typeList = ['naturalScience','sightseeing','specialTourism','mountainPeak','village'];
+    let funcList = [addNaturalScienceLayer,addSightseeingLayer,addSpecialTourismLayer,addMountainPeakLayer,addVillageLayer];
+    let dataList = [naturalScienceGeoJSON,sightseeingGeoJSON,specialTourismGeoJSON,mountainPeakGeoJSON,villageGeoJSON];
+    for (let i = 0; i < typeList.length; i++) {
+        let elements = document.getElementsByClassName(typeList[i]);
+        if (elements.length > 0) {
+            funcList[i](dataList[i]);
+        }
+        // for (let j = 0; j < elements.length; j++) {
+        //     elements[j].style.color = fontColor;
+        // }
     }
 }
 
@@ -1388,7 +1441,12 @@ function optMap(opt) {
 function setKey(event) {
     console.log(event.keyCode);
     if (event.keyCode === 77) {
-        changeMapMode();
+        if (fontColor === '#000') {
+            changeMapMode('3D');
+        }
+        else {
+            changeMapMode('2D');
+        }
     }
     else if (event.keyCode === 78) {
         rotateLeftRight(Cesium.Math.toDegrees(-viewer.camera.heading));
@@ -1400,7 +1458,7 @@ function setKey(event) {
         viewer.camera.zoomOut(viewer.camera.positionCartographic.height * 2);
     }
     else if (event.keyCode === 65) {
-        addRoadBackgroundLayer({ "sroad" : "./sroad.geojson", "ssroad" : "./ssroad.geojson", "road" : "./道路.geojson"});
+        addRoadBackgroundLayer({ "sroadeast" : "./sroadeast.geojson", "sroadwest" : "./sroadwest.geojson", "ssroad" : "./ssroad.geojson"});
         
         var request1 = new XMLHttpRequest();
         request1.open("get", "./动物.geojson");
@@ -1961,10 +2019,12 @@ function flyThroughStart2() {
         }
         var hPitches = [];
         var distanceSum = 0.0;
-        for (var i = 3, j = 0; i < roamingPostions.length; i += 3) {
+        for (var i = 3, j = 0, k = 0; i < roamingPostions.length; i += 3) {
             var origin = new Cesium.Cartesian3.fromDegrees(roamingPostions[i-3], roamingPostions[i-2], roamingPostions[i-1]);
             var target = new Cesium.Cartesian3.fromDegrees(roamingPostions[i+0], roamingPostions[i+1], roamingPostions[i+2]);
             var hPitch = getHeadingPitch(origin, target);
+
+            hPitch.transportation = userTourPostitions[k++].transportation;
 
             distanceSum += hPitch.distance;
             hPitch.distance = distanceSum;
@@ -2053,6 +2113,14 @@ function flyThroughStart2() {
                 hpRoll.heading = hPitches[i].heading;
                 hpRoll.pitch = hPitches[i].pitch;
 
+                if (typeof transportationCB === 'function') {
+                    transportationCB(hPitches[i].transportation)
+                }
+
+                if (window.Android) {
+                    window.Android.transportationCB(hPitches[i].transportation)
+                }
+
                 simplifiedHPitch = hPitches[i].simplifiedHPitch;
 
                 currentIndex = i;
@@ -2099,7 +2167,5 @@ function flyThroughStart2() {
                 });
             }
         });
-
-        
     });
 }
