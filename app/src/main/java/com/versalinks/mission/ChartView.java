@@ -145,13 +145,14 @@ public class ChartView extends LineChart {
         xAxis.setAxisMaximum(maxX);
         //不显示网格线
         xAxis.setDrawGridLines(true);
-        //设置X轴值为字符串
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return String.valueOf(value);
-            }
-        });
+//        //设置X轴值为字符串
+//        xAxis.setValueFormatter(new ValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, AxisBase axis) {
+//                int intValue = new BigDecimal(value).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//                return String.valueOf(intValue);
+//            }
+//        });
         //得到Y轴
         YAxis yAxis = lineChart.getAxisLeft();
         yAxis.setTextColor(Color.WHITE);
@@ -171,13 +172,14 @@ public class ChartView extends LineChart {
         //+1:y轴多一个单位长度，为了好看
         yAxis.setAxisMaximum(maxY);
 
-        //y轴
-        yAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return String.valueOf(value);
-            }
-        });
+//        //y轴
+//        yAxis.setValueFormatter(new ValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, AxisBase axis) {
+//                int intValue = new BigDecimal(value).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//                return String.valueOf(intValue);
+//            }
+//        });
         //图例：得到Lengend
         Legend legend = lineChart.getLegend();
         //隐藏Lengend
