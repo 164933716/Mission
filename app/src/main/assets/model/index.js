@@ -1395,25 +1395,29 @@ function changeMapMode(mode) {
             rotateByDown(angle);
         }
 
+        viewer.scene.mode = Cesium.SceneMode.SCENE2D;
+
         viewer.imageryLayers.removeAll();
         viewer.imageryLayers.addImageryProvider(mapboxOutdoorsLayer);
 
-        viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({});
-        terrainExaggeration = 0.0;
+        // viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider({});
+        // terrainExaggeration = 0.0;
 
         fontColor = '#000';
     }
     else {
-        if (Math.round(Math.abs(angle)) === 90) {
-            rotateByUp(60);
-        }
+        // if (Math.round(Math.abs(angle)) === 90) {
+        //     rotateByUp(60);
+        // }
+
+        viewer.scene.mode = Cesium.SceneMode.SCENE3D;
 
         viewer.imageryLayers.removeAll();
         viewer.imageryLayers.addImageryProvider(mapboxLayer);
         viewer.imageryLayers.addImageryProvider(FJSImageryLayer);
 
-        viewer.terrainProvider = terrainProvider;
-        terrainExaggeration = 1.0;
+        // viewer.terrainProvider = terrainProvider;
+        // terrainExaggeration = 1.0;
 
         fontColor = '#fff';
     }
