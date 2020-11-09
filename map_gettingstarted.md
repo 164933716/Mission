@@ -1,5 +1,5 @@
 
-# Gaode Development Android Map SDK Getting Started Guide
+# Amap Development Android Map SDK Getting Started Guide
 
 This guide is a quick start guide for adding maps to Android apps.
 

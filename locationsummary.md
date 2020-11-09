@@ -114,9 +114,9 @@ The Android Positioning SDK is provided to readers who have certain Android prog
 
 ## Account and Key application
 
-There are three steps to register as a Gaode developer:
+There are three steps to register as a Amap developer:
 
-The first step is to register a Gaode developer;
+The first step is to register a Amap developer;
 
 The second step is to go to the console to create an application;
 
