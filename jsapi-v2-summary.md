@@ -8,7 +8,7 @@ On March 31, 2020, [Map JS API v2.0][2] was released, welcome to use.
 
 ## Introduction
 
-AMaps JS API is a set of map application programming interface developed in JavaScript language, integrated design of mobile terminal and PC terminal, a set of API is compatible with many system platforms. Currently JS API is free and open to use.
+AMap JS API is a set of map application programming interface developed in JavaScript language, integrated design of mobile terminal and PC terminal, a set of API is compatible with many system platforms. Currently JS API is free and open to use.
 
 JS API provides 2D and 3D map modes to meet the needs of most developers for map display, map customization, layer loading, point marker addition, and vector graphics drawing. It also provides POI search, route planning, and geocoding. , Administrative area query, positioning and many other open service interfaces.
 
